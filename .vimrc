@@ -12,18 +12,18 @@ call vundle#rc()
 " Bundles {
 Bundle 'gmarik/vundle'
 
-Bundle 'godlygeek/csapprox'
-Bundle 'scrooloose/nerdcommenter'
-Bundle 'ervandew/supertab'
-Bundle 'scrooloose/syntastic'
-Bundle 'tomtom/tlib_vim'
-Bundle 'MarcWeber/vim-addon-mw-utils'
-Bundle 'Lokaltog/vim-powerline'
-Bundle 'garbas/vim-snipmate'
-Bundle 'tpope/vim-surround'
+"Bundle 'godlygeek/csapprox'
+"Bundle 'scrooloose/nerdcommenter'
+"Bundle 'ervandew/supertab'
+"Bundle 'scrooloose/syntastic'
+"Bundle 'tomtom/tlib_vim'
+"Bundle 'MarcWeber/vim-addon-mw-utils'
+"Bundle 'Lokaltog/vim-powerline'
+"Bundle 'garbas/vim-snipmate'
+"Bundle 'tpope/vim-surround'
 
-Bundle 'vim-scripts/OmniCppComplete'
-Bundle 'vim-scripts/taglist.vim'
+"Bundle 'vim-scripts/OmniCppComplete'
+"Bundle 'vim-scripts/taglist.vim'
 " }
 
 " General {

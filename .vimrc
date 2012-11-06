@@ -12,18 +12,20 @@ call vundle#rc()
 " Bundles {
 Bundle 'gmarik/vundle'
 
+Bundle 'vim-scripts/a.vim'
 Bundle 'godlygeek/csapprox'
+Bundle 'vim-scripts/OmniCppComplete'
 Bundle 'scrooloose/nerdcommenter'
+Bundle 'scrooloose/nerdtree'
+Bundle 'myusuf3/numbers.vim'
 Bundle 'ervandew/supertab'
 Bundle 'scrooloose/syntastic'
+Bundle 'majutsushi/tagbar'
 Bundle 'tomtom/tlib_vim'
 Bundle 'MarcWeber/vim-addon-mw-utils'
 Bundle 'Lokaltog/vim-powerline'
 Bundle 'garbas/vim-snipmate'
 Bundle 'tpope/vim-surround'
-
-Bundle 'vim-scripts/OmniCppComplete'
-Bundle 'vim-scripts/taglist.vim'
 " }
 
 " General {
@@ -96,7 +98,7 @@ hi ColorColumn ctermbg=blue
 " }
 
 " Formatting {
-set nowrap                      " wrap long lines
+set wrap                        " wrap long lines
 set smartindent                 " indent at the same level of the previous line
 set shiftwidth=3                " use indents of 3 spaces
 set expandtab                   " tabs are spaces, not tabs
@@ -123,12 +125,12 @@ autocmd FileType go setlocal softtabstop=4
 let mapleader=','
 
 " Easier moving in tabs and windows
-map <C-H> <C-W>h
-map <C-J> <C-W>j
-map <C-K> <C-W>k
-map <C-L> <C-W>l
-map <C-X> <C-W>x
-map <C-C> <C-W>w
+noremap <C-H> <C-W>h
+noremap <C-J> <C-W>j
+noremap <C-K> <C-W>k
+noremap <C-L> <C-W>l
+noremap <C-X> <C-W>x
+noremap <C-C> <C-W>w
 
 " Wrapped lines goes down/up to next row, rather than next line in file.
 nnoremap j gj
@@ -136,12 +138,12 @@ nnoremap k gk
 
 " The following two lines conflict with moving to top and bottom of the
 " screen (have to do with tabs)
-map <S-H> gT
-map <S-L> gt
+nnoremap <S-H> gT
+nnoremap <S-L> gt
 
 " Visual mode Ctrl+C copies to + buffer.
 set clipboard=unnamedplus
-vmap <C-C> "+y
+vnoremap <C-C> "+y
 
 " Stupid shift key fixes
 if has("user_commands")
@@ -161,19 +163,21 @@ cmap Tabe tabe
 " Yank from the cursor to the end of the line, to be consistent with C and D.
 nnoremap Y y$
 
-" Map tab to write
+" Map Tab to write
 nnoremap <Tab> :w<CR>
 
-" Map leader + tab to write/quit
+" Map ,Tab to write/quit
 nnoremap <leader><Tab> :x<CR>
 inoremap <leader><Tab> <Esc>:x<CR>
 
+" Map ,q to write-quit all
+nnoremap <leader>q :xa<CR>
+
+" Map ,Q to quit all
+nnoremap <leader>Q :qa!<CR>
+
 " Clearing highlighted search
 nmap <silent> <leader>/ :nohlsearch<CR>
-
-" Colorscheme workaround - WTF.
-nmap <leader>1 :colo corporation<CR>
-nmap <leader>2 :colo pw<CR>
 
 " Shortcuts
 " Change Working Directory to that of the current file
@@ -206,6 +210,16 @@ imap <leader>{ {<CR>}<Esc>O
 autocmd FileType go nmap <leader>f :Fmt<CR>
 
 " Plugins {
+" a.vim {
+map <leader>av :AV<CR>
+map <leader>a<Space> :A<CR>
+" }
+
+" NERDTree {
+map <leader>n :NERDTreeToggle<CR>
+let NERDTreeIgnore=[]
+" }
+
 " Powerline {
 let g:Powerline_symbols = 'unicode'
 " }
@@ -213,7 +227,7 @@ let g:Powerline_symbols = 'unicode'
 " Syntastic {
 let g:syntastic_mode_map = { 'mode': 'active',
          \ 'active_filetypes': ['cpp'],
-         \ 'passive_filetypes': [] }
+         \ 'passive_filetypes': ['java'] }
 
 let g:syntastic_check_on_open=1
 let g:syntastic_enable_signs=1
@@ -227,8 +241,12 @@ let g:syntastic_cpp_check_header=0   " don't check headers from cpps
 let g:syntastic_cpp_compiler_options=' -g -Wall -Wextra'
 " }
 
-" taglist.vim {
-map <leader>t :TlistToggle<CR><C-H>
+" Tagbar {
+let g:tagbar_autoclose=1
+let g:tagbar_left=1
+
+nnoremap <silent> <leader>t :TagbarToggle<CR>
+
 " }
 " }
 

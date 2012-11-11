@@ -16,7 +16,8 @@ export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin
 
-# Prompt GIT stuff.
+# Git prompt stuff.
+source ~/.git-prompt.sh # Copied from /usr/share/git/completion
 export GIT_PS1_SHOWDIRTYSTATE=1
 export GIT_PS1_SHOWSTASHSTATE=1
 export GIT_PS1_SHOWUNTRACKEDFILES=1
@@ -40,26 +41,8 @@ shopt -s checkwinsize
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
-
-if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-   # We have color support; assume it's compliant with Ecma-48
-   # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-   # a case would tend to support setf rather than setaf.)
-   color_prompt=yes
-else
-   color_prompt=
-fi
-
-if [ "$color_prompt" = yes ]; then
-   PS1='\[\e[01;32m\]\u@\h\[\e[0m\]:\[\e[01;35m\]$(__git_ps1 "%s")\[\e[0m\]:\[\e[01;34m\]\w\[\e[0m\]\$ '
-   #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-fi
+PS1='\[\e[01;32m\]\u@\h\[\e[0m\]:\[\e[01;35m\]$(__git_ps1 "%s")\[\e[0m\]:\[\e[01;34m\]\w\[\e[0m\]\$ '
+#PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -86,7 +69,6 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
@@ -97,3 +79,6 @@ fi
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
+
+# Run X at startup.
+[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && startx

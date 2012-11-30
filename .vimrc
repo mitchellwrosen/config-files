@@ -198,7 +198,7 @@ let g:Powerline_symbols = 'unicode'
 " Syntastic {
 let g:syntastic_mode_map = { 'mode': 'active',
          \ 'active_filetypes': ['cpp'],
-         \ 'passive_filetypes': ['java'] }
+         \ 'passive_filetypes': [''] }
 
 let g:syntastic_check_on_open=1
 let g:syntastic_enable_signs=1

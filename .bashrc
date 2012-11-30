@@ -12,12 +12,23 @@ HISTCONTROL=ignoreboth
 export TERM=rxvt-unicode-256color
 export LANG=en_US.UTF-8
 
-export GOROOT=/usr/local/go
-export GOPATH=$HOME/go
+export GOROOT=/usr/lib/go
+export GOPATH=$HOME/projects/go
 export PATH=$PATH:$GOROOT/bin
 
+export PATH=$PATH:~/scripts
+export PATH=$PATH:~/Downloads/google_appengine
+
+export PATH=$PATH:~/.gem/ruby/1.9.1/bin
+
+# Wrap gcc with colorgcc
+export PATH=$PATH:/usr/lib/colorgcc/bin
+# Tell ccache to only use compilers here. Remember to TELL COLORGCC TO
+# CALL CCACHE INSTEAD OF THE REAL COMPILER by modifying /etc/colorgcc/colorgcc
+export CCACHE_PATH=/usr/bin
+
 # Git prompt stuff.
-source ~/.git-prompt.sh # Copied from /usr/share/git/completion
+source /home/mitchell/.git-prompt.sh # Copied from /usr/share/git/completion
 export GIT_PS1_SHOWDIRTYSTATE=1
 export GIT_PS1_SHOWSTASHSTATE=1
 export GIT_PS1_SHOWUNTRACKEDFILES=1
@@ -41,7 +52,7 @@ shopt -s checkwinsize
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-PS1='\[\e[01;32m\]\u@\h\[\e[0m\]:\[\e[01;35m\]$(__git_ps1 "%s")\[\e[0m\]:\[\e[01;34m\]\w\[\e[0m\]\$ '
+PS1='\[\e[01;32m\]\u\[\e[0m\]:\[\e[01;35m\]$(__git_ps1 "%s")\[\e[0m\]:\[\e[01;34m\]\w\[\e[0m\]\$ '
 #PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
 # enable color support of ls and also add handy aliases

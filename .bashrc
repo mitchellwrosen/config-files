@@ -23,8 +23,8 @@ export PATH=$PATH:~/.gem/ruby/1.9.1/bin
 
 # Wrap gcc with colorgcc
 export PATH=$PATH:/usr/lib/colorgcc/bin
-# Tell ccache to only use compilers here. Remember to TELL COLORGCC TO
-# CALL CCACHE INSTEAD OF THE REAL COMPILER by modifying /etc/colorgcc/colorgcc
+# Tell ccache to only use compilers here. Remember to TELL COLORGCC TO CALL
+# CCACHE INSTEAD OF THE REAL COMPILER by modifying /etc/colorgcc/colorgcc
 export CCACHE_PATH=/usr/bin
 
 # Git prompt stuff.
@@ -53,7 +53,6 @@ shopt -s checkwinsize
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 PS1='\[\e[01;32m\]\u\[\e[0m\]:\[\e[01;35m\]$(__git_ps1 "%s")\[\e[0m\]:\[\e[01;34m\]\w\[\e[0m\]\$ '
-#PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then

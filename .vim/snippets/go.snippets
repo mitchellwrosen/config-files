@@ -66,7 +66,7 @@ snippet i
 # import
 snippet im
 	import (
-		"${1:package}"
+		"${1:fmt}"
 	)
 # interface
 snippet in
@@ -126,13 +126,13 @@ snippet fr
 	}
 # function simple
 snippet fun
-	func ${1:funcName}(${2}) ${3} {
+	func ${1:funcName}${2}) ${3} {
 		${4:/* code */}
 	}
 # function on receiver
 snippet fum
-	func (self ${1:type}) ${2:funcName}(${3}) ${4:os.Error} {
-		${5:/* code */}
+	func (${1:foo} ${2:type}) ${3:funcName}(${4}) ${5:os.Error} {
+		${6:/* code */}
 	}
 # make
 snippet mk

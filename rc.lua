@@ -155,6 +155,12 @@ cpuwidget:set_gradient_colors({ "#FF5656", "#88A175", "#AECF96" })
 vicious.cache(cpuwidget, vicious.widgets.cpu)
 vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 7)
 
+-- Volume level
+--volwidget = widget({ type = "textbox" })
+--vicious.cache(volwidget, vicious.widgets.volume)
+--vicious.register(volwidget, vicious.widgets.volume,
+                 --"<span weight='bold'>Vol:</span> $1%", 2, "Master")
+
 -- Wifi widget
 --wifiwidget = widget({ type = "textbox" })
 --vicious.register(wifiwidget, vicious.widgets.wifi,
@@ -244,6 +250,7 @@ for s = 1, screen.count() do
       tempwidget, separator,
       memwidget, separator,
       cpuwidget.widget, cpuwidgetlabel, spacer,
+      --volwidget, spacer,
       --wifiwidget, spacer,
       s == 1 and mysystray or nil,
       mytasklist[s],

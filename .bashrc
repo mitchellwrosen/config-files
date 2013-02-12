@@ -11,6 +11,7 @@ HISTCONTROL=ignoreboth
 
 export TERM=rxvt-unicode-256color
 export LANG=en_US.UTF-8
+export EDITOR="vim"
 
 export GOROOT=/usr/lib/go
 export GOPATH=$HOME/projects/go

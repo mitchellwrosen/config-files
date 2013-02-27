@@ -23,6 +23,7 @@ Bundle 'scrooloose/syntastic'
 Bundle 'majutsushi/tagbar'
 Bundle 'tomtom/tlib_vim'
 Bundle 'MarcWeber/vim-addon-mw-utils'
+Bundle 'Lokaltog/vim-easymotion'
 Bundle 'Lokaltog/vim-powerline'
 Bundle 'garbas/vim-snipmate'
 Bundle 'tpope/vim-surround'
@@ -56,6 +57,7 @@ au BufWinEnter *.* silent! loadview
 
 " UI {
 colorscheme molokai
+
 
 set backspace=indent,eol,start  " backspace for dummies
 set linespace=0                 " No extra spaces between rows
@@ -182,6 +184,11 @@ au FileType go nmap <leader>f :Fmt<CR>
 " a.vim {
 map <leader>av :AV<CR>
 map <leader>a<Space> :A<CR>
+" }
+
+" EasyMotion {
+hi link EasyMotionTarget ErrorMsg
+hi link EasyMotionShade Comment
 " }
 
 " NERDTree {

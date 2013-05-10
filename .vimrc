@@ -1,35 +1,37 @@
 set nocompatible        " disable vi-compatibility
 
-" Setup Bundles/Runtime Path {
+" Setup Bundles/Runtime Path
 filetype on
 filetype off
-set rtp+=~/.vim/plugin
+"set rtp+=~/.vim/plugin
 set rtp+=~/.vim/bundle/vundle
 set rtp+=$GOROOT/misc/vim
 call vundle#rc()
-" }
 
-" Bundles {
+" Bundles
 Bundle 'gmarik/vundle'
 
 Bundle 'vim-scripts/a.vim'
+Bundle 'wincent/Command-T'
+Bundle 'vim-scripts/Conque-Shell'
 Bundle 'godlygeek/csapprox'
-Bundle 'vim-scripts/OmniCppComplete'
+"Bundle 'eagletmt/ghcmod-vim'
+"Bundle 'ujihisa/neco-ghc'
 Bundle 'Shougo/neocomplcache'
 Bundle 'scrooloose/nerdcommenter'
-Bundle 'scrooloose/nerdtree'
+Bundle 'vim-scripts/OmniCppComplete'
 Bundle 'ervandew/supertab'
 Bundle 'scrooloose/syntastic'
 Bundle 'majutsushi/tagbar'
 Bundle 'tomtom/tlib_vim'
 Bundle 'MarcWeber/vim-addon-mw-utils'
-Bundle 'Lokaltog/vim-easymotion'
 Bundle 'Lokaltog/vim-powerline'
 Bundle 'garbas/vim-snipmate'
+Bundle 'tpope/vim-fugitive'
+"Bundle 'Shougo/vimproc'
 Bundle 'tpope/vim-surround'
-" }
 
-" General {
+" General
 set background=dark         " Assume a dark background
 filetype plugin indent on   " Automatically detect file types.
 syntax on                   " syntax highlighting
@@ -37,14 +39,19 @@ scriptencoding utf-8
 
 set laststatus=2           " always show the status line
 set encoding=utf-8
-
 set autowrite                   " automatically write a file when leaving a modified buffer
 set shortmess+=aoOtTW           " abbrev. of messages (avoids 'hit enter')
 set history=1000                " store a ton of history (default is 20)
+set showcmd
+set autoread
+set hidden
 
 set noswapfile
-
+set nobackup
+set nowritebackup
 if has('persistent_undo')
+   silent !mkdir ~/.vim/backups > /dev/null 2>&1
+   set undodir=~/.vim/backups
    set undofile                " persistent undo is nice
    set undolevels=1000         " maximum number of changes that can be undone
    set undoreload=10000        " maximum number lines to save for undo on a buffer reload
@@ -58,10 +65,11 @@ au BufWinEnter *.* silent! loadview
 " UI {
 colorscheme molokai
 
-
 set backspace=indent,eol,start  " backspace for dummies
 set linespace=0                 " No extra spaces between rows
 "set number                      " Line numbers on
+set foldenable
+set cursorline
 set showmatch                   " show matching brackets/parenthesis
 set matchpairs+=<:>             " match < >
 set hlsearch                    " highlight search terms
@@ -71,7 +79,9 @@ set wildmenu                    " show list instead of just completing
 set wildmode=longest:full,full  " command <Tab> completion, list matches, then longest common part, then all.
 set whichwrap=b,s,<,>,[,]       " backspace and cursor keys wrap to
 set scrolljump=0                " lines to scroll when cursor leaves screen
-set scrolloff=30                " minimum lines to keep above and below cursor
+set scrolloff=10                " minimum lines to keep above and below cursor
+set sidescrolloff=5
+set sidescroll=1
 set list
 set listchars=tab:::,trail:·,extends:#,nbsp:· " Highlight problematic whitespace, # on long lines
 set textwidth=80
@@ -91,18 +101,20 @@ set pastetoggle=<F12>           " pastetoggle (sane indentation on pastes)
 au BufWritePre <buffer> :call setline(1,map(getline(1,"$"),'substitute(v:val,"\\s\\+$","","")'))
 
 " Go-specific.
-au FileType go au BufWritePre <buffer> :Fmt   " Call :Fmt on write
+au FileType go au BufWritePre <buffer> silent Fmt
 au FileType go setlocal listchars=tab:\ \ ,trail:.,extends:#,nbsp:.
-au FileType go setlocal noexpandtab
-au FileType go setlocal shiftwidth=4
-au FileType go setlocal tabstop=4
-au FileType go setlocal softtabstop=4
+au FileType go setlocal ts=4 sw=4 sts=4 noexpandtab
 " }
+
+au FileType python setlocal ts=4 sw=4 sts=4
 
 " Key (re)Mappings {
 let mapleader=','
 
 nnoremap ; :
+
+" Ugly vim latexsuite fix for <C-J> override
+noremap <SID>__imap_jumpforward <Plug>IMAP_JumpForward
 
 " Easier moving in tabs and windows
 nnoremap <C-H> <C-W>h
@@ -113,6 +125,10 @@ nnoremap <C-X> <C-W>x
 nnoremap <C-C> <C-W>w
 nnoremap <S-H> gT
 nnoremap <S-L> gt
+
+" Move locations with [l and ]l
+nnoremap ]l :lnext<CR>
+nnoremap [l :lprev<CR>
 
 " Visual mode Ctrl+C copies to + buffer.
 set clipboard=unnamedplus
@@ -148,7 +164,7 @@ nnoremap <leader>q :xa<CR>
 nnoremap <leader>Q :qa!<CR>
 
 " Map ,/ to clear highlighted search
-nnoremap <silent> <leader>/ :nohlsearch<CR>
+nnoremap <silent> <CR> :nohlsearch<CR>
 
 " Shortcuts
 " Change working directory to that of the current file
@@ -160,11 +176,12 @@ cmap w!! w !sudo tee % >/dev/null
 
 " Some helpers to edit mode
 " http://vimcasts.org/e/14
-cnoremap %% <C-R>=expand('%:h').'/'<cr>
+cnoremap %% <C-R>=expand('%:h').'/'<CR>
 map <leader>ew :e %%
 map <leader>es :sp %%
 map <leader>ev :vsp %%
 map <leader>et :tabe %%
+map <leader>eT :args * \| tab all<CR>
 
 " Adjust viewports to the same size
 map <leader>= <C-w>=
@@ -172,10 +189,6 @@ map <leader>= <C-w>=
 " Easier horizontal scrolling
 map zl zL
 map zh zH
-
-" Curly brace, then get inside block.
-imap <leader>{ {<CR>}<Esc>O
-" }
 
 " ,f formats in go files (necessary? I think I prefer :Fmt on write)
 au FileType go nmap <leader>f :Fmt<CR>
@@ -186,16 +199,8 @@ map <leader>av :AV<CR>
 map <leader>a<Space> :A<CR>
 " }
 
-" EasyMotion {
-hi link EasyMotionTarget ErrorMsg
-hi link EasyMotionShade Comment
-" }
-
-" NERDTree {
-map <leader>n :NERDTreeToggle<CR>
-let NERDTreeIgnore=[]
-let NERDChristmasTree=1
-let NERDTreeQuitOnOpen=1
+" NeoComplCache {
+let g:neocomplcache_enable_at_startup = 1
 " }
 
 " Powerline {
@@ -204,7 +209,6 @@ let g:Powerline_symbols = 'unicode'
 
 " Syntastic {
 let g:syntastic_mode_map = { 'mode': 'active',
-         \ 'active_filetypes': ['cpp'],
          \ 'passive_filetypes': ['java'] }
 
 let g:syntastic_check_on_open=1
@@ -217,11 +221,10 @@ let g:syntastic_stl_format = '[%E{Err: %fe #%e}%B{, }%W{Warn: %fw #%w}]'
 
 let g:syntastic_cpp_check_header=0   " don't check headers from cpps
 let g:syntastic_cpp_compiler_options=' -g -Wall -Wextra'
-" }
 
 " Tagbar {
 "au VimEnter * :TagbarOpen
-nnoremap <silent> <leader>t :TagbarOpen fj<CR>
+"nnoremap <silent> <leader>t :TagbarOpen fj<CR>
 " }
 " }
 " }

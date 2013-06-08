@@ -1,0 +1,8 @@
+[user]
+	name = Mitchell Rosen
+	email = mitchellwrosen@gmail.com
+[push]
+	default = simple
+[alias]
+	s = status -s -b
+	l = log --graph --decorate --pretty=oneline --abbrev-commit --all

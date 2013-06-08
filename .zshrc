@@ -2,11 +2,12 @@ export TERM="rxvt-unicode-256color"
 export LANG="en_US.UTF-8"
 export EDITOR="vim"
 
+export GHCROOT=/usr/
+
 export GOROOT=/usr/lib/go
 export GOPATH=$HOME/projects/go
 export PATH=$PATH:$GOROOT/bin
 
-export PATH=$PATH:~/scripts
 #export PATH=$PATH:~/Downloads/google_appengine
 
 # Wrap gcc with colorgcc
@@ -15,6 +16,7 @@ export PATH=$PATH:/usr/lib/colorgcc/bin
 export PATH=$PATH:~/.cabal/bin
 export PATH=$PATH:~/.gem/ruby/2.0.0/bin
 
+export PATH=$PATH:~/bin
 
 # Tell ccache to only use compilers here. Remember to TELL COLORGCC TO CALL
 # CCACHE INSTEAD OF THE REAL COMPILER by modifying /etc/colorgcc/colorgcc
@@ -22,16 +24,16 @@ export CCACHE_PATH=/usr/bin
 
 autoload -U colors && colors
 PS1="%{$fg[red]%}%n%{$reset_color%}@%{$fg[blue]%}%m%{$fg[green]%}%~ %{$fg[yellow]%}%# %{$reset_color%}%"
-#PS1='\[\e[01;32m\]\u\[\e[0m\]:\[\e[01;35m\]\[\e[0m\]:\[\e[01;34m\]\w\[\e[0m\]\$ '
 
 # Common alias
 alias ls='ls -F --color=auto'
 alias ll='ls -lh'
 alias la='ls -lha'
 alias grep='grep --color=auto'
+alias g='git '
 
 # dev_appserver alias
-alias appserver='python2 /opt/google-appengine-go/dev_appserver.py'
+#alias appserver='python2 /opt/google-appengine-go/dev_appserver.py'
 
 setopt CORRECT # Spell check commands
 #setopt RM_STAR_WAIT # 10 second wait if you do rm *

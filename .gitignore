@@ -1,3 +1,4 @@
 .vim/view
 .vim/bundle
+.vim/backups
 *.un~

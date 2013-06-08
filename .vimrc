@@ -1,79 +1,118 @@
-set nocompatible        " disable vi-compatibility
+set nocompatible
 
-" Setup Bundles/Runtime Path
-filetype on
-filetype off
-"set rtp+=~/.vim/plugin
+if has('autocmd')
+   filetype on
+end
+
+set rtp+=~/.vim/plugin
 set rtp+=~/.vim/bundle/vundle
+
 set rtp+=$GOROOT/misc/vim
 call vundle#rc()
 
-" Bundles
 Bundle 'gmarik/vundle'
 
 Bundle 'vim-scripts/a.vim'
-Bundle 'wincent/Command-T'
-Bundle 'vim-scripts/Conque-Shell'
-Bundle 'godlygeek/csapprox'
-"Bundle 'eagletmt/ghcmod-vim'
-"Bundle 'ujihisa/neco-ghc'
-Bundle 'Shougo/neocomplcache'
-Bundle 'scrooloose/nerdcommenter'
+Bundle   'godlygeek/csapprox'
+Bundle        'kien/ctrlp.vim'
+Bundle     'ujihisa/neco-ghc'
+Bundle      'Shougo/neocomplcache'
+Bundle  'scrooloose/nerdcommenter'
 Bundle 'vim-scripts/OmniCppComplete'
-Bundle 'ervandew/supertab'
-Bundle 'scrooloose/syntastic'
-Bundle 'majutsushi/tagbar'
-Bundle 'tomtom/tlib_vim'
-Bundle 'MarcWeber/vim-addon-mw-utils'
-Bundle 'Lokaltog/vim-powerline'
-Bundle 'garbas/vim-snipmate'
-Bundle 'tpope/vim-fugitive'
-"Bundle 'Shougo/vimproc'
-Bundle 'tpope/vim-surround'
+Bundle    'ervandew/supertab'
+Bundle  'scrooloose/syntastic'
+Bundle  'majutsushi/tagbar'
+Bundle      'tomtom/tlib_vim'
+Bundle   'MarcWeber/vim-addon-mw-utils'
+Bundle        'bitc/vim-hdevtools'
+Bundle    'Lokaltog/vim-powerline'
+Bundle      'garbas/vim-snipmate'
+Bundle       'tpope/vim-fugitive'
+Bundle       'tpope/vim-surround'
 
-" General
+"Bundle    'Twinside/vim-haskellConceal'
+"Bundle 'lukerandall/haskellmode-vim'
+"Bundle 'FredKSchott/CoVim'
+"Bundle 'Shougo/vimproc'
+"Bundle 'eagletmt/ghcmod-vim'
+
 set background=dark         " Assume a dark background
-filetype plugin indent on   " Automatically detect file types.
+
+" Enable loading the plugin files for specific file types.
+filetype plugin on
+
+" Enable loading the indent file for specific file types.
+filetype indent on
 syntax on                   " syntax highlighting
 scriptencoding utf-8
 
-set laststatus=2           " always show the status line
-set encoding=utf-8
-set autowrite                   " automatically write a file when leaving a modified buffer
-set shortmess+=aoOtTW           " abbrev. of messages (avoids 'hit enter')
-set history=1000                " store a ton of history (default is 20)
-set showcmd
+" When a file has been detected to have been changed of Vim and it has not been
+" changed inside Vim, automatically read it again.
 set autoread
+
+" Write the contents of the file, if it has been modified, on each :next,
+" :rewind, :last, :first, :previous, :stop, :suspend, :tag, :!, :make, CTRL-]
+" and CTRL-^ command; and when a :buffer, CTRL-O, CTRL-I, '{A-Z0-9}, or
+" `{A-Z0-9} command takes one to another file.
+set autowrite
+
+" Set the character encoding used inside Vim.
+set encoding=utf-8
+
+" The last window will always have a status line.
+set laststatus=2
+
+" Helps to avoid all the hit-enter prompts caused by file messages.
+set shortmess=aoOW
+
+" Show (partial) command in the last line of the screen.
+set showcmd
+
+" When off a buffer is unloaded when it is abandoned.  When on a buffer becomes
+" hidden when it is abandoned.
 set hidden
 
+" Do not use a swapfile for the buffer.
 set noswapfile
-set nobackup
+
+" Do not make a backup before overwriting a file.
 set nowritebackup
+
+" Maximum number of changes that can be undone.
+set undolevels=1000         " maximum number of changes that can be undone
+
+" Save the whole buffer for undo when releoading it. Only happens when this
+" option is negative or when the number of lines is smaller than the value of
+" this option.
+set undoreload=-1
+
 if has('persistent_undo')
-   silent !mkdir ~/.vim/backups > /dev/null 2>&1
+   " List of directory names for undo files. NOTE: Directory must already exist.
    set undodir=~/.vim/backups
-   set undofile                " persistent undo is nice
-   set undolevels=1000         " maximum number of changes that can be undone
-   set undoreload=10000        " maximum number lines to save for undo on a buffer reload
+
+   " Automatically save undo history to an undo file when writing a buffer to a
+   " file, and restores undo history from the same file on buffer read.
+   set undofile
 endif
+
 
 " Save/load view state (cursor position, etc)
 au BufWinLeave *.* silent! mkview
 au BufWinEnter *.* silent! loadview
-" }
 
-" UI {
 colorscheme molokai
 
 set backspace=indent,eol,start  " backspace for dummies
 set linespace=0                 " No extra spaces between rows
-"set number                      " Line numbers on
+set number                      " Line numbers on
+set relativenumber              " Relative line numbers
 set foldenable
 set cursorline
 set showmatch                   " show matching brackets/parenthesis
 set matchpairs+=<:>             " match < >
 set hlsearch                    " highlight search terms
 set winminheight=0              " windows can be 0 line high
+set winminwidth=0
 set incsearch                   " incremental search
 set wildmenu                    " show list instead of just completing
 set wildmode=longest:full,full  " command <Tab> completion, list matches, then longest common part, then all.
@@ -87,7 +126,6 @@ set listchars=tab:::,trail:·,extends:#,nbsp:· " Highlight problematic whitespa
 set textwidth=80
 set colorcolumn=+1
 hi ColorColumn ctermbg=black
-" }
 
 set nowrap                      " don't wrap long lines
 set smartindent                 " indent at the same level of the previous line
@@ -104,11 +142,10 @@ au BufWritePre <buffer> :call setline(1,map(getline(1,"$"),'substitute(v:val,"\\
 au FileType go au BufWritePre <buffer> silent Fmt
 au FileType go setlocal listchars=tab:\ \ ,trail:.,extends:#,nbsp:.
 au FileType go setlocal ts=4 sw=4 sts=4 noexpandtab
-" }
 
 au FileType python setlocal ts=4 sw=4 sts=4
 
-" Key (re)Mappings {
+" Key Mappings
 let mapleader=','
 
 nnoremap ; :
@@ -193,21 +230,20 @@ map zh zH
 " ,f formats in go files (necessary? I think I prefer :Fmt on write)
 au FileType go nmap <leader>f :Fmt<CR>
 
-" Plugins {
-" a.vim {
+" a.vim
 map <leader>av :AV<CR>
 map <leader>a<Space> :A<CR>
-" }
 
-" NeoComplCache {
+" Latex
+let g:tex_flavor='latex'
+
+" NeoComplCache
 let g:neocomplcache_enable_at_startup = 1
-" }
 
-" Powerline {
+" Powerline
 let g:Powerline_symbols = 'unicode'
-" }
 
-" Syntastic {
+" Syntastic
 let g:syntastic_mode_map = { 'mode': 'active',
          \ 'passive_filetypes': ['java'] }
 
@@ -222,9 +258,10 @@ let g:syntastic_stl_format = '[%E{Err: %fe #%e}%B{, }%W{Warn: %fw #%w}]'
 let g:syntastic_cpp_check_header=0   " don't check headers from cpps
 let g:syntastic_cpp_compiler_options=' -g -Wall -Wextra'
 
-" Tagbar {
-"au VimEnter * :TagbarOpen
-"nnoremap <silent> <leader>t :TagbarOpen fj<CR>
-" }
-" }
-" }
+" Tagbar
+map <leader>t :TagbarToggle<CR>
+
+" Hdevtools
+au FileType haskell nnoremap <buffer> <F1> :HdevtoolsType<CR>
+au FileType haskell nnoremap <buffer> <F2> :HdevtoolsInfo<CR>
+au FileType haskell nnoremap <buffer> <F3> :HdevtoolsClear<CR>

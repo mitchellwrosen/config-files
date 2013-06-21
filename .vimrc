@@ -21,14 +21,17 @@ Bundle  'scrooloose/nerdcommenter'
 Bundle 'vim-scripts/OmniCppComplete'
 Bundle    'ervandew/supertab'
 Bundle  'scrooloose/syntastic'
+Bundle   'godlygeek/tabular'
 Bundle  'majutsushi/tagbar'
 Bundle      'tomtom/tlib_vim'
+Bundle         'dag/vim2hs'
 Bundle   'MarcWeber/vim-addon-mw-utils'
 Bundle        'bitc/vim-hdevtools'
 Bundle    'Lokaltog/vim-powerline'
 Bundle      'garbas/vim-snipmate'
 Bundle       'tpope/vim-fugitive'
 Bundle       'tpope/vim-surround'
+Bundle 'jcf/vim-latex'
 
 "Bundle    'Twinside/vim-haskellConceal'
 "Bundle 'lukerandall/haskellmode-vim'
@@ -58,6 +61,8 @@ set autowrite
 
 " Set the character encoding used inside Vim.
 set encoding=utf-8
+
+set foldmethod=syntax
 
 " The last window will always have a status line.
 set laststatus=2
@@ -227,8 +232,9 @@ map <leader>= <C-w>=
 map zl zL
 map zh zH
 
-" ,f formats in go files (necessary? I think I prefer :Fmt on write)
-au FileType go nmap <leader>f :Fmt<CR>
+" Better mnemonics for fold open-all (zO) and fold close-all (zC)
+map zO zR
+map zC zM
 
 " a.vim
 map <leader>av :AV<CR>
@@ -244,19 +250,27 @@ let g:neocomplcache_enable_at_startup = 1
 let g:Powerline_symbols = 'unicode'
 
 " Syntastic
-let g:syntastic_mode_map = { 'mode': 'active',
-         \ 'passive_filetypes': ['java'] }
-
-let g:syntastic_check_on_open=1
-let g:syntastic_enable_signs=1
-let g:syntastic_auto_loc_list=2
-let g:syntastic_loc_list_height=5    " height of location list
-let g:syntastic_error_symbol='✗'
-let g:syntastic_warning_symbol='⚠'
-let g:syntastic_stl_format = '[%E{Err: %fe #%e}%B{, }%W{Warn: %fw #%w}]'
-
+let g:syntastic_mode_map = {
+      \ 'mode': 'active',
+      \ 'passive_filetypes': ['java']
+      \ }
+let g:syntastic_always_populate_loc_list=1 " Always stick any detected errors into the loclist.
+let g:syntastic_check_on_open=1            " Do syntax checks when buffers are first loaded.
 let g:syntastic_cpp_check_header=0   " don't check headers from cpps
 let g:syntastic_cpp_compiler_options=' -g -Wall -Wextra'
+let g:syntastic_error_symbol='✗'
+let g:syntastic_haskell_checkers=['hdevtools', 'ghc_mod']
+let g:syntastic_loc_list_height=5 " Height of the location list.
+let g:syntastic_stl_format = '[%E{Err: %fe #%e}%B{, }%W{Warn: %fw #%w}]'
+let g:syntastic_warning_symbol='⚠'
+
+" Tabular
+"" TODO haskell-only
+map <leader>hb :Tabular haskell_bindings<CR>
+map <leader>hd :Tabular haskell_do_arrows<CR>
+map <leader>hi :Tabular haskell_imports<CR>
+map <leader>hp :Tabular haskell_pattern_arrows<CR>
+map <leader>ht :Tabular haskell_types<CR>
 
 " Tagbar
 map <leader>t :TagbarToggle<CR>

@@ -4,6 +4,7 @@ import XMonad
 import XMonad.Actions.CycleWS (nextWS, prevWS, shiftToPrev, shiftToNext)
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks (avoidStruts, manageDocks)
+import XMonad.Hooks.SetWMName
 import XMonad.Util.Run (spawnPipe)
 import XMonad.Util.EZConfig (additionalKeysP, removeKeysP)
 import qualified XMonad.StackSet as W
@@ -28,6 +29,7 @@ main = do
                                                        , ppSep     = xmobarColor "orange" "" " | "
                                                        , ppTitle   = xmobarColor "lightblue" "" . shorten 120
                                                        }
+      , startupHook = setWMName "LG3D"
       }
       `removeKeysP` removeKeys'
       `additionalKeysP` additionalKeys'

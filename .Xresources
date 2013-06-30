@@ -1,45 +1,78 @@
+Xft.dpi:       96
+Xft.antialias: true
+Xft.hinting:   full
+Xft.hintstyle: hintslight
+Xft.rgba:      rgb
+
 ! Font
-URxvt*font:           xft:Terminus:antialias=true:pixelsize=14
+URxvt*font:           xft:Terminus:pixelsize=14
 URxvt*boldFont:       xft:Terminus:bold:pixelsize=14
 URxvt*italicFont:     xft:Terminus:pixelsize=14
 URxvt*bolditalicFont: xft:Terminus:pixelsize=14
 
 ! Misc
-URxvt*scrollBar: false
+URxvt*scrollBar:      false
 URxvt*internalBorder: 4
-URxvt*borderless: true
+URxvt*borderless:     true
 
-!URxvt*inheritPixmap: true
-URxvt*shading: 40
+URxvt*inheritPixmap: true
+URxvt*transparent: true
+URxvt*shading: 15
 
-URxvt*background: #000000
-URxvt*foreground: #babdb6
-! Black (not tango) + DarkGrey
-URxvt*color0:  #000000
-URxvt*color8:  #555753
-! DarkRed + Red
-URxvt*color1:  #ff6565
-URxvt*color9:  #ff8d8d
-! DarkGreen + Green
-URxvt*color2:  #93d44f
-URxvt*color10: #c8e7a8
-! DarkYellow + Yellow
-URxvt*color3:  #eab93d
-URxvt*color11: #ffc123
-! DarkBlue + Blue
-URxvt*color4:  #204a87
-URxvt*color12: #3465a4
-! DarkMangenta + Mangenta
-URxvt*color5:  #ce5c00
-URxvt*color13: #f57900
-!DarkCyan + Cyan (both not tango)
-URxvt*color6:  #89b6e2
-URxvt*color14: #46a4ff
-! LightGrey + White
-URxvt*color7:  #cccccc
-URxvt*color15: #ffffff
+!URxvt*background: #000000
+!URxvt*foreground: #babdb6
 
 ! Man page highlighting.
 URxvt.colorIT: #87af5f
 URxvt.colorBD: #d7d7d7
 URxvt.colorUL: #87afd7
+
+URxvt*color0  : #2E3436
+URxvt*color8  : #555753
+URxvt*color1  : #CC0000
+URxvt*color9  : #EF2929
+URxvt*color2  : #4E9A06
+URxvt*color10 : #8AE234
+URxvt*color3  : #C4A000
+URxvt*color11 : #FCE94F
+URxvt*color4  : #3465A4
+URxvt*color12 : #729FCF
+URxvt*color5  : #75507B
+URxvt*color13 : #AD7FA8
+URxvt*color6  : #06989A
+URxvt*color14 : #34E2E2
+URxvt*color7  : #D3D7CF
+URxvt*color15 : #EEEEEC
+
+!URxvt*color0:      #000000
+!URxvt*color8:      #555753
+!URxvt*color1:      #CC0000
+!URxvt*color9:      #EF2929
+!URxvt*color2:      #4E9A06
+!URxvt*color10:     #8AE234
+!URxvt*color3:      #C4A000
+!URxvt*color11:     #FCE94F
+!URxvt*color4:      #3465A4
+!URxvt*color12:     #729FCF
+!URxvt*color5:      #75507B
+!URxvt*color13:     #AD7FA8
+!URxvt*color6:      #06989A
+!URxvt*color14:     #34E2E2
+!URxvt*color7:      #D3D7CF
+!URxvt*color15:     #ECEDEE
+
+! Clickable URLs, tabs, change font size
+URxvt.perl-ext-common: default,matcher,tabbed
+URxvt.url-launcher:    /usr/bin/chromium
+URxvt.matcher.button:  1
+
+URxvt.tabbed.tabbar-fg:  2
+URxvt.tabbed.tabbar-bg:  0
+URxvt.tabbed.tab-fg:     3
+URxvt.tabbed.tab-bg:     0
+URxvt.tabbed.autohide:   yes
+URxvt.tabbed.new-button: no
+URXvt.tabbed.title:      no
+
+URxvt.keysym.C-Up:   perl:font-size:increase
+URxvt.keysym.C-Down: perl:font-size:decrease

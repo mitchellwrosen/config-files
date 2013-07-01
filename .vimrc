@@ -6,38 +6,94 @@ end
 
 set rtp+=~/.vim/plugin
 set rtp+=~/.vim/bundle/vundle
-
 set rtp+=$GOROOT/misc/vim
+
 call vundle#rc()
 
 Bundle 'gmarik/vundle'
-
-Bundle 'vim-scripts/a.vim'
-Bundle   'godlygeek/csapprox'
-Bundle        'kien/ctrlp.vim'
-Bundle     'ujihisa/neco-ghc'
-Bundle      'Shougo/neocomplcache'
-Bundle  'scrooloose/nerdcommenter'
-Bundle 'vim-scripts/OmniCppComplete'
-Bundle    'ervandew/supertab'
+Bundle 'godlygeek/csapprox'
+" Fuzzy file searching
+Bundle 'kien/ctrlp.vim'
+" neocomplcache plugin for Haskell
+Bundle   'ujihisa/neco-ghc'
+" Keyword completion
+Bundle 'Shougo/neocomplcache'
+" ,c to comment a line/block of code
+Bundle 'scrooloose/nerdcommenter'
+" <Tab> to autocomplete
+Bundle 'ervandew/supertab'
+" Syntax checker
 Bundle  'scrooloose/syntastic'
-Bundle   'godlygeek/tabular'
-Bundle  'majutsushi/tagbar'
-Bundle      'tomtom/tlib_vim'
-Bundle         'dag/vim2hs'
-Bundle   'MarcWeber/vim-addon-mw-utils'
-Bundle        'bitc/vim-hdevtools'
-Bundle    'Lokaltog/vim-powerline'
-Bundle      'garbas/vim-snipmate'
-Bundle       'tpope/vim-fugitive'
-Bundle       'tpope/vim-surround'
-Bundle 'jcf/vim-latex'
-
-"Bundle    'Twinside/vim-haskellConceal'
+" Displays tags in a sidebar
+Bundle 'majutsushi/tagbar'
+" Git wrapper
+Bundle 'tpope/vim-fugitive'
+" Type checker, type information for Haskell
+Bundle 'bitc/vim-hdevtools'
+" The ultimate statusline
+Bundle 'Lokaltog/vim-powerline'
+Bundle 'tpope/vim-surround'
+" Text aligner.
+Bundle 'godlygeek/tabular'
+Bundle 'tomtom/tlib_vim'
+Bundle 'MarcWeber/vim-addon-mw-utils'
+"Bundle 'Twinside/vim-haskellConceal'
 "Bundle 'lukerandall/haskellmode-vim'
+"Bundle 'eagletmt/ghcmod-vim'
+
+" LaTeX compiler, editor, viewer
+"Bundle 'jcf/vim-latex'
+"let g:tex_flavor='latex'
+"noremap <SID>__imap_jumpforward <Plug>IMAP_JumpForward
+
+"Bundle 'vim-scripts/a.vim'
+"map <leader>av :AV<CR>
+"map <leader>a<Space> :A<CR>
+"Bundle 'vim-scripts/OmniCppComplete'
+
+" Utils
+
+" Graveyard
+"Bundle      'garbas/vim-snipmate'
 "Bundle 'FredKSchott/CoVim'
 "Bundle 'Shougo/vimproc'
-"Bundle 'eagletmt/ghcmod-vim'
+
+" neocomplcache
+let g:neocomplcache_enable_at_startup = 1
+" syntastic
+let g:syntastic_mode_map = { 'mode': 'active' }
+let g:syntastic_always_populate_loc_list=1 " Always stick any detected errors into the loclist.
+let g:syntastic_check_on_wq=0              " Don't run syntax checks whenever buffers are written to disk
+let g:syntastic_cpp_check_header=0         " Don't check headers from cpps
+let g:syntastic_cpp_compiler_options=' -g -Wall -Wextra'
+let g:syntastic_error_symbol='✗'
+let g:syntastic_haskell_checkers=['hdevtools']
+let g:syntastic_loc_list_height=5          " Height of the location list.
+let g:syntastic_stl_format = '[%E{Err: %fe #%e}%B{, }%W{Warn: %fw #%w}]'
+let g:syntastic_warning_symbol='⚠'
+" tagbar
+map <leader>t :TagbarToggle<CR>
+" vim-hdevtools
+au FileType haskell nnoremap <buffer> <F1> :HdevtoolsType<CR>
+au FileType haskell nnoremap <buffer> <F2> :HdevtoolsInfo<CR>
+au FileType haskell nnoremap <buffer> <F3> :HdevtoolsClear<CR>
+" vim-powerline
+let g:Powerline_symbols = 'unicode'
+" tabular
+" TODO: Haskell only
+nmap <leader>hb :Tabularize /^[^=]*\zs=\ze[^[:punct:]]/<CR>
+vmap <leader>hb :Tabularize /^[^=]*\zs=\ze[^[:punct:]]/<CR>
+nmap <leader>hc :Tabularize /--.*/l2<CR>
+vmap <leader>hc :Tabularize /--.*/l2<CR>
+nmap <leader>hd :Tabularize / \(<-\|←\) /l0r0<CR>
+vmap <leader>hd :Tabularize / \(<-\|←\) /l0r0<CR>
+nmap <leader>hi :Tabularize /^[^(]*\zs(.*\|\<as\>.*/<CR>
+vmap <leader>hi :Tabularize /^[^(]*\zs(.*\|\<as\>.*/<CR>
+nmap <leader>hp :Tabularize / \(->\|→\) /l0r0<CR>
+vmap <leader>hp :Tabularize / \(->\|→\) /l0r0<CR>
+nmap <leader>ht :Tabularize / \(::\|∷\) /l0r0<CR>
+vmap <leader>ht :Tabularize / \(::\|∷\) /l0r0<CR>
+
 
 set background=dark         " Assume a dark background
 
@@ -138,25 +194,24 @@ set expandtab                   " tabs are spaces, not tabs
 set softtabstop=3               " soft <Tab> is 3 spaces
 set shiftwidth=3                " use indents of 3 spaces
 set pastetoggle=<F12>           " pastetoggle (sane indentation on pastes)
-"set comments=sl:/*,mb:*,elx:*/  " auto format comment blocks
 
 " Remove trailing whitespaces and ^M chars on write.
 au BufWritePre <buffer> :call setline(1,map(getline(1,"$"),'substitute(v:val,"\\s\\+$","","")'))
 
-" Go-specific.
+" Go-specific
 au FileType go au BufWritePre <buffer> silent Fmt
 au FileType go setlocal listchars=tab:\ \ ,trail:.,extends:#,nbsp:.
 au FileType go setlocal ts=4 sw=4 sts=4 noexpandtab
 
+" Python-specific
 au FileType python setlocal ts=4 sw=4 sts=4
 
-" Key Mappings
+" Haskell-specific
+au FileType haskell setlocal ts=4 sw=4 sts=4
+
 let mapleader=','
 
 nnoremap ; :
-
-" Ugly vim latexsuite fix for <C-J> override
-noremap <SID>__imap_jumpforward <Plug>IMAP_JumpForward
 
 " Easier moving in tabs and windows
 nnoremap <C-H> <C-W>h
@@ -172,7 +227,7 @@ nnoremap <S-L> gt
 nnoremap ]l :lnext<CR>
 nnoremap [l :lprev<CR>
 
-" Visual mode Ctrl+C copies to + buffer.
+" Visual mode Ctrl+C copies to + buffer (requires vim to be compiled with +clipboard)
 set clipboard=unnamedplus
 vnoremap <C-C> "+y
 
@@ -192,20 +247,19 @@ endif
 " Yank from the cursor to the end of the line, to be consistent with C and D.
 nnoremap Y y$
 
-" Map Tab to write
+" <Tab> to write
 nnoremap <Tab> :w<CR>
 
-" Map ,Tab to write/quit
-nnoremap <leader><Tab> :x<CR>
-inoremap <leader><Tab> <Esc>:x<CR>
+" ,x to write/quit
+nnoremap <leader>x :x<CR>
 
-" Map ,q to write-quit all
+" ,q to write-quit all
 nnoremap <leader>q :xa<CR>
 
-" Map ,Q to quit all (no write)
+" ,Q to quit all (no write)
 nnoremap <leader>Q :qa!<CR>
 
-" Map ,/ to clear highlighted search
+" <Enter> to clear highlighted search
 nnoremap <silent> <CR> :nohlsearch<CR>
 
 " Shortcuts
@@ -235,47 +289,3 @@ map zh zH
 " Better mnemonics for fold open-all (zO) and fold close-all (zC)
 map zO zR
 map zC zM
-
-" a.vim
-map <leader>av :AV<CR>
-map <leader>a<Space> :A<CR>
-
-" Latex
-let g:tex_flavor='latex'
-
-" NeoComplCache
-let g:neocomplcache_enable_at_startup = 1
-
-" Powerline
-let g:Powerline_symbols = 'unicode'
-
-" Syntastic
-let g:syntastic_mode_map = {
-      \ 'mode': 'active',
-      \ 'passive_filetypes': ['java']
-      \ }
-let g:syntastic_always_populate_loc_list=1 " Always stick any detected errors into the loclist.
-let g:syntastic_check_on_open=1            " Do syntax checks when buffers are first loaded.
-let g:syntastic_cpp_check_header=0   " don't check headers from cpps
-let g:syntastic_cpp_compiler_options=' -g -Wall -Wextra'
-let g:syntastic_error_symbol='✗'
-let g:syntastic_haskell_checkers=['hdevtools', 'ghc_mod']
-let g:syntastic_loc_list_height=5 " Height of the location list.
-let g:syntastic_stl_format = '[%E{Err: %fe #%e}%B{, }%W{Warn: %fw #%w}]'
-let g:syntastic_warning_symbol='⚠'
-
-" Tabular
-"" TODO haskell-only
-map <leader>hb :Tabular haskell_bindings<CR>
-map <leader>hd :Tabular haskell_do_arrows<CR>
-map <leader>hi :Tabular haskell_imports<CR>
-map <leader>hp :Tabular haskell_pattern_arrows<CR>
-map <leader>ht :Tabular haskell_types<CR>
-
-" Tagbar
-map <leader>t :TagbarToggle<CR>
-
-" Hdevtools
-au FileType haskell nnoremap <buffer> <F1> :HdevtoolsType<CR>
-au FileType haskell nnoremap <buffer> <F2> :HdevtoolsInfo<CR>
-au FileType haskell nnoremap <buffer> <F3> :HdevtoolsClear<CR>

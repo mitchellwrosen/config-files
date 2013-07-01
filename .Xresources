@@ -73,6 +73,3 @@ URxvt.tabbed.tab-bg:     0
 URxvt.tabbed.autohide:   yes
 URxvt.tabbed.new-button: no
 URXvt.tabbed.title:      no
-
-URxvt.keysym.C-Up:   perl:font-size:increase
-URxvt.keysym.C-Down: perl:font-size:decrease

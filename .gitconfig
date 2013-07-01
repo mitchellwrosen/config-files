@@ -15,7 +15,7 @@
    l    = log --graph --abbrev-commit --decorate --relative-date --format=format:'%C(bold blue)%h %C(bold magenta)(%ar) %C(bold white)%s%C(reset) %C(white)- %an%C(auto)%d' --all
    l2   = log --graph --abbrev-commit --decorate --relative-date --format=format:'%C(bold blue)%h %C(bold magenta)%aD %C(bold white)%s%C(reset) %C(white)- %an%C(auto)%d' --all
    push = push --tags
-   s    = status --short --branch
+   s    = status --short
    st   = stash
    wd   = diff --word-diff=\"color\"
    wds  = diff --word-diff=\"color\" --staged

@@ -1,25 +1,35 @@
-[user]
-	name = Mitchell Rosen
-	email = mitchellwrosen@gmail.com
-[push]
-	default = tracking
 [alias]
-   a    = add
-   aa   = add --all
-   ai   = add --interactive
-   b    = branch -vv
-   c    = commit
-   ca   = commit --amend
-   d    = diff
-   ds   = diff --staged
-   l    = log --graph --abbrev-commit --decorate --relative-date --format=format:'%C(bold blue)%h %C(bold magenta)(%ar) %C(bold white)%s%C(reset) %C(white)- %an%C(auto)%d' --all
-   l2   = log --graph --abbrev-commit --decorate --relative-date --format=format:'%C(bold blue)%h %C(bold magenta)%aD %C(bold white)%s%C(reset) %C(white)- %an%C(auto)%d' --all
-   push = push --tags
-   s    = status --short
-   st   = stash
-   wd   = diff --word-diff=\"color\"
-   wds  = diff --word-diff=\"color\" --staged
-
+   a      = add
+   alias  = "!git config -l | grep alias | cut -c 7-"
+   aa     = add --all
+   ai     = add --interactive
+   b      = branch -vv
+   c      = commit
+   ca     = commit --amend
+   co     = checkout
+   d      = diff
+   ds     = diff --staged
+   f      = "!git ls-files | grep -i"
+   g      = grep -Iin
+   ga     = !git grep -Iin
+   l      = log --graph --abbrev-commit --decorate --relative-date --format=format:'%C(bold blue)%h %C(bold magenta)(%ar) %C(bold white)%s%C(reset) %C(white)- %an%C(auto)%d'
+   la     = log --graph --abbrev-commit --decorate --relative-date --format=format:'%C(bold blue)%h %C(bold magenta)(%ar) %C(bold white)%s%C(reset) %C(white)- %an%C(auto)%d' --all
+   l2     = log --graph --abbrev-commit --decorate --relative-date --format=format:'%C(bold blue)%h %C(bold magenta)%aD %C(bold white)%s%C(reset) %C(white)- %an%C(auto)%d' --all
+   master = checkout master
+   push   = push --tags
+   r      = reset
+   r1     = reset HEAD^
+   r2     = reset HEAD^^
+   rb     = rebase
+   rbi    = rebase -i
+   s      = status --short
+   sa     = stash apply
+   sl     = stash list
+   ss     = stash save
+   wd     = diff --word-diff=\"color\"
+   wds    = diff --word-diff=\"color\" --staged
+   x      = commit -m
+   xa     = commit -am
 [color]
    ui = true
    diff = true
@@ -41,12 +51,21 @@
    changed = bold yellow
    untracked = bold red
 [core]
-	whitespace = trailing-space,space-before-tab
+   whitespace = trailing-space,space-before-tab
 [diff]
-	renames = copies
-	mnemonicprefix = true
-	tool = vimdiff
+   renames = copies
+   mnemonicprefix = true
+   tool = vimdiff
 [difftool]
    prompt = false
+[merge]
+   ff = false
 [pager]
    color = true
+[pull]
+   rebase = true
+[push]
+   default = tracking
+[user]
+   name = Mitchell Rosen
+   email = mitchellwrosen@gmail.com

@@ -5,10 +5,10 @@ Xft.hintstyle: hintslight
 Xft.rgba:      rgb
 
 ! Font
-URxvt*font:           xft:Terminus:pixelsize=14
-URxvt*boldFont:       xft:Terminus:bold:pixelsize=14
-URxvt*italicFont:     xft:Terminus:pixelsize=14
-URxvt*bolditalicFont: xft:Terminus:pixelsize=14
+URxvt*font:           xft:Terminus:pixelsize=24
+URxvt*boldFont:       xft:Terminus:bold:pixelsize=24
+URxvt*italicFont:     xft:Terminus:pixelsize=24
+URxvt*bolditalicFont: xft:Terminus:pixelsize=24
 
 ! Misc
 URxvt*scrollBar:      false
@@ -19,8 +19,8 @@ URxvt*inheritPixmap: true
 URxvt*transparent: true
 URxvt*shading: 15
 
-!URxvt*background: #000000
-!URxvt*foreground: #babdb6
+URxvt*background: #000000
+URxvt*foreground: #babdb6
 
 ! Man page highlighting.
 URxvt.colorIT: #87af5f

@@ -31,9 +31,9 @@ Bundle 'MarcWeber/vim-addon-mw-utils'
 "Bundle 'eagletmt/ghcmod-vim'
 
 " LaTeX compiler, editor, viewer
-"Bundle 'jcf/vim-latex'
-"let g:tex_flavor='latex'
-"noremap <SID>__imap_jumpforward <Plug>IMAP_JumpForward
+Bundle 'jcf/vim-latex'
+let g:tex_flavor='latex'
+noremap <SID>__imap_jumpforward <Plug>IMAP_JumpForward
 
 "Bundle 'vim-scripts/a.vim'
 "map <leader>av :AV<CR>
@@ -70,8 +70,6 @@ set autowrite
 " Set the character encoding used inside Vim.
 set encoding=utf-8
 
-set foldmethod=syntax
-
 " The last window will always have a status line.
 set laststatus=2
 
@@ -92,7 +90,7 @@ set noswapfile
 set nowritebackup
 
 " Maximum number of changes that can be undone.
-set undolevels=1000         " maximum number of changes that can be undone
+set undolevels=1000
 
 " Save the whole buffer for undo when releoading it. Only happens when this
 " option is negative or when the number of lines is smaller than the value of
@@ -108,7 +106,6 @@ if has('persistent_undo')
    set undofile
 endif
 
-
 " Save/load view state (cursor position, etc)
 au BufWinLeave *.* silent! mkview
 au BufWinEnter *.* silent! loadview
@@ -119,7 +116,7 @@ set backspace=indent,eol,start  " backspace for dummies
 set linespace=0                 " No extra spaces between rows
 set number                      " Line numbers on
 set relativenumber              " Relative line numbers
-set foldenable
+set nofoldenable
 set cursorline
 set showmatch                   " show matching brackets/parenthesis
 set matchpairs+=<:>             " match < >
@@ -145,25 +142,10 @@ set smartindent                 " indent at the same level of the previous line
 set expandtab                   " tabs are spaces, not tabs
 set softtabstop=3               " soft <Tab> is 3 spaces
 set shiftwidth=3                " use indents of 3 spaces
-set pastetoggle=<F12>           " pastetoggle (sane indentation on pastes)
+set pastetoggle=<F12>           " sane indentation on pastes
 
 " Remove trailing whitespaces and ^M chars on write.
 au BufWritePre <buffer> :call setline(1,map(getline(1,"$"),'substitute(v:val,"\\s\\+$","","")'))
-
-" Go-specific
-au FileType go au BufWritePre <buffer> silent Fmt
-au FileType go setlocal listchars=tab:\ \ ,trail:.,extends:#,nbsp:.
-au FileType go setlocal ts=4 sw=4 sts=4 noexpandtab
-
-" Python-specific
-au FileType python setlocal ts=4 sw=4 sts=4
-
-" Haskell-specific
-au FileType haskell setlocal ts=4
-au FileType haskell setlocal sw=4
-au FileType haskell setlocal sts=4
-
-"au BufEnter "*.do" set filetype=sh
 
 let mapleader=','
 
@@ -257,27 +239,18 @@ let g:syntastic_stl_format = '[%E{Err: %fe #%e}%B{, }%W{Warn: %fw #%w}]'
 let g:syntastic_warning_symbol='⚠'
 
 " tagbar
-map <leader>t :TagbarToggle<CR>
+map <leader>g :TagbarToggle<CR>
 
 " vim-hdevtools
-au FileType haskell nnoremap <buffer> <F1> :HdevtoolsType<CR>
-au FileType haskell nnoremap <buffer> <F2> :HdevtoolsInfo<CR>
-au FileType haskell nnoremap <buffer> <F3> :HdevtoolsClear<CR>
+let g:hdevtools_options = "-g -isrc -g -Wall"
 
 " vim-powerline
 let g:Powerline_symbols = 'unicode'
 
 " tabular
-" TODO: Haskell only
-nmap <leader>hb :Tabularize /^[^=]*\zs=\ze[^[:punct:]]/<CR>
-vmap <leader>hb :Tabularize /^[^=]*\zs=\ze[^[:punct:]]/<CR>
-nmap <leader>hc :Tabularize /--.*/l2<CR>
-vmap <leader>hc :Tabularize /--.*/l2<CR>
-nmap <leader>hd :Tabularize /<-/<CR>
-vmap <leader>hd :Tabularize / \(<-\|←\) /l0r0<CR>
-nmap <leader>hi :Tabularize /^[^(]*\zs(.*\|\<as\>.*/<CR>
-vmap <leader>hi :Tabularize /^[^(]*\zs(.*\|\<as\>.*/<CR>
-nmap <leader>hp :Tabularize / \(->\|→\) /l0r0<CR>
-vmap <leader>hp :Tabularize / \(->\|→\) /l0r0<CR>
-nmap <leader>ht :Tabularize / \(::\|∷\) /l0r0<CR>
-vmap <leader>ht :Tabularize / \(::\|∷\) /l0r0<CR>
+nmap <leader>t :execute "Tabularize /" . expand("<cWORD>")<CR>
+
+let g:ctrlp_custom_ignore = {
+   \ 'dir': '\v(bin|dist|SourceGraph|\.git)$',
+   \ 'file': '\v(\.hi|\.o)$'
+   \ }

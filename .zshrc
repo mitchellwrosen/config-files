@@ -5,10 +5,11 @@ export EDITOR="vim"
 
 export _JAVA_AWT_WM_NONREPARENTING=1
 
-export GOROOT=/usr/lib/go
-export GOPATH=$HOME/projects/go
+#export GOROOT=/usr/lib/go
+export GOPATH=~/golang
 
-export PATH=$PATH:$GOROOT/bin:/usr/lib/colorgcc/bin:~/.cabal/bin:~/.gem/ruby/2.0.0/bin:~/bin
+#export PATH=$PATH:$GOROOT/bin:/usr/lib/colorgcc/bin:~/.cabal/bin:~/.gem/ruby/2.0.0/bin:~/bin
+export PATH=~/.cabal/bin:$GOPATH/bin:$PATH
 
 # Tell ccache to only use compilers here. Remember to TELL COLORGCC TO CALL
 # CCACHE INSTEAD OF THE REAL COMPILER by modifying /etc/colorgcc/colorgcc

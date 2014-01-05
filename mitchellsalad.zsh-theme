@@ -9,7 +9,7 @@ function box_name {
 local current_dir='${PWD/#$HOME/~}'
 local git_info='$(git_prompt_info)'
 
-PROMPT="[%{$terminfo[bold]$FG[226]%}${current_dir}%{$reset_color%}${git_info}]   ҉ "
+PROMPT="[%{$terminfo[bold]$FG[226]%}${current_dir}%{$reset_color%}${git_info}] • "
 RPROMPT="[%{$terminfo[bold]$FG[040]%}%n%{$reset_color%} %{$FG[239]%}♪ %{$terminfo[bold]$FG[033]%}$(box_name)%{$reset_color%}]"
 
 ZSH_THEME_GIT_PROMPT_PREFIX=" %{$FG[239]%}↟%{$reset_color%} %{$fg[255]%}"

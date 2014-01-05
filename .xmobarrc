@@ -1,4 +1,4 @@
-Config { font         = "xft:Terminus:pixelsize=12",
+Config { font         = "xft:Droid Sans Mono:pixelsize=12",
        , bgColor      = "black"
        , fgColor      = "grey"
        , position     = TopW L 97
@@ -19,10 +19,7 @@ Config { font         = "xft:Terminus:pixelsize=12",
                                    "True", "-L", "15", "-H", "80", "-l",
                                    "red", "-n", "yellow", "-h", "green", "--",
                                    "-O", "+", "-o", ""] 60
-                    , Run Wireless "wlp3s0" ["-t", "<fc=lightblue><essid></fc> <quality>",
-                                            "-L", "50", "-H", "80", "-l", "red",
-                                            "-n", "yellow", "-h", "green"] 10
-                    , Run Date "%a %b %_d %l:%M" "date" 10
+                    , Run Wireless "wlp3s0" [] 10
                     ]
-       , template = "%StdinReader% }       :) { %uptime% | %cpu% | %memory% | %thermal0% | %battery% | %wlp3s0wi% | <fc=orange>%date%</fc>"
+       , template = "%StdinReader% }{ %uptime% | %cpu% | %memory% | %thermal0% | %battery% | %wlp3s0wi% | <fc=orange>%date%</fc>"
        }

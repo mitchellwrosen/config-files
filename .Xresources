@@ -5,10 +5,11 @@ Xft.hintstyle: hintslight
 Xft.rgba:      rgb
 
 ! Font
-URxvt*font:           xft:Terminus:pixelsize=24
-URxvt*boldFont:       xft:Terminus:bold:pixelsize=24
-URxvt*italicFont:     xft:Terminus:pixelsize=24
-URxvt*bolditalicFont: xft:Terminus:pixelsize=24
+URxvt*font:           xft:DejaVu Sans Mono:size=12
+!URxvt*font:           xft:terminus:pixelsize=12
+URxvt*boldFont:       xft:DejaVu Sans Mono:bold:pixelsize=12
+URxvt*italicFont:     xft:DejaVu Sans Mono:pixelsize=12
+URxvt*bolditalicFont: xft:DejaVu Sans Mono:pixelsize=12
 
 ! Misc
 URxvt*scrollBar:      false
@@ -44,25 +45,8 @@ URxvt*color14 : #34E2E2
 URxvt*color7  : #D3D7CF
 URxvt*color15 : #EEEEEC
 
-!URxvt*color0:      #000000
-!URxvt*color8:      #555753
-!URxvt*color1:      #CC0000
-!URxvt*color9:      #EF2929
-!URxvt*color2:      #4E9A06
-!URxvt*color10:     #8AE234
-!URxvt*color3:      #C4A000
-!URxvt*color11:     #FCE94F
-!URxvt*color4:      #3465A4
-!URxvt*color12:     #729FCF
-!URxvt*color5:      #75507B
-!URxvt*color13:     #AD7FA8
-!URxvt*color6:      #06989A
-!URxvt*color14:     #34E2E2
-!URxvt*color7:      #D3D7CF
-!URxvt*color15:     #ECEDEE
-
 ! Clickable URLs, tabs, change font size
-URxvt.perl-ext-common: default,matcher,tabbed
+URxvt.perl-ext-common: default,font-size,matcher,tabbed
 URxvt.url-launcher:    /usr/bin/chromium
 URxvt.matcher.button:  1
 
@@ -73,3 +57,6 @@ URxvt.tabbed.tab-bg:     0
 URxvt.tabbed.autohide:   yes
 URxvt.tabbed.new-button: no
 URXvt.tabbed.title:      no
+
+URxvt.keysym.C-Up: perl:font-size:increase
+URxvt.keysym.C-Down: perl:font-size:decrease

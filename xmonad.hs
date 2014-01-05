@@ -11,11 +11,11 @@ import qualified XMonad.StackSet as W
 
 main :: IO ()
 main = do
-   xmproc <- spawnPipe "/usr/bin/xmobar /home/mitchell/.xmobarrc"
+   xmproc <- spawnPipe "/home/mitchell/.cabal/bin/xmobar /home/mitchell/.xmobarrc"
    xmonad $ defaultConfig
       { terminal           = "urxvt"
       , workspaces         = ["web", "code", "scrap", "chat", "music", "misc"]
-      , borderWidth        = 2
+      , borderWidth        = 1
       {-, focusedBorderColor = "red"-}
       {-, normalBorderColor  = "#cccccc"-}
       , focusFollowsMouse  = False

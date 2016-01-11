@@ -16,6 +16,7 @@
    la     = log --graph --abbrev-commit --decorate --relative-date --format=format:'%C(bold blue)%h %C(bold magenta)(%ar) %C(bold white)%s%C(reset) %C(white)- %an%C(auto)%d' --all
    l2     = log --graph --abbrev-commit --decorate --relative-date --format=format:'%C(bold blue)%h %C(bold magenta)%aD %C(bold white)%s%C(reset) %C(white)- %an%C(auto)%d' --all
    master = checkout master
+   next   = "!git checkout $(git rev-list HEAD..master | tail -n 1)"
    push   = push --tags
    r      = reset
    r1     = reset HEAD^
@@ -52,6 +53,7 @@
    untracked = bold red
 [core]
    whitespace = trailing-space,space-before-tab
+	editor = /usr/bin/vim
 [diff]
    renames = copies
    mnemonicprefix = true

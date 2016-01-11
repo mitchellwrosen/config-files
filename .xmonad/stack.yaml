@@ -1,0 +1,12 @@
+flags: {}
+extra-package-dbs: []
+packages:
+- '.'
+extra-deps:
+- alsa-core-0.5.0.1
+- alsa-mixer-0.2.0.3
+- X11-xft-0.3.1
+- xmobar-0.23.1
+- xmonad-0.12
+- xmonad-contrib-0.12
+resolver: lts-3.21

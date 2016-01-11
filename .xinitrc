@@ -19,6 +19,4 @@ xmodmap ~/.Xmodmap               # Key mappings
 xbindkeys                        # Key bindings
 xrdb -merge ~/.Xresources
 
-#trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 3 --transparent true --alpha 10 --tint 0x000000 --heighttype pixel --height 10
-
-exec xmonad
+exec stack --work-dir .xmonad/.stack-work --stack-yaml .xmonad/stack.yaml exec xmonad

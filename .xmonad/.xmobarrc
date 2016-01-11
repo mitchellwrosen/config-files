@@ -9,9 +9,9 @@ Config { font         = "xft:DejaVu Sans Mono:pixelsize=12"
                         ["-t", "up <days>d"]
                         864000
                     , Run MultiCpu
-                        ["-t", "cpu <autototal>",
-                         "-L", "15",
-                         "-H", "50",
+                        ["-t", "cpu <autovbar>",
+                         "-L", "25",
+                         "-H", "75",
                          "-l", "green",
                          "-n", "yellow",
                          "-h", "red"]
@@ -52,7 +52,8 @@ Config { font         = "xft:DejaVu Sans Mono:pixelsize=12"
                          "-h", "green"]
                         10
                     , Run DynNetwork
-                        ["-t", "<rx>↓ <tx>↑"]
+                        ["-t", "<rx>↓",
+                         "-w", "5"]
                         10
                     , Run Battery 
                         ["-t", "bat <left> (<timeleft>)",

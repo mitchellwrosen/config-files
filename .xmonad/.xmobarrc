@@ -54,7 +54,7 @@ Config { font         = "xft:DejaVu Sans Mono:pixelsize=12"
                     , Run DynNetwork
                         ["-t", "<rx>↓",
                          "-w", "5"]
-                        10
+                        50
                     , Run Battery 
                         ["-t", "bat <left> (<timeleft>)",
                          "-S", "True",

@@ -2,7 +2,7 @@ export TERM="rxvt-unicode-256color"
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 export EDITOR="vim"
-export BROWSER="chromium"
+export BROWSER="google-chrome-stable"
 
 export _JAVA_AWT_WM_NONREPARENTING=1
 

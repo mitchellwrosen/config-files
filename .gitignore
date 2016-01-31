@@ -1,4 +1,3 @@
-.vim/view
-.vim/bundle
-.vim/backups
+nvim/plugged
+nvim/autoload/plug.vim
 *.un~

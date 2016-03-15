@@ -5,19 +5,30 @@ endif
 call plug#begin()
 
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
-Plug 'benekastah/neomake'
+" Plug 'benekastah/neomake'
 Plug 'kien/ctrlp.vim'
 Plug 'vim-scripts/wombat256.vim'
 Plug 'godlygeek/tabular'
 Plug 'def-lkb/vimbufsync'
 Plug 'tomtom/tcomment_vim'
 Plug 'bling/vim-airline'
+Plug 'scrooloose/nerdtree'
+Plug 'majutsushi/tagbar'
 
-Plug 'neovimhaskell/haskell-vim',  { 'for': 'haskell' }
-Plug 'eagletmt/ghcmod-vim',        { 'for': 'haskell' }
+Plug 'Valloric/YouCompleteMe',
+    \ {
+    \   'do': './install.py',
+    \   'for': 'haskell'
+    \ }
+
+Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
+Plug 'eagletmt/ghcmod-vim',       { 'for': 'haskell' }
+" Plug 'eagletmt/neco-ghc',         { 'for': 'haskell' }
 
 Plug 'the-lambda-church/coquille', { 'for': 'coq'     }
 Plug 'idris-hackers/idris-vim',    { 'for': 'idris'   }
+
+Plug 'raichoo/purescript-vim'
 
 call plug#end()
 
@@ -45,13 +56,14 @@ set mat=2
 set noswapfile
 set number
 set ruler
-set shiftwidth=4
+set shiftwidth=2
 set showmatch
 set smartcase
 set smartindent
 set smarttab
-set softtabstop=4
-set tabstop=4
+set softtabstop=2
+set tabstop=2
+set tags=tags;/,codex.tags;/
 set timeoutlen=1000
 set ttimeoutlen=0
 set whichwrap+=<,>,h,l
@@ -109,25 +121,58 @@ let g:haskell_enable_typeroles=1
 let g:haskell_enable_static_pointers=1
 
 " neomake
-let g:neomake_haskell_hdevtools_maker =
-    \ {
-    \   'args' : []
-    \ }
-let g:neomake_haskell_enabled_makers = ['hdevtools']
-
-" syntastic
-" set statusline+=%#warningmsg#
-" set statusline+=%{SyntasticStatuslineFlag()}
-" set statusline+=%*
-" let g:syntastic_always_populate_loc_list = 1
-" let g:syntastic_auto_loc_list = 1
-" let g:syntastic_check_on_open = 1
-" " let g:syntastic_check_on_wq = 0
-" let g:syntastic_haskell_checkers = []
+" let g:neomake_haskell_enabled_makers = ['ghcmod']
 
 " tcomment
 nnoremap <silent> <leader>m :TComment<CR>
 vnoremap <silent> <leader>m :TComment<CR>
+
+" YouCompleteMe
+let g:ycm_filetype_whitelist =
+    \ {
+    \     'haskell': 1
+    \ }
+inoremap <C-j> <C-n>
+inoremap <C-k> <C-p>
+
+" NERDTree
+nnoremap <silent> <leader>n :NERDTreeToggle<CR>
+
+" tagbar
+nnoremap <silent> <leader>t :TagbarToggle<CR>
+nnoremap <leader>tg :!codex update --force<CR>
+
+let g:tagbar_type_haskell = {
+    \ 'ctagsbin'  : 'hasktags',
+    \ 'ctagsargs' : '-x -c -o-',
+    \ 'kinds'     : [
+        \  'm:modules:0:1',
+        \  'd:data: 0:1',
+        \  'd_gadt: data gadt:0:1',
+        \  't:type names:0:1',
+        \  'nt:new types:0:1',
+        \  'c:classes:0:1',
+        \  'cons:constructors:1:1',
+        \  'c_gadt:constructor gadt:1:1',
+        \  'c_a:constructor accessors:1:1',
+        \  'ft:function types:1:1',
+        \  'fi:function implementations:0:1',
+        \  'o:others:0:1'
+    \ ],
+    \ 'sro'        : '.',
+    \ 'kind2scope' : {
+        \ 'm' : 'module',
+        \ 'c' : 'class',
+        \ 'd' : 'data',
+        \ 't' : 'type'
+    \ },
+    \ 'scope2kind' : {
+        \ 'module' : 'm',
+        \ 'class'  : 'c',
+        \ 'data'   : 'd',
+        \ 'type'   : 't'
+    \ }
+\ }
 
 " Strip trailing whitespace on save
 fun! <SID>StripTrailingWhitespaces()

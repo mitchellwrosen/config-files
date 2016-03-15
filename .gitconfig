@@ -27,6 +27,7 @@
    sa     = stash apply
    sl     = stash list
    ss     = stash save
+   sync   = "!git fetch upstream && git rebase upstream/master"
    wd     = diff --word-diff=\"color\"
    wds    = diff --word-diff=\"color\" --staged
    x      = commit -m

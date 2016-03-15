@@ -19,6 +19,11 @@ alias grep='grep --color=auto'
 alias g='git'
 alias open='xdg-open'
 
+# todo.txt
+export TODOTXT_DEFAULT_ACTION=ls
+export TODOTXT_SORT_COMMAND='env LC_COLLATE=C sort -k 2,2 -k 1,1n'
+alias t='todo.sh'
+
 # Suffix aliases
 alias -s c=vim
 alias -s hs=vim

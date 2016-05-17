@@ -56,6 +56,7 @@ set mat=2
 set noswapfile
 set number
 set ruler
+set scrolloff=5
 set shiftwidth=2
 set showmatch
 set smartcase
@@ -103,7 +104,7 @@ nnoremap <silent> <Tab> :w<CR>
 nnoremap <silent> <leader>a :execute "Tabularize /" . expand("<cWORD>")<CR>
 
 " Ctrl+P
-nnoremap <silent> <leader>o :CtrlP<CR>
+nnoremap <silent> <leader>o :CtrlP .<CR>
 let g:ctrlp_max_files=0
 let g:ctrlp_show_hidden=1
 let g:ctrlp_custom_ignore =

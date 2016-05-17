@@ -6,7 +6,6 @@ Xft.rgba:      rgb
 
 ! Font
 URxvt*font:           xft:DejaVu Sans Mono:size=12
-!URxvt*font:           xft:terminus:pixelsize=12
 URxvt*boldFont:       xft:DejaVu Sans Mono:bold:pixelsize=12
 URxvt*italicFont:     xft:DejaVu Sans Mono:pixelsize=12
 URxvt*bolditalicFont: xft:DejaVu Sans Mono:pixelsize=12

@@ -53,8 +53,8 @@
    changed = bold yellow
    untracked = bold red
 [core]
-   whitespace = trailing-space,space-before-tab
-	editor = /usr/bin/vim
+  whitespace = trailing-space,space-before-tab
+  editor = nvim
 [diff]
    renames = copies
    mnemonicprefix = true

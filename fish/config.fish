@@ -6,4 +6,4 @@ alias gg "git grep -Iin"
 
 alias t "todo.sh"
 
-fish_vi_mode
+fish_vi_key_bindings

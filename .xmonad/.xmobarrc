@@ -5,7 +5,7 @@ Config { font         = "xft:DejaVu Sans Mono:pixelsize=12"
        , lowerOnStart = True
        , persistent   = True
        , commands = [ Run StdinReader
-                    , Run Uptime 
+                    , Run Uptime
                         ["-t", "up <days>d"]
                         864000
                     , Run MultiCpu
@@ -26,7 +26,7 @@ Config { font         = "xft:DejaVu Sans Mono:pixelsize=12"
                         10
                     , Run ThermalZone
                         0
-                        ["-t", "temp <temp>°",
+                        ["-t", "temp <temp>",
                          "-L", "50",
                          "-H", "70",
                          "-l", "green",
@@ -35,15 +35,15 @@ Config { font         = "xft:DejaVu Sans Mono:pixelsize=12"
                         50
                     , Run ThermalZone
                         1
-                        ["-t", "<temp>°",
+                        ["-t", "<temp>",
                          "-L", "50",
                          "-H", "70",
                          "-l", "green",
                          "-n", "yellow",
                          "-h", "red"]
                         50
-                    , Run Volume "default" "Master" 
-                        ["-t", "vol <volumevbar>"] 
+                    , Run Volume "default" "Master"
+                        ["-t", "vol <volumevbar>"]
                         10
                     , Run Wireless "wlp3s0"
                         ["-t", "<fc=white><essid></fc> <qualityvbar>",
@@ -52,10 +52,10 @@ Config { font         = "xft:DejaVu Sans Mono:pixelsize=12"
                          "-h", "green"]
                         10
                     , Run DynNetwork
-                        ["-t", "<rx>↓",
+                        ["-t", "<rx>",
                          "-w", "5"]
                         50
-                    , Run Battery 
+                    , Run Battery
                         ["-t", "bat <left> (<timeleft>)",
                          "-S", "True",
                          "-L", "15",

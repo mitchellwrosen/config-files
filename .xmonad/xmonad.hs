@@ -24,7 +24,7 @@ main = do
    xmproc <- spawnPipe "~/.xmonad/bin/xmobar ~/.xmonad/.xmobarrc"
    xmonad $ def
       { terminal           = "urxvt"
-      , workspaces         = ["α", "β", "γ", "δ", "ε", "ζ"]
+      , workspaces         = ["1", "2", "3", "4", "5", "6"]
       , borderWidth        = 2
       , focusFollowsMouse  = False
       , modMask            = mod4Mask -- Rebind Mod to the Windows key

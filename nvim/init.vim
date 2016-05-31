@@ -55,6 +55,7 @@ set magic
 set mat=2
 set noswapfile
 set number
+set relativenumber
 set ruler
 set scrolloff=5
 set shiftwidth=2
@@ -83,6 +84,8 @@ filetype plugin on
 filetype indent on
 
 colorscheme wombat256mod
+
+nnoremap <C-T> :tabnew<CR>
 
 nnoremap <C-H> <C-W>h
 nnoremap <C-J> <C-W>j

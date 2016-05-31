@@ -19,4 +19,4 @@ xmodmap ~/.Xmodmap               # Key mappings
 xbindkeys                        # Key bindings
 xrdb -merge ~/.Xresources
 
-exec xmonad
+exec stack --stack-yaml /home/mitchell/.xmonad/stack.yaml exec xmonad

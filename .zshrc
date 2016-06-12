@@ -33,7 +33,7 @@ alias -s py=vim
 alias -g DN=/dev/null
 
 # Path to your oh-my-zsh configuration.
-ZSH=$HOME/.oh-my-zsh
+# ZSH=$HOME/.oh-my-zsh
 
 # zsh theme
 ZSH_THEME="mitchellsalad"
@@ -54,10 +54,11 @@ COMPLETION_WAITING_DOTS="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(git)
 
-source $ZSH/oh-my-zsh.sh
+# source $ZSH/oh-my-zsh.sh
 
 autoload -U compinit
 compinit
+# skip_global_compinit=1
 
 setopt auto_cd
 

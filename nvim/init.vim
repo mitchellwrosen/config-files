@@ -25,8 +25,9 @@ Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
 Plug 'eagletmt/ghcmod-vim',       { 'for': 'haskell' }
 " Plug 'eagletmt/neco-ghc',         { 'for': 'haskell' }
 
-Plug 'the-lambda-church/coquille', { 'for': 'coq'     }
-Plug 'idris-hackers/idris-vim',    { 'for': 'idris'   }
+Plug 'the-lambda-church/coquille', { 'for': 'coq'   }
+Plug 'idris-hackers/idris-vim',    { 'for': 'idris' }
+Plug 'derekelkins/agda-vim',       { 'for': 'agda'  }
 
 Plug 'raichoo/purescript-vim'
 

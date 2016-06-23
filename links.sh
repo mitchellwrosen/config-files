@@ -15,7 +15,7 @@ function go() {
   read -p "Symlink $LINKNAME to $TARGET? (y/n) " yn
   case $yn in
     [Yy]* ) ln -s -f $TARGET $LINKNAME;;
-    *     ) break;;
+    *     ) ;;
   esac
 }
 
@@ -26,5 +26,6 @@ go $THISDIR/.xmonad $HOMEDIR/.xmonad
 go $THISDIR/.Xmodmap $HOMEDIR/.Xmodmap
 go $THISDIR/.Xresources $HOMEDIR/.Xresources
 go $THISDIR/.zshrc $HOMEDIR/.zshrc
+go $THISDIR/zsh/plugins/zsh-history-substring-search.zsh $HOMEDIR/.config/zsh/plugins/zsh-history-substring-search.zsh
 go $THISDIR/nvim $HOMEDIR/.config/nvim
 go $THISDIR/xorg.conf /etc/X11/xorg.conf

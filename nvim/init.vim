@@ -22,7 +22,7 @@ Plug 'Valloric/YouCompleteMe',
     \ }
 
 Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
-Plug 'eagletmt/ghcmod-vim',       { 'for': 'haskell' }
+" Plug 'eagletmt/ghcmod-vim',       { 'for': 'haskell' }
 " Plug 'eagletmt/neco-ghc',         { 'for': 'haskell' }
 
 Plug 'the-lambda-church/coquille', { 'for': 'coq'   }

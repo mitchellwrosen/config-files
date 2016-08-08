@@ -72,3 +72,5 @@
 [user]
    name = Mitchell Rosen
    email = mitchellwrosen@gmail.com
+[commit]
+	gpgsign = true

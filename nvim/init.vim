@@ -14,6 +14,11 @@ Plug 'tomtom/tcomment_vim'
 Plug 'bling/vim-airline'
 Plug 'scrooloose/nerdtree'
 Plug 'majutsushi/tagbar'
+Plug 'christoomey/vim-tmux-navigator'
+
+" For vimdeck
+Plug 'vim-scripts/SyntaxRange'
+Plug 'vim-scripts/ingo-library'
 
 Plug 'Valloric/YouCompleteMe',
     \ {
@@ -22,8 +27,6 @@ Plug 'Valloric/YouCompleteMe',
     \ }
 
 Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
-" Plug 'eagletmt/ghcmod-vim',       { 'for': 'haskell' }
-" Plug 'eagletmt/neco-ghc',         { 'for': 'haskell' }
 
 Plug 'the-lambda-church/coquille', { 'for': 'coq'   }
 Plug 'idris-hackers/idris-vim',    { 'for': 'idris' }
@@ -40,6 +43,7 @@ set autoread
 set autoindent
 set backspace=eol,start,indent
 set cmdheight=1
+set colorcolumn=80
 set encoding=utf8
 set expandtab
 set ffs=unix,dos,mac
@@ -85,6 +89,9 @@ filetype plugin on
 filetype indent on
 
 colorscheme wombat256mod
+hi ColorColumn ctermbg=black
+
+nnoremap <C-]> :tab split<CR>:exec("tag " . expand("<cword>"))<CR>
 
 nnoremap <C-T> :tabnew<CR>
 

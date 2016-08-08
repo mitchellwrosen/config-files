@@ -16,12 +16,21 @@ zstyle ':vcs_info:*'   enable git
 
 precmd () { vcs_info }
 
-export PATH=~/.local/bin:$PATH
+export PATH=~/.local/bin:~/.gem/ruby/2.3.0/bin:$PATH
+
 
 alias g='git'
 alias ls='ls --color'
 alias vi='nvim'
 alias vim='nvim'
+
+alias ghci-core="ghci -ddump-simpl -dsuppress-idinfo \
+-dsuppress-coercions -dsuppress-type-applications \
+-dsuppress-uniques -dsuppress-module-prefixes"
+
+alias stack-ghci-core="stack ghci --ghci-options=\"-ddump-simpl -dsuppress-idinfo \
+-dsuppress-coercions -dsuppress-type-applications \
+-dsuppress-uniques -dsuppress-module-prefixes"\"
 
 # todo.txt
 export TODOTXT_DEFAULT_ACTION=ls

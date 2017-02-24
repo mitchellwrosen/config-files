@@ -5,62 +5,85 @@ Config { font         = "xft:DejaVu Sans Mono:pixelsize=12"
        , lowerOnStart = True
        , persistent   = True
        , commands = [ Run StdinReader
+
                     , Run Uptime
-                        ["-t", "up <days>d"]
+                        ["-t", "<days>d"]
                         864000
+
                     , Run MultiCpu
-                        ["-t", "cpu <autovbar>",
+                        ["-t", "<autovbar>",
                          "-L", "25",
                          "-H", "75",
                          "-l", "green",
                          "-n", "yellow",
                          "-h", "red"]
                         10
+
+                    , Run DiskIO
+                        [("/", "<read>↓ <write>↑")]
+                        []
+                        10
+
                     , Run Memory
-                        ["-t", "mem <usedratio>",
+                        ["-t", "<usedratio>",
                          "-L", "33",
                          "-H", "66",
                          "-l", "green",
                          "-n", "yellow",
                          "-h", "red"]
                         10
+
                     , Run ThermalZone
                         0
-                        ["-t", "temp <temp>",
+                        ["-t", "<temp>°",
                          "-L", "50",
                          "-H", "70",
                          "-l", "green",
                          "-n", "yellow",
                          "-h", "red"]
-                        50
+                        10
+
                     , Run ThermalZone
                         1
-                        ["-t", "<temp>",
+                        ["-t", "<temp>°",
                          "-L", "50",
                          "-H", "70",
                          "-l", "green",
                          "-n", "yellow",
                          "-h", "red"]
-                        50
+                        10
+
+                    , Run Volume "default" "Master"
+                        ["-t", "<volumevbar> ♫"]
+                        10
+
+                    , Run Wireless "wlp3s0"
+                        ["-t", "<fc=white><essid></fc> <qualityvbar>",
+                         "-l", "red",
+                         "-n", "yellow",
+                         "-h", "green"]
+                        10
+
                     , Run DynNetwork
-                        ["-t", "<rx>",
-                         "-w", "5"]
-                        50
+                        [ "-t", "<rx>↓<tx>↑" ]
+                        10
+
                     , Run Battery
-                        ["-t", "bat <left> (<timeleft>)",
+                        ["-t", "<left><leftipat> (<timeleft>)",
                          "-S", "True",
-                         "-L", "15",
-                         "-H", "80",
+                         "-L", "20",
+                         "-H", "70",
                          "-l", "red",
                          "-n", "yellow",
                          "-h", "green",
-                         "--", "-O",
-                         "+", "-o",
-                         ""]
+                         "--",
+                         "--on-icon-pattern", "↑",
+                         "--off-icon-pattern", "↓"]
                         600
+
                     , Run Date "%a %b %_d %l:%M" "date" 600
                     ]
        , sepChar = "%"
        , alignSep = "}{"
-       , template = "%StdinReader% }{ %uptime% | %multicpu% | %memory% | %thermal0% %thermal1% | %default:Master% | %wlp3s0wi% %dynnetwork% | %battery% | <fc=orange>%date%</fc>"
+       , template = "%StdinReader% }{ %uptime% | %multicpu% | %memory% | %diskio% | %thermal0% %thermal1% | %default:Master% | %wlp3s0wi% %dynnetwork% | %battery% | <fc=orange>%date%</fc>"
        }

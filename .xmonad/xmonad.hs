@@ -1,122 +1,103 @@
 {-# LANGUAGE TypeOperators #-}
 
-import System.IO (hPutStrLn)
+import System.Exit (ExitCode(ExitSuccess), exitWith)
+import System.IO
 
 import XMonad
-import XMonad.Actions.CycleWS           (nextWS, prevWS, shiftToPrev, shiftToNext)
-import XMonad.Actions.DynamicWorkspaces (addWorkspacePrompt, removeEmptyWorkspace)
-import XMonad.Actions.Search
-import XMonad.Actions.Submap
-import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.ManageDocks         (AvoidStruts, avoidStruts, docksEventHook, manageDocks)
-import XMonad.Hooks.SetWMName
-import XMonad.Layout.LayoutModifier     (ModifiedLayout)
-import XMonad.Layout.Maximize           (Maximize, maximize, maximizeRestore)
-import XMonad.Layout.Spacing
-import XMonad.Prompt
-import XMonad.Util.Cursor
-import XMonad.Util.Run                  (safeSpawn, spawnPipe)
-import XMonad.Util.EZConfig             (additionalKeysP, removeKeysP)
-import qualified XMonad.StackSet as W
+  (ChangeLayout(NextLayout), Choose, Full(Full), IncMasterN(IncMasterN),
+    Mirror(Mirror), Resize(Expand, Shrink), Tall(Tall), Window, X,
+    XConfig(XConfig), (|||), def, io, kill, launch, mod4Mask, sendMessage,
+    spawn, windows, withFocused, xC_top_left_arrow)
+import XMonad.Actions.CycleWS (nextWS, prevWS, shiftToPrev, shiftToNext)
+import XMonad.Hooks.DynamicLog (dynamicLogWithPP, shorten, xmobarColor, xmobarPP)
+import XMonad.Hooks.ManageDocks
+  (AvoidStruts, avoidStruts, docksEventHook, docksStartupHook, manageDocks)
+import XMonad.Hooks.SetWMName (setWMName)
+import XMonad.Layout.LayoutModifier (ModifiedLayout)
+import XMonad.Layout.Spacing (SmartSpacing, smartSpacing)
+import XMonad.StackSet (focusDown, focusUp, sink, swapDown, swapUp)
+import XMonad.Util.Cursor (setDefaultCursor)
+import XMonad.Util.Run (spawnPipe)
+import XMonad.Util.EZConfig (mkKeymap)
 
-main :: IO ()
-main = do
-   xmproc <- spawnPipe "~/.xmonad/bin/xmobar ~/.xmonad/.xmobarrc"
-   xmonad $ def
-      { terminal           = "urxvt"
-      , workspaces         = ["1", "2", "3", "4", "5", "6"]
-      , borderWidth        = 2
-      , focusFollowsMouse  = False
-      , modMask            = mod4Mask -- Rebind Mod to the Windows key
-      , manageHook         = manageDocks <+> manageHook def
-      , layoutHook         = layout_hook
-      , handleEventHook    = docksEventHook <+> handleEventHook def
-      , logHook            = dynamicLogWithPP xmobarPP { ppCurrent = xmobarColor "black" "gray"
-                                                       , ppHidden  = xmobarColor "orange" ""
-                                                       , ppHiddenNoWindows = id
-                                                       , ppOutput  = hPutStrLn xmproc
-                                                       , ppSep     = xmobarColor "orange" "" " | "
-                                                       , ppTitle   = xmobarColor "lightblue" "" . shorten 120
-                                                       -- Don't log layout name
-                                                       , ppOrder   = \[a,_,b] -> [a,b]
-                                                       }
-      , startupHook = startup_hook
-      }
-      `removeKeysP` removeKeys'
-      `additionalKeysP` additionalKeys'
+import qualified XMonad as X (XConfig(..))
+import qualified XMonad.Hooks.DynamicLog as X (PP(..))
 
 type (:+) f g = Choose f g
 infixr 5 :+
 
-layout_hook
-  :: ModifiedLayout AvoidStruts
-       (ModifiedLayout Maximize
-         (ModifiedLayout SmartSpacing (Tall :+ Mirror Tall :+ Full)))
-     Window
-layout_hook = modify (tall ||| Mirror tall ||| Full)
- where
-  modify = avoidStruts . maximize . smartSpacing 5
-  tall = Tall 1 (3/100) (1/2)
+type L =
+  ModifiedLayout AvoidStruts
+    (ModifiedLayout SmartSpacing
+      (Tall :+ Mirror Tall :+ Full))
 
-startup_hook :: X ()
-startup_hook = do
-  setWMName "LG3D"
-  setDefaultCursor xC_top_left_arrow
+main :: IO ()
+main = do
+  xmobar <- spawnPipe "/home/mitchell/.xmonad/xmobar /home/mitchell/.xmonad/xmobarrc"
+  launch (myConfig xmobar)
 
-removeKeys' :: [String]
-removeKeys' = [ "M-S-<Return>" -- terminal
-              , "M-S-c"        -- kill
-              , "M-<Tab>"      -- focus down
-              , "M-S-<Tab>"    -- focus up
-              , "M-h"          -- shrink
-              , "M-l"          -- expand
-              , "M-<Return>"   -- swap master
-              , "M-m"          -- focus master
-              ]
+myConfig :: Handle -> XConfig L
+myConfig xmobar = XConfig
+  { X.borderWidth = 2
+  , X.terminal = "urxvt"
+  , X.workspaces = ["1", "2", "3", "4", "5", "6"]
+  , X.layoutHook = layout_hook
+  , X.normalBorderColor = "gray"
+  , X.focusedBorderColor = "red"
+  , X.modMask = mod4Mask -- Rebind Mod to the Windows key
+  , X.keys = \cfg -> mkKeymap cfg (keymap cfg)
+  , X.manageHook = manageDocks
+  , X.handleEventHook = docksEventHook
+  , X.mouseBindings = X.mouseBindings def
+  , X.logHook = dynamicLogWithPP $ xmobarPP
+      { X.ppCurrent = xmobarColor "black" "gray"
+      , X.ppHidden  = xmobarColor "orange" ""
+      , X.ppHiddenNoWindows = id
+      , X.ppOutput  = hPutStrLn xmobar
+      , X.ppSep     = xmobarColor "orange" "" " | "
+      , X.ppTitle   = xmobarColor "lightblue" "" . shorten 120
+      -- Don't log layout name
+      , X.ppOrder   = \[a,_,b] -> [a,b]
+      }
 
-xpconfig :: XPConfig
-xpconfig = greenXPConfig
-  { font = "-misc-fixed-*-*-*-*-20-*-*-*-*-*-*-*"
-  , height = 26
-  , historySize = 0
-  , promptBorderWidth = 1
+  , X.startupHook = do
+      -- TODO: check keymap
+      setWMName "LG3D"
+      setDefaultCursor xC_top_left_arrow
+      docksStartupHook
+
+  , X.focusFollowsMouse = False
+  , X.clickJustFocuses = True
+  , X.clientMask = X.clientMask def
+  , X.rootMask = X.rootMask def
+  , X.handleExtraArgs = X.handleExtraArgs def
   }
 
-additionalKeys' :: [(String, X ())]
-additionalKeys' =   -- Window/workspace management
-                  [ ("M-c",          kill)
-                  -- , ("M-S-<Return>", myAddWorkspacePrompt xpconfig)
-                  , ("M-S-c",        removeEmptyWorkspace)
-                  , ("M-h",          prevWS)
-                  , ("M-l",          nextWS)
-                  , ("M-S-h",        shiftToPrev >> prevWS)
-                  , ("M-S-l",        shiftToNext >> nextWS)
-                  , ("M-M1-h",       sendMessage Shrink)
-                  , ("M-M1-l",       sendMessage Expand)
-                  -- Shell/browser
-                  , ("M-<Return>",   spawn =<< asks (terminal . config))
-                  , ("M-i",          spawn "google-chrome-stable")
-                  -- Search
-                  --, ("M-o",          promptSearchBrowser xpconfig "google-chrome-unstable" google)
-                  , ("M-o g", promptSearch xpconfig google)
-                  , ("M-o h", promptSearch xpconfig hackage)
-                  -- Shutdown
-                  , ("M-S-<Delete>", spawn "sudo shutdown")
+keymap :: XConfig l -> [(String, X ())]
+keymap cfg =
+  [ ("M-,",        sendMessage (IncMasterN 1))
+  , ("M-.",        sendMessage (IncMasterN (-1)))
+  , ("M-<Return>", spawn (X.terminal cfg))
+  , ("M-<Space>",  sendMessage NextLayout)
+  , ("M-c",        kill)
+  , ("M-h",        prevWS)
+  , ("M-i",        spawn "google-chrome-stable")
+  , ("M-j",        windows focusDown)
+  , ("M-k",        windows focusUp)
+  , ("M-l",        nextWS)
+  , ("M-p",        spawn "dmenu_run")
+  , ("M-t",        withFocused (\w -> windows (sink w)))
+  , ("M-S-h",      shiftToPrev >> prevWS)
+  , ("M-S-j",      windows swapDown)
+  , ("M-S-k",      windows swapUp)
+  , ("M-S-l",      shiftToNext >> nextWS)
+  , ("M-S-q",      io (exitWith ExitSuccess))
+  , ("M-M1-h",     sendMessage Shrink)
+  , ("M-M1-l",     sendMessage Expand)
+  ]
 
-                  , ("M-m", withFocused (sendMessage . maximizeRestore))
-                  -- , ("M-M1-j", sendMessage (ModifySpacing (+1)))
-                  ]
-
--- Like promptSearchBrowser, but open it up so I have access to the flags to
--- pass to the browser. This lets me pass "--new-window" to chrome, so my
--- searches don't appear in new tabs on some random existing browser window.
-promptSearchBrowser' :: XPConfig -> Browser -> SearchEngine -> X ()
-promptSearchBrowser' config browser (SearchEngine name site) =
-    mkXPrompt (Search' name) config (historyCompletionP ("Search [" `isPrefixOf`))
-      (\query -> safeSpawn browser ["--new-window", site query])
-
-data Search' = Search' Name
-instance XPrompt Search' where
-    showXPrompt (Search' name)= "Search [" ++ name ++ "]: "
-    nextCompletion _ = getNextCompletion
-    commandToComplete _ c = c
+layout_hook :: L Window
+layout_hook = f (tall ||| Mirror tall ||| Full)
+ where
+  f = avoidStruts . smartSpacing 5
+  tall = Tall 1 (3/100) (1/2)

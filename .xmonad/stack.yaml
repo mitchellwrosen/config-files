@@ -1,6 +1,9 @@
-resolver: lts-6.1
+resolver: lts-7.19
+packages: []
 extra-deps:
-- X11-xft-0.3.1
-- xmonad-contrib-0.12
-- alsa-core-0.5.0.1
-- alsa-mixer-0.2.0.3
+  - alsa-core-0.5.0.1
+  - alsa-mixer-0.2.0.3
+  - X11-1.8
+  - X11-xft-0.3.1
+  - xmonad-0.13
+  - xmonad-contrib-0.13

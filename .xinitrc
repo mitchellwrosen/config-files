@@ -19,4 +19,4 @@ xmodmap ~/.Xmodmap               # Key mappings
 xbindkeys                        # Key bindings
 xrdb -merge ~/.Xresources
 
-exec /home/mitchell/.xmonad/xmonad
+exec /home/mitchell/.xmonad/xmonad 1>/home/mitchell/.xmonad/xmonad-stdout 2>/home/mitchell/.xmonad/xmonad-stderr

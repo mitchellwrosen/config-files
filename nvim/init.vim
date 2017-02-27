@@ -16,21 +16,27 @@ Plug 'scrooloose/nerdtree'
 Plug 'majutsushi/tagbar'
 Plug 'christoomey/vim-tmux-navigator'
 
-" For vimdeck
-Plug 'vim-scripts/SyntaxRange'
-Plug 'vim-scripts/ingo-library'
+" All for vim-snipmate
+Plug 'MarcWeber/vim-addon-mw-utils'
+Plug 'tomtom/tlib_vim'
+Plug 'garbas/vim-snipmate'
 
-Plug 'Valloric/YouCompleteMe',
-    \ {
-    \   'do': './install.py',
-    \   'for': 'haskell'
-    \ }
+" Plug 'Valloric/YouCompleteMe',
+"     \ {
+"     \   'do': './install.py',
+"     \   'for': 'haskell'
+"     \ }
 
 Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
+" Plug 'eagletmt/ghcmod-vim',       { 'for': 'haskell' }
+Plug 'ndmitchell/ghcid',          { 'rtp': 'plugins/nvim' }
+
 
 Plug 'the-lambda-church/coquille', { 'for': 'coq'   }
 Plug 'idris-hackers/idris-vim',    { 'for': 'idris' }
 Plug 'derekelkins/agda-vim',       { 'for': 'agda'  }
+
+Plug 'elmcast/elm-vim'
 
 Plug 'raichoo/purescript-vim'
 
@@ -43,7 +49,7 @@ set autoread
 set autoindent
 set backspace=eol,start,indent
 set cmdheight=1
-set colorcolumn=80
+set colorcolumn=81
 set encoding=utf8
 set expandtab
 set ffs=unix,dos,mac
@@ -58,9 +64,10 @@ set lazyredraw
 set list
 set magic
 set mat=2
+set nofoldenable " never fold
 set noswapfile
-set number
-set relativenumber
+set nonumber
+set norelativenumber
 set ruler
 set scrolloff=5
 set shiftwidth=2
@@ -93,7 +100,7 @@ hi ColorColumn ctermbg=black
 
 nnoremap <C-]> :tab split<CR>:exec("tag " . expand("<cword>"))<CR>
 
-nnoremap <C-T> :tabnew<CR>
+nnoremap <silent> <C-T> :tabnew<CR>
 
 nnoremap <C-H> <C-W>h
 nnoremap <C-J> <C-W>j
@@ -102,6 +109,8 @@ nnoremap <C-L> <C-W>l
 
 nnoremap <S-H> gT
 nnoremap <S-L> gt
+nnoremap <silent> <A-S-H> :tabm -1<CR>
+nnoremap <silent> <A-S-L> :tabm +1<CR>
 
 nnoremap j gj
 nnoremap k gk
@@ -124,6 +133,10 @@ let g:ctrlp_custom_ignore =
     \   'file': '\v\.(o|hi|beam|dyn_hi|dyn_o)$'
     \ }
 
+" ghcid
+let g:ghcid_command="ghcid -c 'stack ghci --ghci-options=-fno-code'"
+nnoremap <silent> <F2> :GhcidKill<CR>:Ghcid<CR>
+
 " haskell-vim
 let g:haskell_enable_quantification=1
 let g:haskell_enable_recursivedo=1
@@ -131,6 +144,13 @@ let g:haskell_enable_arrowsyntax=1
 let g:haskell_enable_pattern_synonyms=1
 let g:haskell_enable_typeroles=1
 let g:haskell_enable_static_pointers=1
+let g:haskell_indent_disable=1
+
+" idris-vim
+let g:idris_indent_if = 2
+let g:idris_indent_case = 2
+let g:idris_indent_where = 2
+let g:idris_indent_do = 2
 
 " neomake
 " let g:neomake_haskell_enabled_makers = ['ghcmod']

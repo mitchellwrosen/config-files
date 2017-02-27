@@ -45,7 +45,7 @@ URxvt*color7  : #D3D7CF
 URxvt*color15 : #EEEEEC
 
 ! Clickable URLs, tabs, change font size
-URxvt.perl-ext-common: default,font-size,matcher,tabbed
+URxvt.perl-ext-common: default,font-size,matcher
 URxvt.url-launcher:    /usr/bin/chromium
 URxvt.matcher.button:  1
 

@@ -4,8 +4,7 @@ endif
 
 call plug#begin()
 
-Plug 'Shougo/vimproc.vim', { 'do': 'make' }
-" Plug 'benekastah/neomake'
+" Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'kien/ctrlp.vim'
 Plug 'vim-scripts/wombat256.vim'
 Plug 'godlygeek/tabular'
@@ -14,61 +13,41 @@ Plug 'tomtom/tcomment_vim'
 Plug 'bling/vim-airline'
 Plug 'scrooloose/nerdtree'
 Plug 'majutsushi/tagbar'
-Plug 'christoomey/vim-tmux-navigator'
-
-" All for vim-snipmate
-Plug 'MarcWeber/vim-addon-mw-utils'
-Plug 'tomtom/tlib_vim'
-Plug 'garbas/vim-snipmate'
-
-" Plug 'Valloric/YouCompleteMe',
-"     \ {
-"     \   'do': './install.py',
-"     \   'for': 'haskell'
-"     \ }
+" Plug 'christoomey/vim-tmux-navigator'
+Plug 'cespare/vim-toml', { 'for': 'toml' }
 
 Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
-" Plug 'eagletmt/ghcmod-vim',       { 'for': 'haskell' }
-Plug 'ndmitchell/ghcid',          { 'rtp': 'plugins/nvim' }
 
-
-Plug 'the-lambda-church/coquille', { 'for': 'coq'   }
+" Plug 'the-lambda-church/coquille', { 'for': 'coq'   }
 Plug 'idris-hackers/idris-vim',    { 'for': 'idris' }
-Plug 'derekelkins/agda-vim',       { 'for': 'agda'  }
+" Plug 'derekelkins/agda-vim',       { 'for': 'agda'  }
 
-Plug 'elmcast/elm-vim'
+" Plug 'elmcast/elm-vim'
 
-Plug 'raichoo/purescript-vim'
+" Plug 'raichoo/purescript-vim'
+Plug 'rust-lang/rust.vim', { 'for': 'rust' }
+
+" Plug 'floobits/floobits-neovim'
 
 call plug#end()
 
 let mapleader = " "
 let g:mapleader = " "
 
-set autoread
-set autoindent
 set backspace=eol,start,indent
-set cmdheight=1
 set colorcolumn=81
-set encoding=utf8
-set expandtab
-set ffs=unix,dos,mac
+set expandtab " Convert tabs to spaces
 set formatoptions=croql
 set guicursor=n-v-c:block-Cursor
 set guicursor+=n-v-c:blinkon0
 set hlsearch
 set ignorecase
-set incsearch
-set laststatus=2
 set lazyredraw
 set list
 set magic
 set mat=2
 set nofoldenable " never fold
 set noswapfile
-set nonumber
-set norelativenumber
-set ruler
 set scrolloff=5
 set shiftwidth=2
 set showmatch
@@ -78,10 +57,8 @@ set smarttab
 set softtabstop=2
 set tabstop=2
 set tags=tags;/,codex.tags;/
-set timeoutlen=1000
 set ttimeoutlen=0
 set whichwrap+=<,>,h,l
-set wrap
 
 if &listchars ==# 'eol:$'
   set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
@@ -97,6 +74,9 @@ filetype indent on
 
 colorscheme wombat256mod
 hi ColorColumn ctermbg=black
+
+" Yank text to clipboard by highlighting
+set mouse=
 
 nnoremap <C-]> :tab split<CR>:exec("tag " . expand("<cword>"))<CR>
 
@@ -119,6 +99,11 @@ nnoremap <silent> <Enter> :nohlsearch<CR>
 
 nnoremap ; :
 nnoremap <silent> <Tab> :w<CR>
+
+nnoremap Y y$
+
+" Escape terminal mode with <Esc>
+tnoremap <Esc> <C-\><C-n>
 
 " tabular
 nnoremap <silent> <leader>a :execute "Tabularize /" . expand("<cWORD>")<CR>

@@ -94,10 +94,10 @@ myConfig xmobar = XConfig{..}
     l2 :: L2 Window
     l2 = smartBorders $
           tabbed shrinkText theme
-      ||| Tall 1 (3/100) (6/10)
+      ||| Tall 1 (3/100) (1/2)
       ||| magnifiercz' 1.6 (FixedColumn 1 1 80 10)
-      ||| Mirror (Tall 1 (3/100) (80/100))
-      ||| magnifiercz' 3 (Mirror (Tall 1 (3/100) (80/100)))
+      ||| Mirror (Tall 1 (3/100) (6/10))
+      ||| magnifiercz' 3 (Mirror (Tall 1 (3/100) (6/10)))
      where
       theme :: Theme
       theme = def

@@ -61,7 +61,7 @@ Plug 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim', 'for': 'haskell' }
 Plug 'chriskempson/base16-vim'
 Plug 'morhetz/gruvbox' " Need this for the airline theme :)
 
-" Plug 'SirVer/ultisnips'
+Plug 'SirVer/ultisnips'
 
 call plug#end()
 " Automatically calls syntax on, filetype plugin indent on
@@ -102,7 +102,7 @@ set undofile                      " persist undo history across buffer exits
 set wildmenu                      " complete commands with a little menu
 set wildmode=list:longest,full
 
-autocmd FileType haskell set signcolumn=yes
+" autocmd FileType haskell set signcolumn=yes
 
 " ==============================================================================
 " Key mappings
@@ -173,7 +173,7 @@ nmap cx <Plug>(Exchange)
 nmap cX <Plug>(ExchangeLine)
 
 " [qf]
-" Toggle the quickfix ("location") menu
+" Toggle the quickfix ("location") menu; move thru quickfix items with Alt+jk
 nmap <Space>l <Plug>(qf_qf_toggle)
 nmap <A-j> <Plug>(qf_qf_next)
 nmap <A-k> <Plug>(qf_qf_prev)
@@ -211,16 +211,9 @@ autocmd FileType elm nnoremap <buffer> <silent> <Space>p :ElmFormat<Enter>
 " Ctrl+space for omnicomplete
 imap <C-Space> <C-x><C-o>
 
-" Sane popup menu hotkeys: tab/shift-tab to move up/down, enter to select.
+" When a popup menu is visible, move thru it with tab and select with enter
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr> <Enter> pumvisible() ? "\<C-y>" : "\<Enter>"
-
-" autocmd FileType haskell imap <buffer> :: ∷
-" autocmd FileType haskell imap <buffer> => ⇒
-" autocmd FileType haskell imap <buffer> -> →
-" autocmd FileType haskell imap <buffer> <- ←
-" autocmd FileType haskell imap <buffer> forall ∀
 
 " ------------------------------------------------------------------------------
 " Visual mode
@@ -274,6 +267,7 @@ function! <SID>StripTrailingWhitespaces()
   call cursor(l, c)
 endfun
 
+" [ghcid]
 " If a .ghcid file exists, start ghcid
 function! <SID>StartGhcid()
   if filereadable(".ghcid")
@@ -304,8 +298,13 @@ autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 " Abbreviations
 " ==============================================================================
 
-" cabbrev ag Ag
-" cabbrev ghcid Ghcid
+" ------------------------------------------------------------------------------
+" Command mode
+" ------------------------------------------------------------------------------
+
+" [UltiSnips]
+" Edit snippets of current file type
+cabbrev snipedit UltiSnipsEdit
 
 " ==============================================================================
 " Plugin settings
@@ -381,13 +380,13 @@ let g:ghcid_background = 1
 let g:haskell_enable_backpack = 1
 let g:haskell_enable_pattern_synonyms = 1
 let g:haskell_enable_quantification = 1
-let g:haskell_indent_before_where = 2
+" let g:haskell_indent_before_where = 2
 let g:haskell_indent_case = 2
 let g:haskell_indent_if = 2
 let g:haskell_indent_in = 0
 let g:haskell_indent_let = 2
-let g:haskell_indent_where = 2
-let g:haskell_indent_bare_where = 2
+" let g:haskell_indent_where = 2
+" let g:haskell_indent_bare_where = 2
 " let g:haskell_classic_highlighting = 1
 
 " ------------------------------------------------------------------------------
@@ -430,8 +429,20 @@ let g:surround_no_mappings = 1
 " UltiSnips
 " ------------------------------------------------------------------------------
 
-" let g:UltiSnipsExpandTrigger="<tab>"
-" let g:UltiSnipsJumpForwardTrigger="<tab>"
+" Tell UltiSnips to use Python 3 (in case auto-detect doesn't work)
+let g:UltiSnipsUsePythonVersion = 3
+
+" Read snippets from this directory
+let g:UltiSnipsSnippetsDir = "~/.config/nvim/UltiSnips"
+
+" Open snippets file with a horizontal split with :snipedit
+let g:UltiSnipsEditSplit = 'horizontal'
+
+" Unset annoying key mappings that can't be avoided
+let g:UltiSnipsExpandTrigger="<C-j>"
+let g:UltiSnipsListSnippets="<Nop>"
+let g:UltiSnipsJumpForwardTrigger="<C-j>"
+let g:UltiSnipsJumpBackwardTrigger="<C-k>"
 
 " ==============================================================================
 " nvim-gtk settings

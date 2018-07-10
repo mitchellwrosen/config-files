@@ -1,19 +1,71 @@
 snippet f
-${1:name} :: ${2:a}
+  ${1:name} :: ${2:a}
+  $1 =
+    ${0:undefined}
+
+snippet case
+case ${1:x} of
+  ${2:y} ->
+    ${0:_}
+endsnippet
+
+snippet class
+class ${1:X} ${2:a} where
+  ${3:f} :: ${4:b}
+endsnippet
+
+snippet data "" b
+data ${1:X}
+  = ${2:X}
+  deriving (${3:Show})
+endsnippet
+
+snippet f
+${1:f} :: ${2:a}
 $1 =
-  ${0:undefined}
+  ${0:_}
 endsnippet
 
-snippet imp
-import qualified ${1:Data.Text} as ${0:`!p snip.rv = t[1].split(".")[-1]`}
-endsnippet
-
-snippet lang
+snippet lang "" b
 {-# language ${0:OverloadedStrings} #-}
 endsnippet
 
-snippet main
+snippet let
+let
+  ${1:f} :: ${2:a}
+  $1 =
+    ${3:_a}
+in
+  ${0:_b}
+endsnippet
+
+snippet impq "" b
+import qualified ${1:X} as ${0:`!p snip.rv = t[1].split(".")[-1]`}
+endsnippet
+
+snippet instance
+instance ${1:X} ${2:Y} where
+  ${3:f} :: ${4:a}
+  $3 =
+    ${0:_}
+
+snippet main "" b
+module Main
+  ( main
+  ) where
+
 main :: IO ()
 main = do
-  ${0:pure ()}
+  ${1:pure ()}
+endsnippet
+
+snippet newtype "" b
+newtype ${1:X}
+  = ${2:X}
+  deriving (${3:Show})
+endsnippet
+
+snippet type "" b
+type X
+  = X
 endsnippet

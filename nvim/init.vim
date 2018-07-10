@@ -298,6 +298,88 @@ autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 " Abbreviations
 " ==============================================================================
 
+autocmd FileType haskell iabbrev zalpha α
+autocmd FileType haskell iabbrev zbeta β
+autocmd FileType haskell iabbrev zchi χ
+autocmd FileType haskell iabbrev zdelta δ
+autocmd FileType haskell iabbrev zepsilon ε
+autocmd FileType haskell iabbrev zeta η
+autocmd FileType haskell iabbrev zgamma γ
+autocmd FileType haskell iabbrev ziota ι
+autocmd FileType haskell iabbrev zkappa κ
+autocmd FileType haskell iabbrev zlambda λ
+autocmd FileType haskell iabbrev zmu μ
+autocmd FileType haskell iabbrev znu ν
+autocmd FileType haskell iabbrev zomega ω
+autocmd FileType haskell iabbrev zphi φ
+autocmd FileType haskell iabbrev zpi π
+autocmd FileType haskell iabbrev zpsi ψ
+autocmd FileType haskell iabbrev zrho ρ
+autocmd FileType haskell iabbrev zsigma σ
+autocmd FileType haskell iabbrev ztau τ
+autocmd FileType haskell iabbrev ztheta θ
+autocmd FileType haskell iabbrev zupsilon υ
+autocmd FileType haskell iabbrev zxi ξ
+autocmd FileType haskell iabbrev zzeta ζ
+
+autocmd FileType haskell iabbrev zDelta Δ
+autocmd FileType haskell iabbrev zGamma Γ
+autocmd FileType haskell iabbrev zLambda Λ
+autocmd FileType haskell iabbrev zOmega Ω
+autocmd FileType haskell iabbrev zPhi Φ
+autocmd FileType haskell iabbrev zPi Π
+autocmd FileType haskell iabbrev zPsi Ψ
+autocmd FileType haskell iabbrev zSigma Σ
+autocmd FileType haskell iabbrev zTheta Θ
+autocmd FileType haskell iabbrev zXi Ξ
+
+autocmd FileType haskell iabbrev zforall ∀
+autocmd FileType haskell iabbrev zexists ∃
+autocmd FileType haskell iabbrev zbottom ⊥
+
+autocmd FileType haskell iabbrev zA 𝔸
+autocmd FileType haskell iabbrev zB 𝔹
+autocmd FileType haskell iabbrev zC ℂ
+autocmd FileType haskell iabbrev zD 𝔻
+autocmd FileType haskell iabbrev zE 𝔼
+autocmd FileType haskell iabbrev zF 𝔽
+autocmd FileType haskell iabbrev zG 𝔾
+autocmd FileType haskell iabbrev zH ℍ
+autocmd FileType haskell iabbrev zI 𝕀
+autocmd FileType haskell iabbrev zJ 𝕁
+autocmd FileType haskell iabbrev zK 𝕂
+autocmd FileType haskell iabbrev zL 𝕃
+autocmd FileType haskell iabbrev zM 𝕄
+autocmd FileType haskell iabbrev zN ℕ
+autocmd FileType haskell iabbrev zO 𝕆
+autocmd FileType haskell iabbrev zP ℙ
+autocmd FileType haskell iabbrev zQ ℚ
+autocmd FileType haskell iabbrev zR ℝ
+autocmd FileType haskell iabbrev zS 𝕊
+autocmd FileType haskell iabbrev zT 𝕋
+autocmd FileType haskell iabbrev zU 𝕌
+autocmd FileType haskell iabbrev zV 𝕍
+autocmd FileType haskell iabbrev zW 𝕎
+autocmd FileType haskell iabbrev zX 𝕏
+autocmd FileType haskell iabbrev zY 𝕐
+autocmd FileType haskell iabbrev zZ ℤ
+autocmd FileType haskell iabbrev zzgamma ℽ
+autocmd FileType haskell iabbrev zzGamma ℾ
+autocmd FileType haskell iabbrev zzpi ℼ
+autocmd FileType haskell iabbrev zzPi ℿ
+
+autocmd FileType haskell iabbrev zeq ≡
+autocmd FileType haskell iabbrev zne ≠
+autocmd FileType haskell iabbrev zle ≤
+autocmd FileType haskell iabbrev zge ≥
+autocmd FileType haskell iabbrev zdot ∘
+autocmd FileType haskell iabbrev znot ¬
+autocmd FileType haskell iabbrev zand ∧
+autocmd FileType haskell iabbrev zor ∨
+autocmd FileType haskell iabbrev zempty ∅
+autocmd FileType haskell iabbrev zunion ∪
+autocmd FileType haskell iabbrev zintersect ∩
+
 " ------------------------------------------------------------------------------
 " Command mode
 " ------------------------------------------------------------------------------

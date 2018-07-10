@@ -27,8 +27,8 @@ Plug 'machakann/vim-highlightedyank'
 " Vim quickfix improvements
 Plug 'romainl/vim-qf'
 
-" File browser
-Plug 'scrooloose/nerdtree'
+" File browser, only load when used
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 
 Plug 'tommcdo/vim-exchange'
 
@@ -38,7 +38,6 @@ Plug 'tpope/vim-characterize'
 
 " Quick (un-)commenting
 Plug 'tpope/vim-commentary'
-
 
 " Make '.' repeat more things out of the box
 Plug 'tpope/vim-repeat'
@@ -62,7 +61,7 @@ Plug 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim', 'for': 'haskell' }
 Plug 'chriskempson/base16-vim'
 Plug 'morhetz/gruvbox' " Need this for the airline theme :)
 
-Plug 'SirVer/ultisnips'
+" Plug 'SirVer/ultisnips'
 
 call plug#end()
 " Automatically calls syntax on, filetype plugin indent on
@@ -71,7 +70,7 @@ call plug#end()
 " Basic settings
 " ==============================================================================
 
-" Colorscheme requires base16-shell, which writes ~/.vimrc_background
+" Colorscheme requires base15-shell, which writes ~/.vimrc_background
 " FIXME Would be nice to auto-update airline theme too, somehow
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256
@@ -143,6 +142,11 @@ nnoremap Y y$
 " Map Ctrl-T to new tab, just like in Chrome
 nnoremap <silent> <C-t> :tabnew<Enter>
 
+" Center the screen after jumping to the next highlight
+nnoremap n nzz
+nnoremap N Nzz
+nnoremap * *zz
+
 " Move tabs with Shift-hl
 nnoremap <S-h> gT
 nnoremap <S-l> gt
@@ -152,14 +156,6 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-
-" Move up and down the quickfix list iwht Alt+JK
-" " command! Cnext try | silent! cnext | catch | silent! cfirst | endtry
-" " command! Cprev try | silent! cprev | catch | silent! clast | endtry
-" nnoremap <A-j> :Cnext<Enter>
-" nnoremap <A-k> :Cprev<Enter>
-nnoremap <A-j> :cnext!<Enter>
-nnoremap <A-k> :cprev!<Enter>
 
 " <Enter> to clear the current search
 nnoremap <silent> <Enter> :nohlsearch<Enter>
@@ -179,6 +175,8 @@ nmap cX <Plug>(ExchangeLine)
 " [qf]
 " Toggle the quickfix ("location") menu
 nmap <Space>l <Plug>(qf_qf_toggle)
+nmap <A-j> <Plug>(qf_qf_next)
+nmap <A-k> <Plug>(qf_qf_prev)
 
 " [commentary]
 " Toggle comment (map to default vim-commentary bindings)
@@ -229,7 +227,7 @@ inoremap <expr> <Enter> pumvisible() ? "\<C-y>" : "\<Enter>"
 " ------------------------------------------------------------------------------
 
 " Make visual mode * work like normal mode *
-vnoremap * y/<C-r>"<Enter>
+vnoremap * y/<C-r>"<Enter>zz
 
 " [exchange]
 xmap X <Plug>(Exchange)
@@ -253,14 +251,16 @@ vmap <Space>f "0y:Ag <C-r>0<Enter>
 " Terminal mode
 " ------------------------------------------------------------------------------
 
-" Move windows as normal
-tnoremap <C-h> <C-\><C-n><C-w>h
-tnoremap <C-j> <C-\><C-n><C-w>j
-tnoremap <C-k> <C-\><C-n><C-w>k
-tnoremap <C-l> <C-\><C-n><C-w>l
-
+" Escape terminal mode with <Esc>
 tnoremap <Esc> <C-\><C-n>
 tnoremap <A-[> <Esc>
+
+" ------------------------------------------------------------------------------
+" quickfix
+" ------------------------------------------------------------------------------
+
+" On <Enter>, go to error and close quickfix list
+autocmd BufReadPost quickfix nnoremap <silent> <buffer> <Enter> <Enter>:cclose<Enter>
 
 " ==============================================================================
 " Functions
@@ -278,10 +278,12 @@ endfun
 function! <SID>StartGhcid()
   if filereadable(".ghcid")
     exec "Ghcid"
-  " elseif filereadable("cabal.project")
-  "   exec "Ghcid -c 'cabal new-repl'"
-  " elseif filereadable("stack.yaml")
-  "   exec "Ghcid -c 'stack ghci'"
+  elseif filereadable("cabal.project")
+    exec "Ghcid -c 'cabal new-repl'"
+  elseif filereadable("stack.yaml")
+    exec "Ghcid -c 'stack ghci'"
+  elseif filereadable(expand('%'))
+    exec "Ghcid -c 'ghci " . expand('%') . "'"
   endif
 endfun
 
@@ -309,16 +311,16 @@ autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 " Plugin settings
 " ==============================================================================
 
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 " airline
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 
 let g:airline_symbols_ascii = 1
 let g:airline_theme='gruvbox'
 
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 " AutoPairs
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 
 " Which symbols are automatically paired
 let g:AutoPairs = { '(': ')', '[': ']', '{': '}', "'": "'", '"': '"', '`': '`' }
@@ -340,9 +342,10 @@ let g:AutoPairsShortcutJump = ''
 let g:AutoPairsShortcutBackInsert = ''
 let g:AutoPairsMapCh = 0
 
-" -----------------------------------------------------------------------------
+
+" ------------------------------------------------------------------------------
 " EasyMotion
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 
 " Don't let EasyMotion write any default mappings
 let g:EasyMotion_do_mapping = 0
@@ -351,22 +354,28 @@ let g:EasyMotion_smartcase = 1
 let g:EasyMotion_use_upper = 1
 let g:EasyMotion_keys = 'ASDGHKLQWERTYUIOPZXCVBNMFJ;'
 
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 " Elm
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 
 " Don't run elm-format on save
 let g:elm_format_autosave = 0
 
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 " exchange
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 
 let g:exchange_no_mappings = 1
 
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
+" ghcid
+" ------------------------------------------------------------------------------
+
+let g:ghcid_background = 1
+
+" ------------------------------------------------------------------------------
 " Haskell
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 
 " let g:haskell_indent_disable = 1
 let g:haskell_enable_backpack = 1
@@ -381,16 +390,17 @@ let g:haskell_indent_where = 2
 let g:haskell_indent_bare_where = 2
 " let g:haskell_classic_highlighting = 1
 
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 " highlightedyank
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 
-" Keep yank highlighted until an edit is made
-let g:highlightedyank_highlight_duration = -1
+" Highlight yank for 500ms
+let g:highlightedyank_highlight_duration = 500
+let g:highlightedyank_max_lines = 50
 
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 " LanguageClient
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 
 " Specify the language-specific executables to run the LSP server
 let g:LanguageClient_serverCommands = {} " { 'haskell': ['hie-wrapper', '--lsp', '-d', '-l', '.HieWrapperLog'] }
@@ -403,30 +413,39 @@ let g:LanguageClient_settingsPath = "/home/mitchell/.config/lsp/settings.json"
 let g:LanguageClient_loggingLevel = 'DEBUG'
 let g:LanguageClient_loggingFile = ".LanguageClientLog"
 
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 " NERDTree
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 
-nnoremap <Space>n :NERDTreeToggle<Enter>
+nnoremap <silent> <Space>n :NERDTreeToggle<Enter>
 
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 " surround
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 
 " Don't let surround provide any magic mappings
 let g:surround_no_mappings = 1
 
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 " UltiSnips
-" -----------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
 
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
+" let g:UltiSnipsExpandTrigger="<tab>"
+" let g:UltiSnipsJumpForwardTrigger="<tab>"
 
-" =============================================================================
+" ==============================================================================
 " nvim-gtk settings
-" =============================================================================
+" ==============================================================================
 
 if exists('g:GtkGuiLoaded')
   call rpcnotify(1, 'Gui', 'Font', 'Hasklig 14')
 endif
+
+" ==============================================================================
+
+" Notes to myself:
+"
+" 'o' in visual swaps cursor location
+" g<C-a> in visual mode turns 1111 into 1234
+" gi
+" gv

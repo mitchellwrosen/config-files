@@ -1,9 +1,6 @@
-syntax on
-filetype plugin indent on
-
-" ------------------------------------------------------------------------------
+" ==============================================================================
 " Plugins
-" ------------------------------------------------------------------------------
+" ==============================================================================
 
 call plug#begin('~/.vim/plugged')
 
@@ -58,10 +55,11 @@ Plug 'chriskempson/base16-vim'
 Plug 'morhetz/gruvbox' " Need this for the airline theme :)
 
 call plug#end()
+" Automatically calls syntax on, filetype plugin indent on
 
-" ------------------------------------------------------------------------------
+" ==============================================================================
 " Basic settings
-" ------------------------------------------------------------------------------
+" ==============================================================================
 
 " Colorscheme requires base16-shell, which writes ~/.vimrc_background
 " FIXME Would be nice to auto-update airline theme too, somehow
@@ -77,7 +75,6 @@ set colorcolumn=81                " highlight column 81
 set cursorline                    " higlight the current line
 set expandtab                     " convert tabs to spaces
 set hidden                        " don't abandon out-of-sight buffers
-set hlsearch                      " highlight search matches
 set ignorecase
 set incsearch                     " search while typing
 set lazyredraw                    " don't draw during e.g. applying a macro
@@ -90,16 +87,15 @@ set shiftwidth=2
 set smartcase
 set smartindent
 set softtabstop=2
-set tabstop=8                     " 8 spaces per literal tab character
 set undofile                      " persist undo history across buffer exits
 set wildmenu                      " complete commands with a little menu
 set wildmode=list:longest,full
 
 autocmd FileType haskell set signcolumn=yes
 
-" ------------------------------------------------------------------------------
+" ==============================================================================
 " Key mappings
-" ------------------------------------------------------------------------------
+" ==============================================================================
 
 " ---------
 " All modes
@@ -216,7 +212,7 @@ inoremap <expr> <Enter> pumvisible() ? "\<C-y>" : "\<Enter>"
 " -----------
 
 " Make visual mode * work like normal mode *
-vnoremap * y/<C-R>"<CR>
+vnoremap * y/<C-R>"<Enter>
 
 " [vim-easy-align]
 " Enter to align things with
@@ -238,9 +234,9 @@ xmap S <Plug>VSurround
 " Space-f ("find") the selected contents
 vmap <Space>f "0y:Ag <C-R>0<Enter>
 
-" ------------------------------------------------------------------------------
+" ==============================================================================
 " Functions
-" ------------------------------------------------------------------------------
+" ==============================================================================
 
 " Remove trailing whitespace, then restore cursor position
 function! <SID>StripTrailingWhitespaces()
@@ -261,9 +257,9 @@ function! <SID>StartGhcid()
   endif
 endfun
 
-" ------------------------------------------------------------------------------
+" ==============================================================================
 " Autocommands
-" ------------------------------------------------------------------------------
+" ==============================================================================
 
 " Start ghcid automatically
 " autocmd FileType haskell autocmd BufWinEnter * :call <SID>StartGhcid()
@@ -274,16 +270,16 @@ autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "norm
 " Strip trailing whitespace on save
 autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 
-" ------------------------------------------------------------------------------
+" ==============================================================================
 " Abbreviations
-" ------------------------------------------------------------------------------
+" ==============================================================================
 
 " cabbrev ag Ag
 " cabbrev ghcid Ghcid
 
-" ------------------------------------------------------------------------------
+" ==============================================================================
 " Plugin settings
-" ------------------------------------------------------------------------------
+" ==============================================================================
 
 " -------
 " airline
@@ -378,3 +374,11 @@ nnoremap <Space>n :NERDTreeToggle<Enter>
 
 " Don't let surround provide any magic mappings
 let g:surround_no_mappings = 1
+
+" ==============================================================================
+" nvim-gtk settings
+" ==============================================================================
+
+if exists('g:GtkGuiLoaded')
+  call rpcnotify(1, 'Gui', 'Font', 'Hasklig 14')
+endif

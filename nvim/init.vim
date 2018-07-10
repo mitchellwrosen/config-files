@@ -10,6 +10,8 @@ Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.s
 " Improved jumping around with f, t, F, T
 Plug 'easymotion/vim-easymotion'
 
+" Plug 'jceb/vim-orgmode'
+
 " Automatically insert/delete parens, braces, quotes, etc
 Plug 'jiangmiao/auto-pairs'
 
@@ -19,11 +21,16 @@ Plug 'junegunn/fzf.vim'
 
 Plug 'junegunn/vim-easy-align'
 
+" Highlight yanks
+Plug 'machakann/vim-highlightedyank'
+
 " Vim quickfix improvements
 Plug 'romainl/vim-qf'
 
 " File browser
 Plug 'scrooloose/nerdtree'
+
+Plug 'tommcdo/vim-exchange'
 
 " Improved 'ga' behavior (shows unicode code point, vim digraph, etc. of
 " character under cursor)
@@ -31,6 +38,7 @@ Plug 'tpope/vim-characterize'
 
 " Quick (un-)commenting
 Plug 'tpope/vim-commentary'
+
 
 " Make '.' repeat more things out of the box
 Plug 'tpope/vim-repeat'
@@ -54,6 +62,8 @@ Plug 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim', 'for': 'haskell' }
 Plug 'chriskempson/base16-vim'
 Plug 'morhetz/gruvbox' " Need this for the airline theme :)
 
+Plug 'SirVer/ultisnips'
+
 call plug#end()
 " Automatically calls syntax on, filetype plugin indent on
 
@@ -76,11 +86,13 @@ set cursorline                    " higlight the current line
 set expandtab                     " convert tabs to spaces
 set hidden                        " don't abandon out-of-sight buffers
 set ignorecase
+set inccommand=split              " show live command substitutions
 set incsearch                     " search while typing
 set lazyredraw                    " don't draw during e.g. applying a macro
 set linebreak                     " wrap lines in a more visually pleasing way
 set list                          " show trailing whitespace, tabs, etc.
 set nofoldenable                  " never fold
+set nojoinspaces
 set scrolloff=10                  " leave lines when scrolling
 set shiftround                    " shift to multiple of shiftwidth
 set shiftwidth=2
@@ -97,9 +109,9 @@ autocmd FileType haskell set signcolumn=yes
 " Key mappings
 " ==============================================================================
 
-" ---------
+" ------------------------------------------------------------------------------
 " All modes
-" ---------
+" ------------------------------------------------------------------------------
 
 " I don't use ;, but I use :, so make : easier to type
 " FIXME What does ; do anyhow?
@@ -117,9 +129,9 @@ map F <Plug>(easymotion-bd-fn)
 map t <Plug>(easymotion-bd-t)
 map T <Plug>(easymotion-bd-tn)
 
-" -----------
+" ------------------------------------------------------------------------------
 " Normal mode
-" -----------
+" ------------------------------------------------------------------------------
 
 " Prevent the cursor from jumping past a wrapped line when moving up and down
 nmap j gj
@@ -131,15 +143,15 @@ nnoremap Y y$
 " Map Ctrl-T to new tab, just like in Chrome
 nnoremap <silent> <C-t> :tabnew<Enter>
 
-" Move tabs with Shift-HL
-nnoremap <S-H> gT
-nnoremap <S-L> gt
+" Move tabs with Shift-hl
+nnoremap <S-h> gT
+nnoremap <S-l> gt
 
-" Move windows with Ctrl+HJKL
-nnoremap <C-H> <C-W>h
-nnoremap <C-J> <C-W>j
-nnoremap <C-K> <C-W>k
-nnoremap <C-L> <C-W>l
+" Move windows with Ctrl+hjkl
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
 " Move up and down the quickfix list iwht Alt+JK
 " " command! Cnext try | silent! cnext | catch | silent! cfirst | endtry
@@ -155,9 +167,14 @@ nnoremap <silent> <Enter> :nohlsearch<Enter>
 " <Tab> to save
 nnoremap <silent> <Tab> :w<Enter>
 
+" [surround]
 nmap ds <Plug>Dsurround
 nmap cs <Plug>Csurround w
 nmap cS <Plug>Csurround W
+
+" [exchange]
+nmap cx <Plug>(Exchange)
+nmap cX <Plug>(ExchangeLine)
 
 " [qf]
 " Toggle the quickfix ("location") menu
@@ -174,7 +191,7 @@ nnoremap <Space>O :Files<Enter>
 
 " [fzf]
 " Space-f ("find") the word under the cursor
-nnoremap <Space>f :Ag <C-R><C-W><Enter>
+nnoremap <Space>f :Ag <C-r><C-w><Enter>
 
 " [LanguageClient]
 nnoremap <Space>sc :call LanguageClient_textDocument_references()<Enter>
@@ -189,12 +206,12 @@ nnoremap <silent> <Space>sm :call LanguageClient_contextMenu()<Enter>
 " Space-p ("pretty ") to format Elm code
 autocmd FileType elm nnoremap <buffer> <silent> <Space>p :ElmFormat<Enter>
 
-" -----------
+" ------------------------------------------------------------------------------
 " Insert mode
-" -----------
+" ------------------------------------------------------------------------------
 
 " Ctrl+space for omnicomplete
-imap <C-Space> <C-X><C-O>
+imap <C-Space> <C-x><C-o>
 
 " Sane popup menu hotkeys: tab/shift-tab to move up/down, enter to select.
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -207,21 +224,19 @@ inoremap <expr> <Enter> pumvisible() ? "\<C-y>" : "\<Enter>"
 " autocmd FileType haskell imap <buffer> <- ←
 " autocmd FileType haskell imap <buffer> forall ∀
 
-" -----------
+" ------------------------------------------------------------------------------
 " Visual mode
-" -----------
+" ------------------------------------------------------------------------------
 
 " Make visual mode * work like normal mode *
-vnoremap * y/<C-R>"<Enter>
+vnoremap * y/<C-r>"<Enter>
+
+" [exchange]
+xmap X <Plug>(Exchange)
 
 " [vim-easy-align]
 " Enter to align things with
 vmap <Enter> <Plug>(LiveEasyAlign)
-
-" Use} } ] to wrap the selection
-vnoremap ) s(<C-R>")<Esc>
-vnoremap ] s[<C-R>"]<Esc>
-vnoremap } s{<C-R>"}<Esc>
 
 " [vim-commentary]
 " Toggle comment
@@ -232,7 +247,20 @@ xmap S <Plug>VSurround
 
 " [fzf.vim]
 " Space-f ("find") the selected contents
-vmap <Space>f "0y:Ag <C-R>0<Enter>
+vmap <Space>f "0y:Ag <C-r>0<Enter>
+
+" ------------------------------------------------------------------------------
+" Terminal mode
+" ------------------------------------------------------------------------------
+
+" Move windows as normal
+tnoremap <C-h> <C-\><C-n><C-w>h
+tnoremap <C-j> <C-\><C-n><C-w>j
+tnoremap <C-k> <C-\><C-n><C-w>k
+tnoremap <C-l> <C-\><C-n><C-w>l
+
+tnoremap <Esc> <C-\><C-n>
+tnoremap <A-[> <Esc>
 
 " ==============================================================================
 " Functions
@@ -281,16 +309,16 @@ autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 " Plugin settings
 " ==============================================================================
 
-" -------
+" -----------------------------------------------------------------------------
 " airline
-" -------
+" -----------------------------------------------------------------------------
 
 let g:airline_symbols_ascii = 1
 let g:airline_theme='gruvbox'
 
-" ---------
+" -----------------------------------------------------------------------------
 " AutoPairs
-" ---------
+" -----------------------------------------------------------------------------
 
 " Which symbols are automatically paired
 let g:AutoPairs = { '(': ')', '[': ']', '{': '}', "'": "'", '"': '"', '`': '`' }
@@ -312,9 +340,9 @@ let g:AutoPairsShortcutJump = ''
 let g:AutoPairsShortcutBackInsert = ''
 let g:AutoPairsMapCh = 0
 
-" ----------
+" -----------------------------------------------------------------------------
 " EasyMotion
-" ----------
+" -----------------------------------------------------------------------------
 
 " Don't let EasyMotion write any default mappings
 let g:EasyMotion_do_mapping = 0
@@ -323,16 +351,22 @@ let g:EasyMotion_smartcase = 1
 let g:EasyMotion_use_upper = 1
 let g:EasyMotion_keys = 'ASDGHKLQWERTYUIOPZXCVBNMFJ;'
 
-" ---
+" -----------------------------------------------------------------------------
 " Elm
-" ---
+" -----------------------------------------------------------------------------
 
 " Don't run elm-format on save
 let g:elm_format_autosave = 0
 
-" -------
+" -----------------------------------------------------------------------------
+" exchange
+" -----------------------------------------------------------------------------
+
+let g:exchange_no_mappings = 1
+
+" -----------------------------------------------------------------------------
 " Haskell
-" -------
+" -----------------------------------------------------------------------------
 
 " let g:haskell_indent_disable = 1
 let g:haskell_enable_backpack = 1
@@ -347,9 +381,16 @@ let g:haskell_indent_where = 2
 let g:haskell_indent_bare_where = 2
 " let g:haskell_classic_highlighting = 1
 
-" --------------
+" -----------------------------------------------------------------------------
+" highlightedyank
+" -----------------------------------------------------------------------------
+
+" Keep yank highlighted until an edit is made
+let g:highlightedyank_highlight_duration = -1
+
+" -----------------------------------------------------------------------------
 " LanguageClient
-" --------------
+" -----------------------------------------------------------------------------
 
 " Specify the language-specific executables to run the LSP server
 let g:LanguageClient_serverCommands = {} " { 'haskell': ['hie-wrapper', '--lsp', '-d', '-l', '.HieWrapperLog'] }
@@ -362,22 +403,29 @@ let g:LanguageClient_settingsPath = "/home/mitchell/.config/lsp/settings.json"
 let g:LanguageClient_loggingLevel = 'DEBUG'
 let g:LanguageClient_loggingFile = ".LanguageClientLog"
 
-" --------
+" -----------------------------------------------------------------------------
 " NERDTree
-" --------
+" -----------------------------------------------------------------------------
 
 nnoremap <Space>n :NERDTreeToggle<Enter>
 
-" --------
+" -----------------------------------------------------------------------------
 " surround
-" --------
+" -----------------------------------------------------------------------------
 
 " Don't let surround provide any magic mappings
 let g:surround_no_mappings = 1
 
-" ==============================================================================
+" -----------------------------------------------------------------------------
+" UltiSnips
+" -----------------------------------------------------------------------------
+
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+
+" =============================================================================
 " nvim-gtk settings
-" ==============================================================================
+" =============================================================================
 
 if exists('g:GtkGuiLoaded')
   call rpcnotify(1, 'Gui', 'Font', 'Hasklig 14')

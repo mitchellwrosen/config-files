@@ -1,0 +1,19 @@
+snippet f
+${1:name} :: ${2:a}
+$1 =
+  ${0:undefined}
+endsnippet
+
+snippet imp
+import qualified ${1:Data.Text} as ${0:`!p snip.rv = t[1].split(".")[-1]`}
+endsnippet
+
+snippet lang
+{-# language ${0:OverloadedStrings} #-}
+endsnippet
+
+snippet main
+main :: IO ()
+main = do
+  ${0:pure ()}
+endsnippet

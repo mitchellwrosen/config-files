@@ -16,6 +16,7 @@ Plug 'easymotion/vim-easymotion'
 Plug 'jiangmiao/auto-pairs'
 
 " Fuzzy search source code, files, etc
+" :help fzf-vim
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
@@ -29,6 +30,8 @@ Plug 'romainl/vim-qf'
 
 " File browser, only load when used
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+
+Plug 'terryma/vim-multiple-cursors'
 
 Plug 'tommcdo/vim-exchange'
 
@@ -102,8 +105,6 @@ set undofile                      " persist undo history across buffer exits
 set wildmenu                      " complete commands with a little menu
 set wildmode=list:longest,full
 
-" autocmd FileType haskell set signcolumn=yes
-
 " ==============================================================================
 " Key mappings
 " ==============================================================================
@@ -113,20 +114,17 @@ set wildmode=list:longest,full
 " ------------------------------------------------------------------------------
 
 " I don't use ;, but I use :, so make : easier to type
-" FIXME What does ; do anyhow?
 map ; :
 
-" Disable useless 'ex' mode and annoying command search q: that I never use
+" Disable useless 'ex' mode that I never use
 map Q <Nop>
+
+" Disable annoying command search 'q:' that I never use
 map q: <Nop>
 
 " [vim-easymotion]
-" Use easymotion to replace f, t behavior. F, T are like supercharged f, t in
-" that they can search for any number of characters at a time
-map f <Plug>(easymotion-bd-f)
-map F <Plug>(easymotion-bd-fn)
-map t <Plug>(easymotion-bd-t)
-map T <Plug>(easymotion-bd-tn)
+" gf to 'go find' some far-away character (above or below)
+map gf <Plug>(easymotion-bd-f)
 
 " ------------------------------------------------------------------------------
 " Normal mode
@@ -140,21 +138,27 @@ nmap k gk
 nnoremap Y y$
 
 " Map Ctrl-T to new tab, just like in Chrome
-nnoremap <silent> <C-t> :tabnew<Enter>
+" nnoremap <silent> <C-t> :tabnew<Enter>
+
+" Don't highlight matches *and* jump at the same time; only highlight
+nnoremap * *``
+nnoremap # #``
 
 " Center the screen after jumping to the next highlight
 nnoremap n nzz
 nnoremap N Nzz
-nnoremap * *zz
 
 " Move tabs with Shift-hl
-nnoremap <S-h> gT
-nnoremap <S-l> gt
+" Trying to wean myself off tabs, so remove this
+" nnoremap <S-h> gT
+" nnoremap <S-l> gt
 
-" Move windows with Ctrl+hjkl
+" Move buffers with Ctrl+jk
+nnoremap <silent> <C-j> :bn<Enter>
+nnoremap <silent> <C-k> :bp<Enter>
+
+" Move windows with Ctrl+hl (sorry, horizontal splits)
 nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
 " <Enter> to clear the current search
@@ -163,14 +167,28 @@ nnoremap <silent> <Enter> :nohlsearch<Enter>
 " <Tab> to save
 nnoremap <silent> <Tab> :w<Enter>
 
+" Make K pull the current line up, similar to how J pulls the following line up
+nnoremap K kJ
+
+" go/gO to create a new line below/above the current line
+" FIXME Would be nice to not clobber the 'z' mark
+nnoremap <silent> <Plug>MyNmapGo mzo<Esc>`z:call repeat#set("\<Plug>MyNmapGo")<Enter>
+nmap go <Plug>MyNmapGo
+nnoremap <silent> <Plug>MyNmapGO mzO<Esc>`z:call repeat#set("\<Plug>MyNmapGO")<Enter>
+nmap gO <Plug>MyNmapGO
+
+" nnoremap go o<Esc>k
+" nnoremap gO O<Esc>j
+
 " [surround]
 nmap ds <Plug>Dsurround
 nmap cs <Plug>Csurround w
 nmap cS <Plug>Csurround W
 
 " [exchange]
-nmap cx <Plug>(Exchange)
-nmap cX <Plug>(ExchangeLine)
+" X ("exchange") once to yank, X again to exchange with the first yank
+nmap X <Plug>(Exchange)
+nmap XX <Plug>(ExchangeLine)
 
 " [qf]
 " Toggle the quickfix ("location") menu; move thru quickfix items with Alt+jk
@@ -179,30 +197,25 @@ nmap <A-j> <Plug>(qf_qf_next)
 nmap <A-k> <Plug>(qf_qf_prev)
 
 " [commentary]
-" Toggle comment (map to default vim-commentary bindings)
+" Toggle comment
 nmap <Space>m <Plug>CommentaryLine
 
 " [fzf]
-" Fuzzy file search, both git- and everything-variants
+" Space-o ("open") to fuzzy file search, both git- and everything-variants
 nnoremap <Space>o :GFiles<Enter>
 nnoremap <Space>O :Files<Enter>
-
-" [fzf]
 " Space-f ("find") the word under the cursor
 nnoremap <Space>f :Ag <C-r><C-w><Enter>
+" Space-k (because it's a home-row key) to fuzzy-search buffers
+nnoremap <Space>k :Buffers<Enter>
 
 " [LanguageClient]
 nnoremap <Space>sc :call LanguageClient_textDocument_references()<Enter>
-autocmd FileType haskell nnoremap <Space>p :call LanguageClient_textDocument_formatting()<Enter>
 nnoremap <Space>ss :call LanguageClient_textDocument_documentSymbol()<Enter>
 nnoremap <F2> :call LanguageClient_textDocument_rename()<Enter>
-nnoremap K :call LanguageClient_textDocument_hover()<Enter>
+nnoremap gt :call LanguageClient_textDocument_hover()<Enter>
 nnoremap gd :call LanguageClient_textDocument_definition()<Enter>
 nnoremap <silent> <Space>sm :call LanguageClient_contextMenu()<Enter>
-
-" [elm-vim]
-" Space-p ("pretty ") to format Elm code
-autocmd FileType elm nnoremap <buffer> <silent> <Space>p :ElmFormat<Enter>
 
 " ------------------------------------------------------------------------------
 " Insert mode
@@ -248,13 +261,6 @@ vmap <Space>f "0y:Ag <C-r>0<Enter>
 tnoremap <Esc> <C-\><C-n>
 tnoremap <A-[> <Esc>
 
-" ------------------------------------------------------------------------------
-" quickfix
-" ------------------------------------------------------------------------------
-
-" On <Enter>, go to error and close quickfix list
-autocmd BufReadPost quickfix nnoremap <silent> <buffer> <Enter> <Enter>:cclose<Enter>
-
 " ==============================================================================
 " Functions
 " ==============================================================================
@@ -285,9 +291,6 @@ endfun
 " Autocommands
 " ==============================================================================
 
-" Start ghcid automatically
-" autocmd FileType haskell autocmd BufWinEnter * :call <SID>StartGhcid()
-
 " Jump to last cursor position on file open
 autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 
@@ -298,87 +301,87 @@ autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 " Abbreviations
 " ==============================================================================
 
-autocmd FileType haskell iabbrev zalpha α
-autocmd FileType haskell iabbrev zbeta β
-autocmd FileType haskell iabbrev zchi χ
-autocmd FileType haskell iabbrev zdelta δ
-autocmd FileType haskell iabbrev zepsilon ε
-autocmd FileType haskell iabbrev zeta η
-autocmd FileType haskell iabbrev zgamma γ
-autocmd FileType haskell iabbrev ziota ι
-autocmd FileType haskell iabbrev zkappa κ
-autocmd FileType haskell iabbrev zlambda λ
-autocmd FileType haskell iabbrev zmu μ
-autocmd FileType haskell iabbrev znu ν
-autocmd FileType haskell iabbrev zomega ω
-autocmd FileType haskell iabbrev zphi φ
-autocmd FileType haskell iabbrev zpi π
-autocmd FileType haskell iabbrev zpsi ψ
-autocmd FileType haskell iabbrev zrho ρ
-autocmd FileType haskell iabbrev zsigma σ
-autocmd FileType haskell iabbrev ztau τ
-autocmd FileType haskell iabbrev ztheta θ
-autocmd FileType haskell iabbrev zupsilon υ
-autocmd FileType haskell iabbrev zxi ξ
-autocmd FileType haskell iabbrev zzeta ζ
+iabbrev zalpha α
+iabbrev zbeta β
+iabbrev zchi χ
+iabbrev zdelta δ
+iabbrev zepsilon ε
+iabbrev zeta η
+iabbrev zgamma γ
+iabbrev ziota ι
+iabbrev zkappa κ
+iabbrev zlambda λ
+iabbrev zmu μ
+iabbrev znu ν
+iabbrev zomega ω
+iabbrev zphi φ
+iabbrev zpi π
+iabbrev zpsi ψ
+iabbrev zrho ρ
+iabbrev zsigma σ
+iabbrev ztau τ
+iabbrev ztheta θ
+iabbrev zupsilon υ
+iabbrev zxi ξ
+iabbrev zzeta ζ
 
-autocmd FileType haskell iabbrev zDelta Δ
-autocmd FileType haskell iabbrev zGamma Γ
-autocmd FileType haskell iabbrev zLambda Λ
-autocmd FileType haskell iabbrev zOmega Ω
-autocmd FileType haskell iabbrev zPhi Φ
-autocmd FileType haskell iabbrev zPi Π
-autocmd FileType haskell iabbrev zPsi Ψ
-autocmd FileType haskell iabbrev zSigma Σ
-autocmd FileType haskell iabbrev zTheta Θ
-autocmd FileType haskell iabbrev zXi Ξ
+iabbrev zDelta Δ
+iabbrev zGamma Γ
+iabbrev zLambda Λ
+iabbrev zOmega Ω
+iabbrev zPhi Φ
+iabbrev zPi Π
+iabbrev zPsi Ψ
+iabbrev zSigma Σ
+iabbrev zTheta Θ
+iabbrev zXi Ξ
 
-autocmd FileType haskell iabbrev zforall ∀
-autocmd FileType haskell iabbrev zexists ∃
-autocmd FileType haskell iabbrev zbottom ⊥
+iabbrev zforall ∀
+iabbrev zexists ∃
+iabbrev zbottom ⊥
 
-autocmd FileType haskell iabbrev zA 𝔸
-autocmd FileType haskell iabbrev zB 𝔹
-autocmd FileType haskell iabbrev zC ℂ
-autocmd FileType haskell iabbrev zD 𝔻
-autocmd FileType haskell iabbrev zE 𝔼
-autocmd FileType haskell iabbrev zF 𝔽
-autocmd FileType haskell iabbrev zG 𝔾
-autocmd FileType haskell iabbrev zH ℍ
-autocmd FileType haskell iabbrev zI 𝕀
-autocmd FileType haskell iabbrev zJ 𝕁
-autocmd FileType haskell iabbrev zK 𝕂
-autocmd FileType haskell iabbrev zL 𝕃
-autocmd FileType haskell iabbrev zM 𝕄
-autocmd FileType haskell iabbrev zN ℕ
-autocmd FileType haskell iabbrev zO 𝕆
-autocmd FileType haskell iabbrev zP ℙ
-autocmd FileType haskell iabbrev zQ ℚ
-autocmd FileType haskell iabbrev zR ℝ
-autocmd FileType haskell iabbrev zS 𝕊
-autocmd FileType haskell iabbrev zT 𝕋
-autocmd FileType haskell iabbrev zU 𝕌
-autocmd FileType haskell iabbrev zV 𝕍
-autocmd FileType haskell iabbrev zW 𝕎
-autocmd FileType haskell iabbrev zX 𝕏
-autocmd FileType haskell iabbrev zY 𝕐
-autocmd FileType haskell iabbrev zZ ℤ
-autocmd FileType haskell iabbrev zzgamma ℽ
-autocmd FileType haskell iabbrev zzGamma ℾ
-autocmd FileType haskell iabbrev zzpi ℼ
-autocmd FileType haskell iabbrev zzPi ℿ
+iabbrev zA 𝔸
+iabbrev zB 𝔹
+iabbrev zC ℂ
+iabbrev zD 𝔻
+iabbrev zE 𝔼
+iabbrev zF 𝔽
+iabbrev zG 𝔾
+iabbrev zH ℍ
+iabbrev zI 𝕀
+iabbrev zJ 𝕁
+iabbrev zK 𝕂
+iabbrev zL 𝕃
+iabbrev zM 𝕄
+iabbrev zN ℕ
+iabbrev zO 𝕆
+iabbrev zP ℙ
+iabbrev zQ ℚ
+iabbrev zR ℝ
+iabbrev zS 𝕊
+iabbrev zT 𝕋
+iabbrev zU 𝕌
+iabbrev zV 𝕍
+iabbrev zW 𝕎
+iabbrev zX 𝕏
+iabbrev zY 𝕐
+iabbrev zZ ℤ
+iabbrev zzgamma ℽ
+iabbrev zzGamma ℾ
+iabbrev zzpi ℼ
+iabbrev zzPi ℿ
 
-autocmd FileType haskell iabbrev zeq ≡
-autocmd FileType haskell iabbrev zne ≠
-autocmd FileType haskell iabbrev zle ≤
-autocmd FileType haskell iabbrev zge ≥
-autocmd FileType haskell iabbrev zdot ∘
-autocmd FileType haskell iabbrev znot ¬
-autocmd FileType haskell iabbrev zand ∧
-autocmd FileType haskell iabbrev zor ∨
-autocmd FileType haskell iabbrev zempty ∅
-autocmd FileType haskell iabbrev zunion ∪
-autocmd FileType haskell iabbrev zintersect ∩
+iabbrev zeq ≡
+iabbrev zne ≠
+iabbrev zle ≤
+iabbrev zge ≥
+iabbrev zdot ∘
+iabbrev znot ¬
+iabbrev zand ∧
+iabbrev zor ∨
+iabbrev zempty ∅
+iabbrev zunion ∪
+iabbrev zintersect ∩
 
 " ------------------------------------------------------------------------------
 " Command mode
@@ -446,7 +449,16 @@ let g:elm_format_autosave = 0
 " exchange
 " ------------------------------------------------------------------------------
 
+" Don't make any default key mappings
 let g:exchange_no_mappings = 1
+
+" ------------------------------------------------------------------------------
+" fzf
+" ------------------------------------------------------------------------------
+
+" If the buffer is already open in another tab or window, jump to it rather
+" than replace the current buffer (which would open 2 copies)
+let g:fzf_buffers_jump = 1
 
 " ------------------------------------------------------------------------------
 " ghcid
@@ -495,6 +507,20 @@ let g:LanguageClient_loggingLevel = 'DEBUG'
 let g:LanguageClient_loggingFile = ".LanguageClientLog"
 
 " ------------------------------------------------------------------------------
+" multiple-cursors
+" ------------------------------------------------------------------------------
+
+let g:multi_cursor_use_default_mapping = 0
+let g:multi_cursor_start_word_key      = '<C-n>'
+" let g:multi_cursor_select_all_word_key = '<A-n>'
+" let g:multi_cursor_start_key           = 'g<C-n>'
+" let g:multi_cursor_select_all_key      = 'g<A-n>'
+let g:multi_cursor_next_key            = '<C-n>'
+let g:multi_cursor_prev_key            = '<C-p>'
+" let g:multi_cursor_skip_key            = '<C-x>'
+let g:multi_cursor_quit_key            = '<Esc>'
+
+" ------------------------------------------------------------------------------
 " NERDTree
 " ------------------------------------------------------------------------------
 
@@ -533,6 +559,57 @@ let g:UltiSnipsJumpBackwardTrigger="<C-k>"
 if exists('g:GtkGuiLoaded')
   call rpcnotify(1, 'Gui', 'Font', 'Hasklig 14')
 endif
+
+" ==============================================================================
+" Filetype-specific settings
+" ==============================================================================
+
+" ------------------------------------------------------------------------------
+" Elm
+" ------------------------------------------------------------------------------
+
+" [elm-vim]
+" Space-p ("pretty ") to format Elm code
+autocmd FileType elm nnoremap <buffer> <silent> <Space>p :ElmFormat<Enter>
+
+" ------------------------------------------------------------------------------
+" fzf
+" ------------------------------------------------------------------------------
+
+autocmd! FileType fzf
+autocmd FileType fzf setlocal laststatus=0
+  \| autocmd BufLeave <buffer> setlocal laststatus=2
+autocmd FileType fzf nnoremap <silent> <buffer> <Esc> :q<Enter>
+
+" ------------------------------------------------------------------------------
+" Haskell
+" ------------------------------------------------------------------------------
+
+autocmd FileType haskell call <SID>IsFiletypeHaskell()
+function <SID>IsFiletypeHaskell()
+
+  " Always \ as a lambda
+  " syn match Lambda /\\/ conceal cchar=λ
+  " set conceallevel=2
+  " set concealcursor=nvic
+  " set signcolumn=yes
+
+  " syn match Arrow /->$/ conceal cchar=a
+
+
+  nnoremap <Space>p :call LanguageClient_textDocument_formatting()<Enter>
+
+  " Start ghcid automatically
+  " autocmd BufWinEnter * :call <SID>StartGhcid()
+
+endfunction
+
+" ------------------------------------------------------------------------------
+" quickfix
+" ------------------------------------------------------------------------------
+
+" On <Enter>, go to error and close quickfix list
+autocmd FileType qf nnoremap <silent> <buffer> <Enter> <Enter>:cclose<Enter>
 
 " ==============================================================================
 

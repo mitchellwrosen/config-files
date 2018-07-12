@@ -1,15 +1,10 @@
-snippet f
-  ${1:name} :: ${2:a}
-  $1 =
-    ${0:undefined}
-
 snippet case
 case ${1:x} of
   ${2:y} ->
     ${0:_}
 endsnippet
 
-snippet class
+snippet class "" b
 class ${1:X} ${2:a} where
   ${3:f} :: ${4:b}
 endsnippet
@@ -18,6 +13,11 @@ snippet data "" b
 data ${1:X}
   = ${2:X}
   deriving (${3:Show})
+endsnippet
+
+snippet l
+\\${1:x} ->
+  ${0:_}
 endsnippet
 
 snippet f

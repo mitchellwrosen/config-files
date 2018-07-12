@@ -5,7 +5,7 @@
 call plug#begin('~/.vim/plugged')
 
 " Language Server Protocol implementation
-Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh', 'for': 'haskell' }
+" Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh', 'for': 'haskell' }
 
 " Improved jumping around with f, t, F, T
 Plug 'easymotion/vim-easymotion'
@@ -50,6 +50,7 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 
 " Lightweight status line
+" TODO: Replace this with a custom statusline
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
@@ -114,10 +115,7 @@ set wildmode=list:longest,full
 " ------------------------------------------------------------------------------
 
 " I don't use ;, but I use :, so make : easier to type
-map ; :
-
-" Disable useless 'ex' mode that I never use
-map Q <Nop>
+noremap ; :
 
 " Disable annoying command search 'q:' that I never use
 map q: <Nop>
@@ -137,6 +135,16 @@ nmap k gk
 " Make Y yank to the end of line, similar to how C and D behave
 nnoremap Y y$
 
+" <Enter> to clear the current search
+nnoremap <silent> <Enter> :nohlsearch<Enter>
+
+" Record macros with Q instead of q
+nnoremap Q q
+nnoremap q <Nop>
+
+" <Tab> to save
+nnoremap <silent> <Tab> :w<Enter>
+
 " Map Ctrl-T to new tab, just like in Chrome
 " nnoremap <silent> <C-t> :tabnew<Enter>
 
@@ -148,8 +156,11 @@ nnoremap # #``
 nnoremap n nzz
 nnoremap N Nzz
 
+" Make K pull the current line up, similar to how J pulls the following line up
+nnoremap K kJ
+
 " Move tabs with Shift-hl
-" Trying to wean myself off tabs, so remove this
+" Trying to wean myself off tabs, so I commented this out
 " nnoremap <S-h> gT
 " nnoremap <S-l> gt
 
@@ -157,38 +168,45 @@ nnoremap N Nzz
 nnoremap <silent> <C-j> :bn<Enter>
 nnoremap <silent> <C-k> :bp<Enter>
 
-" Move windows with Ctrl+hl (sorry, horizontal splits)
+" Move vertical splits with Ctrl+hl (sorry, horizontal splits)
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
 
-" <Enter> to clear the current search
-nnoremap <silent> <Enter> :nohlsearch<Enter>
-
-" <Tab> to save
-nnoremap <silent> <Tab> :w<Enter>
-
-" Make K pull the current line up, similar to how J pulls the following line up
-nnoremap K kJ
-
-" go/gO to create a new line below/above the current line
+" [repeat]
+" q-hjkl> to push code around. repeat.vim is used to make these commands
+" repeatable with '.'
 " FIXME Would be nice to not clobber the 'z' mark
-nnoremap <silent> <Plug>MyNmapGo mzo<Esc>`z:call repeat#set("\<Plug>MyNmapGo")<Enter>
-nmap go <Plug>MyNmapGo
-nnoremap <silent> <Plug>MyNmapGO mzO<Esc>`z:call repeat#set("\<Plug>MyNmapGO")<Enter>
-nmap gO <Plug>MyNmapGO
-
-" nnoremap go o<Esc>k
-" nnoremap gO O<Esc>j
+nmap qh <Plug>MyNmapQh
+nmap qj <Plug>MyNmapQj
+nmap qk <Plug>MyNmapQk
+nmap ql i<Space><Esc>
+nmap q> <Plug>MyNmapQgt
+nmap q< <Plug>MyNmapQlt
+nnoremap <silent> <Plug>MyNmapQh :call <SID>QH()<Enter>:call repeat#set("\<Plug>MyNmapQh")<Enter>
+nnoremap <silent> <Plug>MyNmapQj mzo<Esc>`z:call repeat#set("\<Plug>MyNmapQj")<Enter>
+nnoremap <silent> <Plug>MyNmapQk mzO<Esc>`z:call repeat#set("\<Plug>MyNmapQk")<Enter>
+nnoremap <silent> <Plug>MyNmapQgt mzi<Tab><Esc>`z:call repeat#set("\<Plug>MyNmapQgt")<Enter>
+nnoremap <silent> <Plug>MyNmapQlt :call <SID>Qlt()<Enter>:call repeat#set("\<Plug>MyNmapQlt")<Enter>
 
 " [surround]
+" ds to delete surround
+" cs to surround inner word
+" cS to surround inner WORD
 nmap ds <Plug>Dsurround
 nmap cs <Plug>Csurround w
 nmap cS <Plug>Csurround W
 
 " [exchange]
 " X ("exchange") once to yank, X again to exchange with the first yank
+" Manually make [exhange] replace 'w' with 'e', as vim does for e.g. 'c'
+"
+" XX to exchange-yank the whole line
+nmap Xw <Plug>(Exchange)e
+nmap XW <Plug>(Exchange)E
 nmap X <Plug>(Exchange)
 nmap XX <Plug>(ExchangeLine)
+
+" foo-bar foo-baz
 
 " [qf]
 " Toggle the quickfix ("location") menu; move thru quickfix items with Alt+jk
@@ -210,12 +228,12 @@ nnoremap <Space>f :Ag <C-r><C-w><Enter>
 nnoremap <Space>k :Buffers<Enter>
 
 " [LanguageClient]
-nnoremap <Space>sc :call LanguageClient_textDocument_references()<Enter>
-nnoremap <Space>ss :call LanguageClient_textDocument_documentSymbol()<Enter>
-nnoremap <F2> :call LanguageClient_textDocument_rename()<Enter>
-nnoremap gt :call LanguageClient_textDocument_hover()<Enter>
-nnoremap gd :call LanguageClient_textDocument_definition()<Enter>
-nnoremap <silent> <Space>sm :call LanguageClient_contextMenu()<Enter>
+" nnoremap <Space>sc :call LanguageClient_textDocument_references()<Enter>
+" nnoremap <Space>ss :call LanguageClient_textDocument_documentSymbol()<Enter>
+" nnoremap <F2> :call LanguageClient_textDocument_rename()<Enter>
+" nnoremap gt :call LanguageClient_textDocument_hover()<Enter>
+" nnoremap gd :call LanguageClient_textDocument_definition()<Enter>
+" nnoremap <silent> <Space>sm :call LanguageClient_contextMenu()<Enter>
 
 " ------------------------------------------------------------------------------
 " Insert mode
@@ -286,6 +304,22 @@ function! <SID>StartGhcid()
     exec "Ghcid -c 'ghci " . expand('%') . "'"
   endif
 endfun
+
+" qh behavior: move code to the left if there's room
+function! <SID>QH()
+  if getline('.')[0] == ' '
+    exec "norm hmz0x`zi\<Space>\<Esc>l"
+  endif
+endfunction
+
+" q< behavior: shift code to the left if there's room
+" FIXME: This just assumes shiftwidth=2, and ignore shiftround
+function! <SID>Qlt()
+  let l = getline('.')
+  if l[0] == ' ' && l[1] == ' '
+    exec "norm 2hmz02x`zi\<Space>\<Space>\<Esc>l"
+  endif
+endfunction
 
 " ==============================================================================
 " Autocommands
@@ -495,16 +529,16 @@ let g:highlightedyank_max_lines = 50
 " LanguageClient
 " ------------------------------------------------------------------------------
 
-" Specify the language-specific executables to run the LSP server
-let g:LanguageClient_serverCommands = {} " { 'haskell': ['hie-wrapper', '--lsp', '-d', '-l', '.HieWrapperLog'] }
+" " Specify the language-specific executables to run the LSP server
+" let g:LanguageClient_serverCommands = {} " { 'haskell': ['hie-wrapper', '--lsp', '-d', '-l', '.HieWrapperLog'] }
 
-" Use global settings.json file
-let g:LanguageClient_settingsPath = "/home/mitchell/.config/lsp/settings.json"
+" " Use global settings.json file
+" let g:LanguageClient_settingsPath = "/home/mitchell/.config/lsp/settings.json"
 
-" LanguageClient doesn't seem to work very well, so verbosely log everything it
-" tries to do.
-let g:LanguageClient_loggingLevel = 'DEBUG'
-let g:LanguageClient_loggingFile = ".LanguageClientLog"
+" " LanguageClient doesn't seem to work very well, so verbosely log everything it
+" " tries to do.
+" let g:LanguageClient_loggingLevel = 'DEBUG'
+" let g:LanguageClient_loggingFile = ".LanguageClientLog"
 
 " ------------------------------------------------------------------------------
 " multiple-cursors

@@ -20,10 +20,10 @@ snippet l
   ${0:_}
 endsnippet
 
-snippet f
+snippet ::
 ${1:f} :: ${2:a}
 $1 =
-  ${0:_}
+  ${0:undefined}
 endsnippet
 
 snippet lang "" b
@@ -48,6 +48,7 @@ instance ${1:X} ${2:Y} where
   ${3:f} :: ${4:a}
   $3 =
     ${0:_}
+endsnippet
 
 snippet main "" b
 module Main

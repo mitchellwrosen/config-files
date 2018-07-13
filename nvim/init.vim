@@ -1,8 +1,14 @@
+" TODO
+" * Replace vim-airline with custom status line
+" * Open ghcid buffer on hovering over something in quickfix
+" * shada?
+" * Fix undo behavior for composite actions like K
+
 " ==============================================================================
 " Plugins
 " ==============================================================================
 
-call plug#begin('~/.vim/plugged')
+cal plug#begin('~/.vim/plugged')
 
 " Language Server Protocol implementation
 " Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh', 'for': 'haskell' }
@@ -50,9 +56,8 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 
 " Lightweight status line
-" TODO: Replace this with a custom statusline
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+" Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline-themes'
 
 " Language-specific syntax highlighting and such
 Plug 'ElmCast/elm-vim', { 'for': 'elm' }
@@ -63,11 +68,11 @@ Plug 'purescript-contrib/purescript-vim', { 'for': 'purescript' }
 Plug 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim', 'for': 'haskell' }
 
 Plug 'chriskempson/base16-vim'
-Plug 'morhetz/gruvbox' " Need this for the airline theme :)
+" Plug 'morhetz/gruvbox' " Need this for the airline theme :)
 
 Plug 'SirVer/ultisnips'
 
-call plug#end()
+cal plug#end()
 " Automatically calls syntax on, filetype plugin indent on
 
 " ==============================================================================
@@ -78,33 +83,38 @@ call plug#end()
 " FIXME Would be nice to auto-update airline theme too, somehow
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256
-  source ~/.vimrc_background
+  so ~/.vimrc_background
 endif
 
-set background=dark
-set autowrite                     " write when leaving a buffer
-set clipboard=unnamed,unnamedplus " yank also copies to both clipboards
-set colorcolumn=81                " highlight column 81
-set cursorline                    " higlight the current line
-set expandtab                     " convert tabs to spaces
-set hidden                        " don't abandon out-of-sight buffers
-set ignorecase
-set inccommand=split              " show live command substitutions
-set incsearch                     " search while typing
-set lazyredraw                    " don't draw during e.g. applying a macro
-set linebreak                     " wrap lines in a more visually pleasing way
-set list                          " show trailing whitespace, tabs, etc.
-set nofoldenable                  " never fold
-set nojoinspaces
-set scrolloff=10                  " leave lines when scrolling
-set shiftround                    " shift to multiple of shiftwidth
-set shiftwidth=2
-set smartcase
-set smartindent
-set softtabstop=2
-set undofile                      " persist undo history across buffer exits
-set wildmenu                      " complete commands with a little menu
-set wildmode=list:longest,full
+set bg=dark
+set aw                     " write when leaving a buffer
+set cb=unnamed,unnamedplus " yank also copies to both clipboards
+set cc=81                  " highlight column 81
+set cul                    " higlight the current line
+set et                     " convert tabs to spaces
+set gp=ag                  " use ag to grep
+set hid                    " don't abandon out-of-sight buffers
+set ic                     " case-insensitive searching
+set icm=split              " show live command substitutions
+set is                     " search while typing
+set lz                     " don't draw during e.g. applying a macro
+set lbr                    " wrap lines in a more visually pleasing way
+set list                   " show trailing whitespace, tabs, etc.
+set nofen                  " never fold
+set nojs                   " insert one space after ., ?, ! chars when joining
+set noml                   " disable modelines
+set nosol                  " don't jump cursor to start of line when moving
+set so=10                  " leave lines when scrolling
+set sr                     " shift to multiple of shiftwidth
+set sw=2
+set scs                    " don't ignore case if search contains uppercase char
+set si                     " smart autoindenting when starting a new line
+set sts=2                  " tab key makes 2 spaces
+set title                  " put filename in window title
+set tm=500                 " only wait .5s for key sequence to complete
+set udf                    " persist undo history across buffer exits
+set wmnu                   " complete commands with a little menu
+set wim=list:longest,full  " wild menu completion behavior
 
 " ==============================================================================
 " Key mappings
@@ -115,7 +125,7 @@ set wildmode=list:longest,full
 " ------------------------------------------------------------------------------
 
 " I don't use ;, but I use :, so make : easier to type
-noremap ; :
+no ; :
 
 " Disable annoying command search 'q:' that I never use
 map q: <Nop>
@@ -128,156 +138,199 @@ map gf <Plug>(easymotion-bd-f)
 " Normal mode
 " ------------------------------------------------------------------------------
 
-" Prevent the cursor from jumping past a wrapped line when moving up and down
-nmap j gj
-nmap k gk
-
-" Make Y yank to the end of line, similar to how C and D behave
-nnoremap Y y$
+" <Tab> to save
+nn <silent> <Tab> :w<CR>
 
 " <Enter> to clear the current search
-nnoremap <silent> <Enter> :nohlsearch<Enter>
+nn <silent> <Enter> :noh<CR>
+
+" Prevent the cursor from jumping past a wrapped line when moving up and down
+nm j gj
+nm k gk
+
+" Make Y yank to the end of line, similar to how C and D behave
+nn Y y$
+
 
 " Record macros with Q instead of q
-nnoremap Q q
-nnoremap q <Nop>
-
-" <Tab> to save
-nnoremap <silent> <Tab> :w<Enter>
+nn Q q
+nn q <Nop>
 
 " Map Ctrl-T to new tab, just like in Chrome
-" nnoremap <silent> <C-t> :tabnew<Enter>
+" nn <silent> <C-t> :tabnew<CR>
 
 " Don't highlight matches *and* jump at the same time; only highlight
-nnoremap * *``
-nnoremap # #``
+nn * *``
+nn # #``
 
-" Center the screen after jumping to the next highlight
-nnoremap n nzz
-nnoremap N Nzz
+" Follow >>/<< shifted text around with the cursor
+nm >> <Plug>MyNmapLl
+nm << <Plug>MyNmapHh
+nn <silent> <Plug>MyNmapLl >>ll:cal repeat#set("\<Plug>MyNmapLl")<CR>
+nn <silent> <Plug>MyNmapHh <<hh:cal repeat#set("\<Plug>MyNmapHh")<CR>
+
+" Restore the cursor after joining lines
+nn J m`J``
 
 " Make K pull the current line up, similar to how J pulls the following line up
-nnoremap K kJ
+nn K kJ
+
+" S to search-and-replace in the file
+nn S :%s//g<Left><Left>
 
 " Move tabs with Shift-hl
 " Trying to wean myself off tabs, so I commented this out
-" nnoremap <S-h> gT
-" nnoremap <S-l> gt
+" nn <S-h> gT
+" nn <S-l> gt
 
 " Move buffers with Ctrl+jk
-nnoremap <silent> <C-j> :bn<Enter>
-nnoremap <silent> <C-k> :bp<Enter>
+nn <silent> <C-j> :bn<CR>
+nn <silent> <C-k> :bp<CR>
+
+" Delete the current buffer with Space-d, or quit vim if it's the only buffer
+nn <expr> <silent> <Space>d len(getbufinfo({'buflisted': 1})) ==? 1 ? ":q\<CR>" : ":bw\<CR>"
 
 " Move vertical splits with Ctrl+hl (sorry, horizontal splits)
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
+nn <C-h> <C-w>h
+nn <C-l> <C-w>l
 
 " [repeat]
 " q-hjkl> to push code around. repeat.vim is used to make these commands
 " repeatable with '.'
 " FIXME Would be nice to not clobber the 'z' mark
-nmap qh <Plug>MyNmapQh
-nmap qj <Plug>MyNmapQj
-nmap qk <Plug>MyNmapQk
-nmap ql i<Space><Esc>
-nmap q> <Plug>MyNmapQgt
-nmap q< <Plug>MyNmapQlt
-nnoremap <silent> <Plug>MyNmapQh :call <SID>QH()<Enter>:call repeat#set("\<Plug>MyNmapQh")<Enter>
-nnoremap <silent> <Plug>MyNmapQj mzo<Esc>`z:call repeat#set("\<Plug>MyNmapQj")<Enter>
-nnoremap <silent> <Plug>MyNmapQk mzO<Esc>`z:call repeat#set("\<Plug>MyNmapQk")<Enter>
-nnoremap <silent> <Plug>MyNmapQgt mzi<Tab><Esc>`z:call repeat#set("\<Plug>MyNmapQgt")<Enter>
-nnoremap <silent> <Plug>MyNmapQlt :call <SID>Qlt()<Enter>:call repeat#set("\<Plug>MyNmapQlt")<Enter>
+nm qh <Plug>MyNmapQh
+nm qj <Plug>MyNmapQj
+nm qk <Plug>MyNmapQk
+nm ql i<Space><Esc>
+nm q> <Plug>MyNmapQgt
+nm q< <Plug>MyNmapQlt
+nn <silent> <Plug>MyNmapQh :cal <SID>QH()<CR>:cal repeat#set("\<Plug>MyNmapQh")<CR>
+nn <silent> <Plug>MyNmapQj m`o<Esc>``:cal repeat#set("\<Plug>MyNmapQj")<CR>
+nn <silent> <Plug>MyNmapQk m`O<Esc>``:cal repeat#set("\<Plug>MyNmapQk")<CR>
+nn <silent> <Plug>MyNmapQgt m`i<Tab><Esc>``:cal repeat#set("\<Plug>MyNmapQgt")<CR>
+nn <silent> <Plug>MyNmapQlt :cal <SID>Qlt()<CR>:cal repeat#set("\<Plug>MyNmapQlt")<CR>
 
 " [surround]
-" ds to delete surround
-" cs to surround inner word
-" cS to surround inner WORD
-nmap ds <Plug>Dsurround
-nmap cs <Plug>Csurround w
-nmap cS <Plug>Csurround W
+" ds to delete surround and restore cursor position
+" cs to surround inner word and restore cursor position
+" cS to surround inner WORD and restore cursor position
+nm ds' mz<Plug>Dsurround '`zh
+nm ds" mz<Plug>Dsurround "`zh
+nm ds( mz<Plug>Dsurround )`zh
+nm ds[ mz<Plug>Dsurround ]`zh
+nm ds{ mz<Plug>Dsurround }`zh
+nm dsp mz<Plug>Dsurround )`zh
+nm cs' mz<Plug>Csurround w'`zl
+nm cs" mz<Plug>Csurround w"`zl
+nm cs( mz<Plug>Csurround w)`zl
+nm cs[ mz<Plug>Csurround w]`zl
+nm cs{ mz<Plug>Csurround w}`zl
+nm csp mz<Plug>Csurround w)`zl
+nm cS' mz<Plug>Csurround W'`zl
+nm cS" mz<Plug>Csurround W"`zl
+nm cS( mz<Plug>Csurround W)`zl
+nm cS[ mz<Plug>Csurround W]`zl
+nm cS{ mz<Plug>Csurround W}`zl
+nm cSp mz<Plug>Csurround W)`zl
 
 " [exchange]
 " X ("exchange") once to yank, X again to exchange with the first yank
 " Manually make [exhange] replace 'w' with 'e', as vim does for e.g. 'c'
 "
 " XX to exchange-yank the whole line
-nmap Xw <Plug>(Exchange)e
-nmap XW <Plug>(Exchange)E
-nmap X <Plug>(Exchange)
-nmap XX <Plug>(ExchangeLine)
-
-" foo-bar foo-baz
+nm Xw <Plug>(Exchange)e
+nm XW <Plug>(Exchange)E
+nm X <Plug>(Exchange)
+nm XX <Plug>(ExchangeLine)
 
 " [qf]
 " Toggle the quickfix ("location") menu; move thru quickfix items with Alt+jk
-nmap <Space>l <Plug>(qf_qf_toggle)
-nmap <A-j> <Plug>(qf_qf_next)
-nmap <A-k> <Plug>(qf_qf_prev)
+nm <Space>l <Plug>(qf_qf_toggle)
+nm <A-j> <Plug>(qf_qf_next)
+nm <A-k> <Plug>(qf_qf_prev)
 
 " [commentary]
 " Toggle comment
-nmap <Space>m <Plug>CommentaryLine
+nm <Space>m <Plug>CommentaryLine
 
 " [fzf]
 " Space-o ("open") to fuzzy file search, both git- and everything-variants
-nnoremap <Space>o :GFiles<Enter>
-nnoremap <Space>O :Files<Enter>
+nn <Space>o :GFiles<CR>
+nn <Space>O :Files<CR>
 " Space-f ("find") the word under the cursor
-nnoremap <Space>f :Ag <C-r><C-w><Enter>
+nn <Space>f :Ag <C-r><C-w><CR>
 " Space-k (because it's a home-row key) to fuzzy-search buffers
-nnoremap <Space>k :Buffers<Enter>
+nn <Space>k :Buffers<CR>
 
 " [LanguageClient]
-" nnoremap <Space>sc :call LanguageClient_textDocument_references()<Enter>
-" nnoremap <Space>ss :call LanguageClient_textDocument_documentSymbol()<Enter>
-" nnoremap <F2> :call LanguageClient_textDocument_rename()<Enter>
-" nnoremap gt :call LanguageClient_textDocument_hover()<Enter>
-" nnoremap gd :call LanguageClient_textDocument_definition()<Enter>
-" nnoremap <silent> <Space>sm :call LanguageClient_contextMenu()<Enter>
+" nn <Space>sc :cal LanguageClient_textDocument_references()<CR>
+" nn <Space>ss :cal LanguageClient_textDocument_documentSymbol()<CR>
+" nn <F2> :cal LanguageClient_textDocument_rename()<CR>
+" nn gt :cal LanguageClient_textDocument_hover()<CR>
+" nn gd :cal LanguageClient_textDocument_definition()<CR>
+" nn <silent> <Space>sm :cal LanguageClient_contextMenu()<CR>
 
 " ------------------------------------------------------------------------------
 " Insert mode
 " ------------------------------------------------------------------------------
 
 " Ctrl+space for omnicomplete
-imap <C-Space> <C-x><C-o>
+im <C-Space> <C-x><C-o>
 
 " When a popup menu is visible, move thru it with tab and select with enter
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <Enter> pumvisible() ? "\<C-y>" : "\<Enter>"
+ino <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+ino <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
 " ------------------------------------------------------------------------------
 " Visual mode
 " ------------------------------------------------------------------------------
 
 " Make visual mode * work like normal mode *
-vnoremap * y/<C-r>"<Enter>zz
+vn * y/<C-r>"<CR>zz
+
+" After yank, leave cursor at the end of the highlight
+vn y y`]
+
+" S to search-and-replace
+" whoops, clashes with surround...
+" xn S :s//g<Left><Left>
 
 " [exchange]
-xmap X <Plug>(Exchange)
+xm X <Plug>(Exchange)
 
 " [vim-easy-align]
 " Enter to align things with
-vmap <Enter> <Plug>(LiveEasyAlign)
+vm <CR> <Plug>(LiveEasyAlign)
 
 " [vim-commentary]
 " Toggle comment
-vmap <Space>m <Plug>Commentary
+vm <Space>m <Plug>Commentary
 
 " [vim-surround]
-xmap S <Plug>VSurround
+xm S' <Plug>VSurround'
+xm S" <Plug>VSurround"
+xm S( <Plug>VSurround)
+xm S[ <Plug>VSurround]
+xm S{ <Plug>VSurround}
+xm Sp <Plug>VSurround)
 
 " [fzf.vim]
 " Space-f ("find") the selected contents
-vmap <Space>f "0y:Ag <C-r>0<Enter>
+vm <Space>f "0y:Ag <C-r>0<CR>
 
 " ------------------------------------------------------------------------------
 " Terminal mode
 " ------------------------------------------------------------------------------
 
 " Escape terminal mode with <Esc>
-tnoremap <Esc> <C-\><C-n>
-tnoremap <A-[> <Esc>
+tno <Esc> <C-\><C-n>
+tno <A-[> <Esc>
+
+" ==============================================================================
+" Commands
+" ==============================================================================
+
+" command! Vimrc e "~/.config/nvim/init.vim"
 
 " ==============================================================================
 " Functions
@@ -288,37 +341,53 @@ function! <SID>StripTrailingWhitespaces()
   let l = line(".")
   let c = col(".")
   %s/\s\+$//e
-  call cursor(l, c)
+  cal cursor(l, c)
 endfun
 
 " [ghcid]
-" If a .ghcid file exists, start ghcid
+" Start ghcid automatically. Only attempt to start it once.
+let s:ghcid_started = 0
 function! <SID>StartGhcid()
-  if filereadable(".ghcid")
-    exec "Ghcid"
-  elseif filereadable("cabal.project")
-    exec "Ghcid -c 'cabal new-repl'"
-  elseif filereadable("stack.yaml")
-    exec "Ghcid -c 'stack ghci'"
-  elseif filereadable(expand('%'))
-    exec "Ghcid -c 'ghci " . expand('%') . "'"
+  if s:ghcid_started == 0
+    let s:ghcid_started = 1
+    if filereadable(".ghcid")
+      exec "Ghcid"
+    elseif filereadable("cabal.project")
+      exec "Ghcid -c 'cabal new-repl'"
+    elseif filereadable("stack.yaml")
+      exec "Ghcid -c 'stack ghci'"
+    elseif filereadable(expand('%'))
+      exec "Ghcid -c 'ghci " . expand('%') . "'"
+    endif
   endif
 endfun
 
 " qh behavior: move code to the left if there's room
 function! <SID>QH()
   if getline('.')[0] == ' '
-    exec "norm hmz0x`zi\<Space>\<Esc>l"
+    exec "norm hm`0x``i\<Space>\<Esc>l"
   endif
 endfunction
 
 " q< behavior: shift code to the left if there's room
-" FIXME: This just assumes shiftwidth=2, and ignore shiftround
+" FIXME: This just assumes shiftwidth=2 and ignores shiftround
 function! <SID>Qlt()
   let l = getline('.')
   if l[0] == ' ' && l[1] == ' '
-    exec "norm 2hmz02x`zi\<Space>\<Space>\<Esc>l"
+    exec "norm 2hm`02x``i\<Space>\<Space>\<Esc>l"
   endif
+endfunction
+
+function! <SID>EchoQuickFixEntry()
+  let l:entries = getqflist()
+  let l:bufnr = bufnr('%')
+  let l:lnum = line('.')
+  for e in entries
+    if e.bufnr == l:bufnr && e.lnum == l:lnum
+      echo e.text
+      return
+    endif
+  endfor
 endfunction
 
 " ==============================================================================
@@ -326,96 +395,99 @@ endfunction
 " ==============================================================================
 
 " Jump to last cursor position on file open
-autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "norm! g`\"" | endif
 
 " Strip trailing whitespace on save
-autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
+au BufWritePre * cal <SID>StripTrailingWhitespaces()
+
+" Echo the quickfix entry on the current line, if any
+au CursorMoved * cal <SID>EchoQuickFixEntry()
 
 " ==============================================================================
 " Abbreviations
 " ==============================================================================
 
-iabbrev zalpha α
-iabbrev zbeta β
-iabbrev zchi χ
-iabbrev zdelta δ
-iabbrev zepsilon ε
-iabbrev zeta η
-iabbrev zgamma γ
-iabbrev ziota ι
-iabbrev zkappa κ
-iabbrev zlambda λ
-iabbrev zmu μ
-iabbrev znu ν
-iabbrev zomega ω
-iabbrev zphi φ
-iabbrev zpi π
-iabbrev zpsi ψ
-iabbrev zrho ρ
-iabbrev zsigma σ
-iabbrev ztau τ
-iabbrev ztheta θ
-iabbrev zupsilon υ
-iabbrev zxi ξ
-iabbrev zzeta ζ
+ia zalpha α
+ia zbeta β
+ia zchi χ
+ia zdelta δ
+ia zepsilon ε
+ia zeta η
+ia zgamma γ
+ia ziota ι
+ia zkappa κ
+ia zlambda λ
+ia zmu μ
+ia znu ν
+ia zomega ω
+ia zphi φ
+ia zpi π
+ia zpsi ψ
+ia zrho ρ
+ia zsigma σ
+ia ztau τ
+ia ztheta θ
+ia zupsilon υ
+ia zxi ξ
+ia zzeta ζ
 
-iabbrev zDelta Δ
-iabbrev zGamma Γ
-iabbrev zLambda Λ
-iabbrev zOmega Ω
-iabbrev zPhi Φ
-iabbrev zPi Π
-iabbrev zPsi Ψ
-iabbrev zSigma Σ
-iabbrev zTheta Θ
-iabbrev zXi Ξ
+ia zDelta Δ
+ia zGamma Γ
+ia zLambda Λ
+ia zOmega Ω
+ia zPhi Φ
+ia zPi Π
+ia zPsi Ψ
+ia zSigma Σ
+ia zTheta Θ
+ia zXi Ξ
 
-iabbrev zforall ∀
-iabbrev zexists ∃
-iabbrev zbottom ⊥
+ia zforall ∀
+ia zexists ∃
+ia zbottom ⊥
 
-iabbrev zA 𝔸
-iabbrev zB 𝔹
-iabbrev zC ℂ
-iabbrev zD 𝔻
-iabbrev zE 𝔼
-iabbrev zF 𝔽
-iabbrev zG 𝔾
-iabbrev zH ℍ
-iabbrev zI 𝕀
-iabbrev zJ 𝕁
-iabbrev zK 𝕂
-iabbrev zL 𝕃
-iabbrev zM 𝕄
-iabbrev zN ℕ
-iabbrev zO 𝕆
-iabbrev zP ℙ
-iabbrev zQ ℚ
-iabbrev zR ℝ
-iabbrev zS 𝕊
-iabbrev zT 𝕋
-iabbrev zU 𝕌
-iabbrev zV 𝕍
-iabbrev zW 𝕎
-iabbrev zX 𝕏
-iabbrev zY 𝕐
-iabbrev zZ ℤ
-iabbrev zzgamma ℽ
-iabbrev zzGamma ℾ
-iabbrev zzpi ℼ
-iabbrev zzPi ℿ
+ia zA 𝔸
+ia zB 𝔹
+ia zC ℂ
+ia zD 𝔻
+ia zE 𝔼
+ia zF 𝔽
+ia zG 𝔾
+ia zH ℍ
+ia zI 𝕀
+ia zJ 𝕁
+ia zK 𝕂
+ia zL 𝕃
+ia zM 𝕄
+ia zN ℕ
+ia zO 𝕆
+ia zP ℙ
+ia zQ ℚ
+ia zR ℝ
+ia zS 𝕊
+ia zT 𝕋
+ia zU 𝕌
+ia zV 𝕍
+ia zW 𝕎
+ia zX 𝕏
+ia zY 𝕐
+ia zZ ℤ
+ia zzgamma ℽ
+ia zzGamma ℾ
+ia zzpi ℼ
+ia zzPi ℿ
 
-iabbrev zeq ≡
-iabbrev zne ≠
-iabbrev zle ≤
-iabbrev zge ≥
-iabbrev zdot ∘
-iabbrev znot ¬
-iabbrev zand ∧
-iabbrev zor ∨
-iabbrev zempty ∅
-iabbrev zunion ∪
-iabbrev zintersect ∩
+ia zeq ≡
+ia zne ≠
+ia zle ≤
+ia zge ≥
+ia zdot ∘
+ia znot ¬
+ia zand ∧
+ia zor ∨
+ia zempty ∅
+ia zunion ∪
+ia zintersect ∩
 
 " ------------------------------------------------------------------------------
 " Command mode
@@ -423,36 +495,24 @@ iabbrev zintersect ∩
 
 " [UltiSnips]
 " Edit snippets of current file type
-cabbrev snipedit UltiSnipsEdit
+ca snipedit UltiSnipsEdit
 
 " ==============================================================================
 " Plugin settings
 " ==============================================================================
 
-" ------------------------------------------------------------------------------
-" airline
-" ------------------------------------------------------------------------------
+" [airline]
+" let g:airline_symbols_ascii = 1
+" let g:airline_theme='gruvbox'
 
-let g:airline_symbols_ascii = 1
-let g:airline_theme='gruvbox'
-
-" ------------------------------------------------------------------------------
-" AutoPairs
-" ------------------------------------------------------------------------------
-
+" [AutoPairs]
 " Which symbols are automatically paired
 let g:AutoPairs = { '(': ')', '[': ']', '{': '}', "'": "'", '"': '"', '`': '`' }
-
-" Let AutoPairs handle <Backspace> (deletes pair)
-let g:AutoPairsMapBS = 1
-
-" Let AutoPairs insert a space before the closing pair
-let g:AutoPairsMapSpace = 1
-
-" Don't handle <Enter> in insert mode specially (cause it's brokenish)
+let g:AutoPairsMapBS = 1 " Let AutoPairs handle <Backspace> (deletes pair)
+let g:AutoPairsMapSpace = 1 " Let AutoPairs insert a space before the closing pair
+" Don't handle <CR> in insert mode specially (cause it's brokenish)
 let g:AutoPairsMapCR = 0
 let g:AutoPairsCenterLine = 0
-
 " Disable a bunch of random key bindings
 let g:AutoPairsShortcutToggle = ''
 let g:AutoPairsShortcutFastWrap = ''
@@ -460,54 +520,36 @@ let g:AutoPairsShortcutJump = ''
 let g:AutoPairsShortcutBackInsert = ''
 let g:AutoPairsMapCh = 0
 
-
-" ------------------------------------------------------------------------------
-" EasyMotion
-" ------------------------------------------------------------------------------
-
-" Don't let EasyMotion write any default mappings
-let g:EasyMotion_do_mapping = 0
-
+" [EasyMotion]
+let g:EasyMotion_do_mapping = 0 " Don't make any key mappings
 let g:EasyMotion_smartcase = 1
 let g:EasyMotion_use_upper = 1
 let g:EasyMotion_keys = 'ASDGHKLQWERTYUIOPZXCVBNMFJ;'
 
-" ------------------------------------------------------------------------------
-" Elm
-" ------------------------------------------------------------------------------
+" [elm]
+let g:elm_setup_keybindings = 0 " Don't make any key mappings
+let g:elm_format_autosave = 0 " Don't run elm-format on save
 
-" Don't run elm-format on save
-let g:elm_format_autosave = 0
-
-" ------------------------------------------------------------------------------
-" exchange
-" ------------------------------------------------------------------------------
-
-" Don't make any default key mappings
+" [exchange]
+" Don't make any key mappings
 let g:exchange_no_mappings = 1
 
-" ------------------------------------------------------------------------------
-" fzf
-" ------------------------------------------------------------------------------
-
+" [fzf]
 " If the buffer is already open in another tab or window, jump to it rather
 " than replace the current buffer (which would open 2 copies)
 let g:fzf_buffers_jump = 1
 
-" ------------------------------------------------------------------------------
-" ghcid
-" ------------------------------------------------------------------------------
-
+" [ghcid]
+" Don't pop up when there are warnings
 let g:ghcid_background = 1
 
-" ------------------------------------------------------------------------------
-" Haskell
-" ------------------------------------------------------------------------------
-
+" [haskell]
 " let g:haskell_indent_disable = 1
 let g:haskell_enable_backpack = 1
 let g:haskell_enable_pattern_synonyms = 1
 let g:haskell_enable_quantification = 1
+let g:haskell_enable_recursivedo = 1
+let g:haskell_enable_typeroles = 1
 " let g:haskell_indent_before_where = 2
 let g:haskell_indent_case = 2
 let g:haskell_indent_if = 2
@@ -517,69 +559,42 @@ let g:haskell_indent_let = 2
 " let g:haskell_indent_bare_where = 2
 " let g:haskell_classic_highlighting = 1
 
-" ------------------------------------------------------------------------------
-" highlightedyank
-" ------------------------------------------------------------------------------
-
-" Highlight yank for 500ms
-let g:highlightedyank_highlight_duration = 500
+" [highlightedyank]
+let g:highlightedyank_highlight_duration = 500 " highlight yank for 500ms
 let g:highlightedyank_max_lines = 50
 
-" ------------------------------------------------------------------------------
-" LanguageClient
-" ------------------------------------------------------------------------------
-
+" [LanguageClient]
 " " Specify the language-specific executables to run the LSP server
 " let g:LanguageClient_serverCommands = {} " { 'haskell': ['hie-wrapper', '--lsp', '-d', '-l', '.HieWrapperLog'] }
-
 " " Use global settings.json file
 " let g:LanguageClient_settingsPath = "/home/mitchell/.config/lsp/settings.json"
-
 " " LanguageClient doesn't seem to work very well, so verbosely log everything it
 " " tries to do.
 " let g:LanguageClient_loggingLevel = 'DEBUG'
 " let g:LanguageClient_loggingFile = ".LanguageClientLog"
 
-" ------------------------------------------------------------------------------
-" multiple-cursors
-" ------------------------------------------------------------------------------
-
+" [multiple-cursors]
 let g:multi_cursor_use_default_mapping = 0
-let g:multi_cursor_start_word_key      = '<C-n>'
+let g:multi_cursor_start_word_key = '<C-n>'
 " let g:multi_cursor_select_all_word_key = '<A-n>'
-" let g:multi_cursor_start_key           = 'g<C-n>'
-" let g:multi_cursor_select_all_key      = 'g<A-n>'
-let g:multi_cursor_next_key            = '<C-n>'
-let g:multi_cursor_prev_key            = '<C-p>'
-" let g:multi_cursor_skip_key            = '<C-x>'
-let g:multi_cursor_quit_key            = '<Esc>'
+" let g:multi_cursor_start_key = 'g<C-n>'
+" let g:multi_cursor_select_all_key = 'g<A-n>'
+let g:multi_cursor_next_key = '<C-n>'
+let g:multi_cursor_prev_key = '<C-p>'
+" let g:multi_cursor_skip_key = '<C-x>'
+let g:multi_cursor_quit_key = '<Esc>'
 
-" ------------------------------------------------------------------------------
-" NERDTree
-" ------------------------------------------------------------------------------
+" [NERDTree]
+nn <silent> <Space>n :NERDTreeToggle<CR>
 
-nnoremap <silent> <Space>n :NERDTreeToggle<Enter>
-
-" ------------------------------------------------------------------------------
-" surround
-" ------------------------------------------------------------------------------
-
+" [surround]
 " Don't let surround provide any magic mappings
 let g:surround_no_mappings = 1
 
-" ------------------------------------------------------------------------------
-" UltiSnips
-" ------------------------------------------------------------------------------
-
-" Tell UltiSnips to use Python 3 (in case auto-detect doesn't work)
-let g:UltiSnipsUsePythonVersion = 3
-
-" Read snippets from this directory
-let g:UltiSnipsSnippetsDir = "~/.config/nvim/UltiSnips"
-
-" Open snippets file with a horizontal split with :snipedit
-let g:UltiSnipsEditSplit = 'horizontal'
-
+" [UltiSnips]
+let g:UltiSnipsUsePythonVersion = 3 " Tell UltiSnips to use Python 3 (in case auto-detect doesn't work)
+let g:UltiSnipsSnippetsDir = "~/.config/nvim/UltiSnips" " Read snippets from this directory
+let g:UltiSnipsEditSplit = 'horizontal' " Open snippets file with a horizontal split with :snipedit
 " Unset annoying key mappings that can't be avoided
 let g:UltiSnipsExpandTrigger="<C-j>"
 let g:UltiSnipsListSnippets="<Nop>"
@@ -587,63 +602,35 @@ let g:UltiSnipsJumpForwardTrigger="<C-j>"
 let g:UltiSnipsJumpBackwardTrigger="<C-k>"
 
 " ==============================================================================
+" Filetype-specific settings
+" ==============================================================================
+
+" [elm-vim]
+" Space-p ("pretty ") to format Elm code
+au FileType elm nn <buffer> <silent> <Space>p :ElmFormat<CR>
+
+au FileType fzf,ghcid setlocal laststatus=0
+  \| au BufLeave <buffer> setlocal laststatus=2
+" Escape to quit little annoying temporary buffers
+au FileType fzf,ghcid nn <silent> <buffer> <Esc> :q<CR>
+
+" Swap ; and : in haskell
+au FileType haskell inoremap ; :
+au FileType haskell inoremap : ;
+" au FileType haskell nn <Space>p :cal LanguageClient_textDocument_formatting()<CR>
+" Start ghcid automatically
+au FileType haskell au BufWinEnter *.hs :cal <SID>StartGhcid()
+
+" On <Enter>, go to error and close quickfix list
+au FileType qf nn <silent> <buffer> <CR> <CR>:ccl<CR>
+
+" ==============================================================================
 " nvim-gtk settings
 " ==============================================================================
 
 if exists('g:GtkGuiLoaded')
-  call rpcnotify(1, 'Gui', 'Font', 'Hasklig 14')
+  cal rpcnotify(1, 'Gui', 'Font', 'Hasklig 18')
 endif
-
-" ==============================================================================
-" Filetype-specific settings
-" ==============================================================================
-
-" ------------------------------------------------------------------------------
-" Elm
-" ------------------------------------------------------------------------------
-
-" [elm-vim]
-" Space-p ("pretty ") to format Elm code
-autocmd FileType elm nnoremap <buffer> <silent> <Space>p :ElmFormat<Enter>
-
-" ------------------------------------------------------------------------------
-" fzf
-" ------------------------------------------------------------------------------
-
-autocmd! FileType fzf
-autocmd FileType fzf setlocal laststatus=0
-  \| autocmd BufLeave <buffer> setlocal laststatus=2
-autocmd FileType fzf nnoremap <silent> <buffer> <Esc> :q<Enter>
-
-" ------------------------------------------------------------------------------
-" Haskell
-" ------------------------------------------------------------------------------
-
-autocmd FileType haskell call <SID>IsFiletypeHaskell()
-function <SID>IsFiletypeHaskell()
-
-  " Always \ as a lambda
-  " syn match Lambda /\\/ conceal cchar=λ
-  " set conceallevel=2
-  " set concealcursor=nvic
-  " set signcolumn=yes
-
-  " syn match Arrow /->$/ conceal cchar=a
-
-
-  nnoremap <Space>p :call LanguageClient_textDocument_formatting()<Enter>
-
-  " Start ghcid automatically
-  " autocmd BufWinEnter * :call <SID>StartGhcid()
-
-endfunction
-
-" ------------------------------------------------------------------------------
-" quickfix
-" ------------------------------------------------------------------------------
-
-" On <Enter>, go to error and close quickfix list
-autocmd FileType qf nnoremap <silent> <buffer> <Enter> <Enter>:cclose<Enter>
 
 " ==============================================================================
 

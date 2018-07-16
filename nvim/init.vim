@@ -1,8 +1,26 @@
+" Big default verb/action changes;
+"
+" * J = page down
+" * K = page up
+" * Q = record (to repurpose q as a more common verb than macro)
+" * q = push text around (don't love this one)
+" * s = surround word
+" * S = surround WORD
+" * S = surround line
+" * X = exchange
+"
 " TODO
 " * Replace vim-airline with custom status line
 " * Open ghcid buffer on hovering over something in quickfix
 " * shada?
 " * Fix undo behavior for composite actions like K
+" * Only use AutoPairs if not up against a character
+" * Alt-K doesn't seem to work
+" * Make 'sp' repeatable
+" * Write function to make ds search for nearest surround and delete it
+" * U to redo
+" * vim-signify
+" * better function snippet (add args as I add types to type sig)
 
 " ==============================================================================
 " Plugins
@@ -148,9 +166,14 @@ nn <silent> <Enter> :noh<CR>
 nm j gj
 nm k gk
 
+" Big jk, and wean myself off <C-du>
+nn J <C-d>
+nn K <C-u>
+nn <C-d> <Nop>
+nn <C-u> <Nop>
+
 " Make Y yank to the end of line, similar to how C and D behave
 nn Y y$
-
 
 " Record macros with Q instead of q
 nn Q q
@@ -169,14 +192,12 @@ nm << <Plug>MyNmapHh
 nn <silent> <Plug>MyNmapLl >>ll:cal repeat#set("\<Plug>MyNmapLl")<CR>
 nn <silent> <Plug>MyNmapHh <<hh:cal repeat#set("\<Plug>MyNmapHh")<CR>
 
-" Restore the cursor after joining lines
-nn J m`J``
+" ,jk to join (and reverse join)
+nn ,j m`J``
+nn ,k km`J``
 
-" Make K pull the current line up, similar to how J pulls the following line up
-nn K kJ
-
-" S to search-and-replace in the file
-nn S :%s//g<Left><Left>
+" Ctrl+S to search-and-replace in the file
+nn <C-s> :%s//g<Left><Left>
 
 " Move tabs with Shift-hl
 " Trying to wean myself off tabs, so I commented this out
@@ -212,26 +233,33 @@ nn <silent> <Plug>MyNmapQlt :cal <SID>Qlt()<CR>:cal repeat#set("\<Plug>MyNmapQlt
 
 " [surround]
 " ds to delete surround and restore cursor position
-" cs to surround inner word and restore cursor position
-" cS to surround inner WORD and restore cursor position
-nm ds' mz<Plug>Dsurround '`zh
-nm ds" mz<Plug>Dsurround "`zh
-nm ds( mz<Plug>Dsurround )`zh
-nm ds[ mz<Plug>Dsurround ]`zh
-nm ds{ mz<Plug>Dsurround }`zh
-nm dsp mz<Plug>Dsurround )`zh
-nm cs' mz<Plug>Csurround w'`zl
-nm cs" mz<Plug>Csurround w"`zl
-nm cs( mz<Plug>Csurround w)`zl
-nm cs[ mz<Plug>Csurround w]`zl
-nm cs{ mz<Plug>Csurround w}`zl
-nm csp mz<Plug>Csurround w)`zl
-nm cS' mz<Plug>Csurround W'`zl
-nm cS" mz<Plug>Csurround W"`zl
-nm cS( mz<Plug>Csurround W)`zl
-nm cS[ mz<Plug>Csurround W]`zl
-nm cS{ mz<Plug>Csurround W}`zl
-nm cSp mz<Plug>Csurround W)`zl
+" s to surround inner word and restore cursor position
+" S to surround inner WORD and restore cursor position
+" SS to surround current line restore cursor position
+nm ds' mz<Plug>Dsurround'`zh
+nm ds" mz<Plug>Dsurround"`zh
+nm ds( mz<Plug>Dsurround)`zh
+nm ds[ mz<Plug>Dsurround]`zh
+nm ds{ mz<Plug>Dsurround}`zh
+nm dsp mz<Plug>Dsurround)`zh
+nm s' mz<Plug>Csurround w'`zl
+nm s" mz<Plug>Csurround w"`zl
+nm s( mz<Plug>Csurround w)`zl
+nm s[ mz<Plug>Csurround w]`zl
+nm s{ mz<Plug>Csurround w}`zl
+nm sp mz<Plug>Csurround w)`zl
+nm S' mz<Plug>Csurround W'`zl
+nm S" mz<Plug>Csurround W"`zl
+nm S( mz<Plug>Csurround W)`zl
+nm S[ mz<Plug>Csurround W]`zl
+nm S{ mz<Plug>Csurround W}`zl
+nm Sp mz<Plug>Csurround W)`zl
+nm SS' mz<Plug>Yssurround'`z
+nm SS" mz<Plug>Yssurround"`z
+nm SS( mz<Plug>Yssurround)`z
+nm SS[ mz<Plug>Yssurround]`z
+nm SS{ mz<Plug>Yssurround}`z
+nm SSp mz<Plug>Yssurround)`z
 
 " [exchange]
 " X ("exchange") once to yank, X again to exchange with the first yank
@@ -291,9 +319,8 @@ vn * y/<C-r>"<CR>zz
 " After yank, leave cursor at the end of the highlight
 vn y y`]
 
-" S to search-and-replace
-" whoops, clashes with surround...
-" xn S :s//g<Left><Left>
+" Ctrl+S to search-and-replace
+xn <C-s> :s//g<Left><Left>
 
 " [exchange]
 xm X <Plug>(Exchange)
@@ -307,12 +334,16 @@ vm <CR> <Plug>(LiveEasyAlign)
 vm <Space>m <Plug>Commentary
 
 " [vim-surround]
-xm S' <Plug>VSurround'
-xm S" <Plug>VSurround"
-xm S( <Plug>VSurround)
-xm S[ <Plug>VSurround]
-xm S{ <Plug>VSurround}
-xm Sp <Plug>VSurround)
+xm s' <Plug>VSurround'
+xm s" <Plug>VSurround"
+xm s( <Plug>VSurround)
+xm s[ <Plug>VSurround]
+xm s{ <Plug>VSurround}
+xm sp <Plug>VSurround)
+
+" We gave vs to vim-surround, so make S work like s did (but it doesn't seem
+" very useful)
+xn S s
 
 " [fzf.vim]
 " Space-f ("find") the selected contents
@@ -550,13 +581,13 @@ let g:haskell_enable_pattern_synonyms = 1
 let g:haskell_enable_quantification = 1
 let g:haskell_enable_recursivedo = 1
 let g:haskell_enable_typeroles = 1
-" let g:haskell_indent_before_where = 2
+let g:haskell_indent_bare_where = 0
+let g:haskell_indent_before_where = 0
 let g:haskell_indent_case = 2
 let g:haskell_indent_if = 2
 let g:haskell_indent_in = 0
 let g:haskell_indent_let = 2
-" let g:haskell_indent_where = 2
-" let g:haskell_indent_bare_where = 2
+let g:haskell_indent_where = 0
 " let g:haskell_classic_highlighting = 1
 
 " [highlightedyank]
@@ -609,17 +640,19 @@ let g:UltiSnipsJumpBackwardTrigger="<C-k>"
 " Space-p ("pretty ") to format Elm code
 au FileType elm nn <buffer> <silent> <Space>p :ElmFormat<CR>
 
-au FileType fzf,ghcid setlocal laststatus=0
-  \| au BufLeave <buffer> setlocal laststatus=2
+au FileType fzf,ghcid setl laststatus=0
+  \| au BufLeave <buffer> setl laststatus=2
 " Escape to quit little annoying temporary buffers
 au FileType fzf,ghcid nn <silent> <buffer> <Esc> :q<CR>
 
 " Swap ; and : in haskell
-au FileType haskell inoremap ; :
-au FileType haskell inoremap : ;
+au FileType haskell ino ; :
+au FileType haskell ino : ;
+au FileType haskell nn r; r:
+au FileType haskell nn r: r;
 " au FileType haskell nn <Space>p :cal LanguageClient_textDocument_formatting()<CR>
 " Start ghcid automatically
-au FileType haskell au BufWinEnter *.hs :cal <SID>StartGhcid()
+" au FileType haskell au BufWinEnter *.hs :cal <SID>StartGhcid()
 
 " On <Enter>, go to error and close quickfix list
 au FileType qf nn <silent> <buffer> <CR> <CR>:ccl<CR>

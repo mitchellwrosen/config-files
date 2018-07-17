@@ -1,4 +1,4 @@
-" Big default verb/action changes;
+" Big default verb/action changes:
 "
 " * J = page down
 " * K = page up
@@ -6,7 +6,7 @@
 " * q = push text around (don't love this one)
 " * s = surround word
 " * S = surround WORD
-" * S = surround line
+" * SS = surround line
 " * X = exchange
 "
 " TODO

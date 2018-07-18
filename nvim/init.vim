@@ -3,24 +3,25 @@
 " * J = page down
 " * K = page up
 " * Q = record (to repurpose q as a more common verb than macro)
-" * q = push text around (don't love this one)
+" * q = push text around (don't love this one, TODO find something better)
 " * s = surround word
 " * S = surround WORD
 " * SS = surround line
-" * X = exchange
+" * U = redo
+" * X = exchange (x in visual mode)
+" * XX = exchange line
 "
 " TODO
 " * Replace vim-airline with custom status line
 " * Open ghcid buffer on hovering over something in quickfix
 " * shada?
-" * Fix undo behavior for composite actions like K
-" * Only use AutoPairs if not up against a character
 " * Alt-K doesn't seem to work
 " * Make 'sp' repeatable
 " * Write function to make ds search for nearest surround and delete it
-" * U to redo
-" * vim-signify
-" * better function snippet (add args as I add types to type sig)
+" * better function snippet (add args as I add types to type sig?)
+" * lens snippet
+" * prism snippet
+" * replace easy-align
 
 " ==============================================================================
 " Plugins
@@ -31,10 +32,8 @@ cal plug#begin('~/.vim/plugged')
 " Language Server Protocol implementation
 " Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh', 'for': 'haskell' }
 
-" Improved jumping around with f, t, F, T
+" Long jump around with gf
 Plug 'easymotion/vim-easymotion'
-
-" Plug 'jceb/vim-orgmode'
 
 " Automatically insert/delete parens, braces, quotes, etc
 Plug 'jiangmiao/auto-pairs'
@@ -44,10 +43,13 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
+" Align characters, but I don't really use it
 Plug 'junegunn/vim-easy-align'
 
 " Highlight yanks
 Plug 'machakann/vim-highlightedyank'
+
+Plug 'mhinz/vim-signify'
 
 " Vim quickfix improvements
 Plug 'romainl/vim-qf'
@@ -55,8 +57,10 @@ Plug 'romainl/vim-qf'
 " File browser, only load when used
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 
+" Multiple cursors for quick and dirty renaming. Very handy.
 Plug 'terryma/vim-multiple-cursors'
 
+" Swap the location of two selections. Occasionally useful.
 Plug 'tommcdo/vim-exchange'
 
 " Improved 'ga' behavior (shows unicode code point, vim digraph, etc. of
@@ -73,10 +77,6 @@ Plug 'tpope/vim-repeat'
 " :help surround
 Plug 'tpope/vim-surround'
 
-" Lightweight status line
-" Plug 'vim-airline/vim-airline'
-" Plug 'vim-airline/vim-airline-themes'
-
 " Language-specific syntax highlighting and such
 Plug 'ElmCast/elm-vim', { 'for': 'elm' }
 Plug 'LnL7/vim-nix', { 'for': 'nix' }
@@ -86,7 +86,6 @@ Plug 'purescript-contrib/purescript-vim', { 'for': 'purescript' }
 Plug 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim', 'for': 'haskell' }
 
 Plug 'chriskempson/base16-vim'
-" Plug 'morhetz/gruvbox' " Need this for the airline theme :)
 
 Plug 'SirVer/ultisnips'
 
@@ -166,9 +165,11 @@ nn <silent> <Enter> :noh<CR>
 nm j gj
 nm k gk
 
-" Big jk, and wean myself off <C-du>
+" Big JK to move around (very fast and common)
 nn J <C-d>
 nn K <C-u>
+" Wean myself off <C-d>, <C-u> (though I still have to use these hotkeys in
+" pagers and such...)
 nn <C-d> <Nop>
 nn <C-u> <Nop>
 
@@ -176,8 +177,16 @@ nn <C-u> <Nop>
 nn Y y$
 
 " Record macros with Q instead of q
+" FIXME: I don't think I want this. I haven't been using my 'q' bindings, and
+" I do use macros occasionally.
 nn Q q
 nn q <Nop>
+
+" U to redo, since U is not very useful by default. I like having undo and
+" redo so similar.
+nn U <C-r>
+" Weaning myself of <C-R> to redo
+nn <C-r> <Nop>
 
 " Map Ctrl-T to new tab, just like in Chrome
 " nn <silent> <C-t> :tabnew<CR>
@@ -193,6 +202,7 @@ nn <silent> <Plug>MyNmapLl >>ll:cal repeat#set("\<Plug>MyNmapLl")<CR>
 nn <silent> <Plug>MyNmapHh <<hh:cal repeat#set("\<Plug>MyNmapHh")<CR>
 
 " ,jk to join (and reverse join)
+" FIXME: ,k is very hard to type and thus useless (,j however feels nice.)
 nn ,j m`J``
 nn ,k km`J``
 
@@ -290,6 +300,9 @@ nn <Space>f :Ag <C-r><C-w><CR>
 " Space-k (because it's a home-row key) to fuzzy-search buffers
 nn <Space>k :Buffers<CR>
 
+" [NERDTree]
+nn <silent> <Space>n :NERDTreeToggle<CR>
+
 " [LanguageClient]
 " nn <Space>sc :cal LanguageClient_textDocument_references()<CR>
 " nn <Space>ss :cal LanguageClient_textDocument_documentSymbol()<CR>
@@ -302,6 +315,15 @@ nn <Space>k :Buffers<CR>
 " Insert mode
 " ------------------------------------------------------------------------------
 
+" Steal back mappings for ([{'"` from AutoPairs. We have to use the VimEnter
+" autocmd trick because plugins are loaded after this file.
+autocmd VimEnter * ino <buffer> <silent> ( <C-R>=<SID>MyAutoPairsInsert('(')<CR>
+autocmd VimEnter * ino <buffer> <silent> [ <C-R>=<SID>MyAutoPairsInsert('[')<CR>
+autocmd VimEnter * ino <buffer> <silent> { <C-R>=<SID>MyAutoPairsInsert('{')<CR>
+autocmd VimEnter * ino <buffer> <silent> ' <C-R>=<SID>MyAutoPairsInsert("'")<CR>
+autocmd VimEnter * ino <buffer> <silent> " <C-R>=<SID>MyAutoPairsInsert('"')<CR>
+autocmd VimEnter * ino <buffer> <silent> ` <C-R>=<SID>MyAutoPairsInsert('`')<CR>
+
 " Ctrl+space for omnicomplete
 im <C-Space> <C-x><C-o>
 
@@ -313,6 +335,12 @@ ino <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 " Visual mode
 " ------------------------------------------------------------------------------
 
+" Same as insert mode
+xn J <C-d>
+xn K <C-u>
+xn <C-d> <Nop>
+xn <C-u> <Nop>
+
 " Make visual mode * work like normal mode *
 vn * y/<C-r>"<CR>zz
 
@@ -323,7 +351,9 @@ vn y y`]
 xn <C-s> :s//g<Left><Left>
 
 " [exchange]
-xm X <Plug>(Exchange)
+" x to exchange. vd and vx have the same default behavior (delete), so we
+" don't lose any functionality here.
+xm x <Plug>(Exchange)
 
 " [vim-easy-align]
 " Enter to align things with
@@ -419,6 +449,18 @@ function! <SID>EchoQuickFixEntry()
       return
     endif
   endfor
+endfunction
+
+" Fix up AutoPairsInsert a bit to make it less annoying. When my cursor is up
+" against a character, I typically don't want a pair, and if I do, I'll just
+" type it myself.
+function! <SID>MyAutoPairsInsert(key)
+  " If we are on a space or at the end of the line, go ahead and auto-pair.
+  if getline('.')[col('.')-1] == ' ' || col('$') <= col('.')
+    return AutoPairsInsert(a:key)
+  else
+    return a:key
+  endif
 endfunction
 
 " ==============================================================================
@@ -615,8 +657,14 @@ let g:multi_cursor_prev_key = '<C-p>'
 " let g:multi_cursor_skip_key = '<C-x>'
 let g:multi_cursor_quit_key = '<Esc>'
 
-" [NERDTree]
-nn <silent> <Space>n :NERDTreeToggle<CR>
+" [signify]
+" Update sign column more than just on open/read (I should disable this if it
+" seems to slow things down)
+let g:signify_realtime = 1
+let g:signify_sign_change = 'Δ'
+let g:signify_sign_delete = '✗'
+" I only use git, so only bother integrating with it (performance win!)
+let g:signify_vcs_list = [ 'git' ]
 
 " [surround]
 " Don't let surround provide any magic mappings
@@ -645,12 +693,15 @@ au FileType fzf,ghcid setl laststatus=0
 " Escape to quit little annoying temporary buffers
 au FileType fzf,ghcid nn <silent> <buffer> <Esc> :q<CR>
 
-" Swap ; and : in haskell
+" Space-p to format Haskell code with stylish-haskell (much less aggressive
+" than brittany).
+au FileType haskell nn <buffer> <silent> <Space>p :%!stylish-haskell<CR>
+" au FileType haskell nn <Space>p :cal LanguageClient_textDocument_formatting()<CR>
+" Swap ; and : in Haskell
 au FileType haskell ino ; :
 au FileType haskell ino : ;
 au FileType haskell nn r; r:
 au FileType haskell nn r: r;
-" au FileType haskell nn <Space>p :cal LanguageClient_textDocument_formatting()<CR>
 " Start ghcid automatically
 " au FileType haskell au BufWinEnter *.hs :cal <SID>StartGhcid()
 

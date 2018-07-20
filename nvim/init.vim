@@ -43,8 +43,8 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
-" Align characters, but I don't really use it
-Plug 'junegunn/vim-easy-align'
+" Align on words
+Plug 'godlygeek/tabular'
 
 " Highlight yanks
 Plug 'machakann/vim-highlightedyank'
@@ -113,7 +113,6 @@ set gp=ag                  " use ag to grep
 set hid                    " don't abandon out-of-sight buffers
 set ic                     " case-insensitive searching
 set icm=split              " show live command substitutions
-set is                     " search while typing
 set lz                     " don't draw during e.g. applying a macro
 set lbr                    " wrap lines in a more visually pleasing way
 set list                   " show trailing whitespace, tabs, etc.
@@ -141,8 +140,9 @@ set wim=list:longest,full  " wild menu completion behavior
 " All modes
 " ------------------------------------------------------------------------------
 
-" I don't use ;, but I use :, so make : easier to type
+" Swap ; and ;
 no ; :
+no : ;
 
 " Disable annoying command search 'q:' that I never use
 map q: <Nop>
@@ -202,9 +202,7 @@ nn <silent> <Plug>MyNmapLl >>ll:cal repeat#set("\<Plug>MyNmapLl")<CR>
 nn <silent> <Plug>MyNmapHh <<hh:cal repeat#set("\<Plug>MyNmapHh")<CR>
 
 " ,jk to join (and reverse join)
-" FIXME: ,k is very hard to type and thus useless (,j however feels nice.)
 nn ,j m`J``
-nn ,k km`J``
 
 " Ctrl+S to search-and-replace in the file
 nn <C-s> :%s//g<Left><Left>
@@ -271,6 +269,10 @@ nm SS[ mz<Plug>Yssurround]`z
 nm SS{ mz<Plug>Yssurround}`z
 nm SSp mz<Plug>Yssurround)`z
 
+" [tabular]
+" Space-a to align on the word under the cursor
+nn <silent> <Space>a m`:execute "Tabularize /" . expand("<cWORD>")<CR>``
+
 " [exchange]
 " X ("exchange") once to yank, X again to exchange with the first yank
 " Manually make [exhange] replace 'w' with 'e', as vim does for e.g. 'c'
@@ -328,7 +330,7 @@ autocmd VimEnter * ino <buffer> <silent> ` <C-R>=<SID>MyAutoPairsInsert('`')<CR>
 im <C-Space> <C-x><C-o>
 
 " When a popup menu is visible, move thru it with tab and select with enter
-ino <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+ino <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 ino <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
 " ------------------------------------------------------------------------------
@@ -342,7 +344,7 @@ xn <C-d> <Nop>
 xn <C-u> <Nop>
 
 " Make visual mode * work like normal mode *
-vn * y/<C-r>"<CR>zz
+vn * y/<C-r>"<CR>
 
 " After yank, leave cursor at the end of the highlight
 vn y y`]
@@ -354,10 +356,6 @@ xn <C-s> :s//g<Left><Left>
 " x to exchange. vd and vx have the same default behavior (delete), so we
 " don't lose any functionality here.
 xm x <Plug>(Exchange)
-
-" [vim-easy-align]
-" Enter to align things with
-vm <CR> <Plug>(LiveEasyAlign)
 
 " [vim-commentary]
 " Toggle comment
@@ -371,13 +369,9 @@ xm s[ <Plug>VSurround]
 xm s{ <Plug>VSurround}
 xm sp <Plug>VSurround)
 
-" We gave vs to vim-surround, so make S work like s did (but it doesn't seem
-" very useful)
-xn S s
-
 " [fzf.vim]
 " Space-f ("find") the selected contents
-vm <Space>f "0y:Ag <C-r>0<CR>
+vm <Space>f y:Ag <C-r>"<CR>
 
 " ------------------------------------------------------------------------------
 " Terminal mode
@@ -658,11 +652,8 @@ let g:multi_cursor_prev_key = '<C-p>'
 let g:multi_cursor_quit_key = '<Esc>'
 
 " [signify]
-" Update sign column more than just on open/read (I should disable this if it
-" seems to slow things down)
-let g:signify_realtime = 1
 let g:signify_sign_change = 'Δ'
-let g:signify_sign_delete = '✗'
+let g:signify_sign_delete = '-'
 " I only use git, so only bother integrating with it (performance win!)
 let g:signify_vcs_list = [ 'git' ]
 
@@ -695,7 +686,7 @@ au FileType fzf,ghcid nn <silent> <buffer> <Esc> :q<CR>
 
 " Space-p to format Haskell code with stylish-haskell (much less aggressive
 " than brittany).
-au FileType haskell nn <buffer> <silent> <Space>p :%!stylish-haskell<CR>
+au FileType haskell nn <buffer> <silent> <Space>p m`:%!stylish-haskell<CR>``
 " au FileType haskell nn <Space>p :cal LanguageClient_textDocument_formatting()<CR>
 " Swap ; and : in Haskell
 au FileType haskell ino ; :

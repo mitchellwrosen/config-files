@@ -319,12 +319,12 @@ nn <silent> <Space>n :NERDTreeToggle<CR>
 
 " Steal back mappings for ([{'"` from AutoPairs. We have to use the VimEnter
 " autocmd trick because plugins are loaded after this file.
-autocmd VimEnter * ino <buffer> <silent> ( <C-R>=<SID>MyAutoPairsInsert('(')<CR>
-autocmd VimEnter * ino <buffer> <silent> [ <C-R>=<SID>MyAutoPairsInsert('[')<CR>
-autocmd VimEnter * ino <buffer> <silent> { <C-R>=<SID>MyAutoPairsInsert('{')<CR>
-autocmd VimEnter * ino <buffer> <silent> ' <C-R>=<SID>MyAutoPairsInsert("'")<CR>
-autocmd VimEnter * ino <buffer> <silent> " <C-R>=<SID>MyAutoPairsInsert('"')<CR>
-autocmd VimEnter * ino <buffer> <silent> ` <C-R>=<SID>MyAutoPairsInsert('`')<CR>
+autocmd VimEnter,BufEnter,BufWinEnter * ino <buffer> <silent> ( <C-R>=<SID>MyAutoPairsInsert('(')<CR>
+autocmd VimEnter,BufEnter,BufWinEnter * ino <buffer> <silent> [ <C-R>=<SID>MyAutoPairsInsert('[')<CR>
+autocmd VimEnter,BufEnter,BufWinEnter * ino <buffer> <silent> { <C-R>=<SID>MyAutoPairsInsert('{')<CR>
+autocmd VimEnter,BufEnter,BufWinEnter * ino <buffer> <silent> ' <C-R>=<SID>MyAutoPairsInsert("'")<CR>
+autocmd VimEnter,BufEnter,BufWinEnter * ino <buffer> <silent> " <C-R>=<SID>MyAutoPairsInsert('"')<CR>
+autocmd VimEnter,BufEnter,BufWinEnter * ino <buffer> <silent> ` <C-R>=<SID>MyAutoPairsInsert('`')<CR>
 
 " Ctrl+space for omnicomplete
 im <C-Space> <C-x><C-o>

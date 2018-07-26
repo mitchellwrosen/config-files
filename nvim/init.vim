@@ -16,7 +16,7 @@
 " * Open ghcid buffer on hovering over something in quickfix
 " * shada?
 " * Alt-K doesn't seem to work
-" * Make 'sp' repeatable
+" * Make 'sp' etc repeatable
 " * Write function to make ds search for nearest surround and delete it
 " * better function snippet (add args as I add types to type sig?)
 " * lens snippet
@@ -109,7 +109,7 @@ set cb=unnamed,unnamedplus " yank also copies to both clipboards
 set cc=81                  " highlight column 81
 set cul                    " higlight the current line
 set et                     " convert tabs to spaces
-set gp=ag                  " use ag to grep
+set gp=rg\ --vimgrep       " use rg to grep
 set hid                    " don't abandon out-of-sight buffers
 set ic                     " case-insensitive searching
 set icm=split              " show live command substitutions
@@ -250,18 +250,21 @@ nm ds( mz<Plug>Dsurround)`zh
 nm ds[ mz<Plug>Dsurround]`zh
 nm ds{ mz<Plug>Dsurround}`zh
 nm dsp mz<Plug>Dsurround)`zh
+nm ds<Space> mz<Plug>Dsurround <Space>`zh
 nm s' mz<Plug>Csurround w'`zl
 nm s" mz<Plug>Csurround w"`zl
 nm s( mz<Plug>Csurround w)`zl
 nm s[ mz<Plug>Csurround w]`zl
 nm s{ mz<Plug>Csurround w}`zl
 nm sp mz<Plug>Csurround w)`zl
+nm s<Space> mz<Plug>Csurround w <Space>`zl
 nm S' mz<Plug>Csurround W'`zl
 nm S" mz<Plug>Csurround W"`zl
 nm S( mz<Plug>Csurround W)`zl
 nm S[ mz<Plug>Csurround W]`zl
 nm S{ mz<Plug>Csurround W}`zl
 nm Sp mz<Plug>Csurround W)`zl
+nm S<Space> mz<Plug>Csurround W <Space>`zl
 nm SS' mz<Plug>Yssurround'`z
 nm SS" mz<Plug>Yssurround"`z
 nm SS( mz<Plug>Yssurround)`z
@@ -298,7 +301,7 @@ nm <Space>m <Plug>CommentaryLine
 nn <Space>o :GFiles<CR>
 nn <Space>O :Files<CR>
 " Space-f ("find") the word under the cursor
-nn <Space>f :Ag <C-r><C-w><CR>
+nn <Space>f :Rg <C-r><C-w><CR>
 " Space-k (because it's a home-row key) to fuzzy-search buffers
 nn <Space>k :Buffers<CR>
 
@@ -332,6 +335,49 @@ im <C-Space> <C-x><C-o>
 " When a popup menu is visible, move thru it with tab and select with enter
 ino <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 ino <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
+
+ino <C-u> <Nop>
+ino <C-u>. ‧
+ino <C-u>.. •
+ino <C-u>- ⁃
+ino <C-u>!! ‼
+ino <C-u>!? ⁉
+ino <C-u>?? ⁇
+ino <C-u>?! ⁈
+ino <C-u>* ⁎
+ino <C-u>** ⁑
+" Greek Heta
+ino <C-u>gh ͱ
+
+ino <C-u>a ᴀ
+ino <C-u>b ʙ
+ino <C-u>c ᴄ
+ino <C-u>d ᴅ
+ino <C-u>e ᴇ
+ino <C-u>f ꜰ
+ino <C-u>g ɢ
+ino <C-u>h ʜ
+ino <C-u>i ɪ
+ino <C-u>j ᴊ
+ino <C-u>k ᴋ
+ino <C-u>l ʟ
+ino <C-u>m ᴍ
+ino <C-u>n ɴ
+ino <C-u>o ᴏ
+ino <C-u>p ᴘ
+ino <C-u>q 𝕢
+" ꞯ
+ino <C-u>r ʀ
+ino <C-u>s ꜱ
+ino <C-u>t ᴛ
+ino <C-u>u ᴜ
+ino <C-u>v ᴠ
+ino <C-u>w ẇ
+" ᴡ
+ino <C-u>y ʏ
+" No small capital X
+ino <C-u>x ẋ
+ino <C-u>z ᴢ
 
 " ------------------------------------------------------------------------------
 " Visual mode
@@ -387,6 +433,15 @@ tno <A-[> <Esc>
 
 " command! Vimrc e "~/.config/nvim/init.vim"
 
+" Add :Rg command to call ripgrep
+" (stolen from https://github.com/junegunn/fzf.vim#advanced-customization)
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
+
 " ==============================================================================
 " Functions
 " ==============================================================================
@@ -434,11 +489,11 @@ function! <SID>Qlt()
 endfunction
 
 function! <SID>EchoQuickFixEntry()
-  let l:entries = getqflist()
-  let l:bufnr = bufnr('%')
-  let l:lnum = line('.')
+  let entries = getqflist()
+  let bufnr = bufnr('%')
+  let lnum = line('.')
   for e in entries
-    if e.bufnr == l:bufnr && e.lnum == l:lnum
+    if e.bufnr == bufnr && e.lnum == lnum
       echo e.text
       return
     endif
@@ -449,8 +504,10 @@ endfunction
 " against a character, I typically don't want a pair, and if I do, I'll just
 " type it myself.
 function! <SID>MyAutoPairsInsert(key)
-  " If we are on a space or at the end of the line, go ahead and auto-pair.
-  if getline('.')[col('.')-1] == ' ' || col('$') <= col('.')
+  let c = getline('.')[col('.')-1]
+  " If we are on a space, the character we're typing, or at the end of the line,
+  " go ahead and auto-pair.
+  if c == ' ' || c == a:key || col('$') <= col('.')
     return AutoPairsInsert(a:key)
   else
     return a:key
@@ -660,6 +717,7 @@ let g:signify_vcs_list = [ 'git' ]
 " [surround]
 " Don't let surround provide any magic mappings
 let g:surround_no_mappings = 1
+" let g:surround_32 = "OINK \r OINK"
 
 " [UltiSnips]
 let g:UltiSnipsUsePythonVersion = 3 " Tell UltiSnips to use Python 3 (in case auto-detect doesn't work)
@@ -687,6 +745,10 @@ au FileType fzf,ghcid nn <silent> <buffer> <Esc> :q<CR>
 " Space-p to format Haskell code with stylish-haskell (much less aggressive
 " than brittany).
 au FileType haskell nn <buffer> <silent> <Space>p m`:%!stylish-haskell<CR>``
+" <Space>ff to find-function (ag can match over multiple lines)
+" <Space>ft to find-type (ripgrep is faster)
+au FileType haskell nn <buffer> <Space>ff :Ag (<Bslash>b)<C-r><C-w><Bslash>b[ <Bslash>t<Bslash>n]+::<CR>
+au FileType haskell nn <buffer> <Space>ft :Rg (data<Bar>newtype<Bar>Type)( +)<Bslash>b<C-r><C-w><Bslash>b<CR>
 " au FileType haskell nn <Space>p :cal LanguageClient_textDocument_formatting()<CR>
 " Swap ; and : in Haskell
 au FileType haskell ino ; :

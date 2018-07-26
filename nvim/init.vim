@@ -505,9 +505,9 @@ endfunction
 " type it myself.
 function! <SID>MyAutoPairsInsert(key)
   let c = getline('.')[col('.')-1]
-  " If we are on a space, the character we're typing, or at the end of the line,
-  " go ahead and auto-pair.
-  if c == ' ' || c == a:key || col('$') <= col('.')
+  if c == a:key
+    return <Right>
+  elseif c == ' ' || col('$') <= col('.')
     return AutoPairsInsert(a:key)
   else
     return a:key

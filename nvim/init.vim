@@ -2,8 +2,6 @@
 "
 " * J = page down
 " * K = page up
-" * Q = record (to repurpose q as a more common verb than macro)
-" * q = push text around (don't love this one, TODO find something better)
 " * s = surround word
 " * S = surround WORD
 " * SS = surround line
@@ -12,7 +10,6 @@
 " * XX = exchange line
 "
 " TODO
-" * Replace vim-airline with custom status line
 " * Open ghcid buffer on hovering over something in quickfix
 " * shada?
 " * Alt-K doesn't seem to work
@@ -34,9 +31,6 @@ cal plug#begin('~/.vim/plugged')
 
 " Long jump around with gf
 Plug 'easymotion/vim-easymotion'
-
-" Automatically insert/delete parens, braces, quotes, etc
-Plug 'jiangmiao/auto-pairs'
 
 " Fuzzy search source code, files, etc
 " :help fzf-vim
@@ -97,7 +91,6 @@ cal plug#end()
 " ==============================================================================
 
 " Colorscheme requires base15-shell, which writes ~/.vimrc_background
-" FIXME Would be nice to auto-update airline theme too, somehow
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256
   so ~/.vimrc_background
@@ -176,12 +169,6 @@ nn <C-u> <Nop>
 " Make Y yank to the end of line, similar to how C and D behave
 nn Y y$
 
-" Record macros with Q instead of q
-" FIXME: I don't think I want this. I haven't been using my 'q' bindings, and
-" I do use macros occasionally.
-nn Q q
-nn q <Nop>
-
 " U to redo, since U is not very useful by default. I like having undo and
 " redo so similar.
 nn U <C-r>
@@ -222,22 +209,6 @@ nn <expr> <silent> <Space>d len(getbufinfo({'buflisted': 1})) ==? 1 ? ":q\<CR>" 
 " Move vertical splits with Ctrl+hl (sorry, horizontal splits)
 nn <C-h> <C-w>h
 nn <C-l> <C-w>l
-
-" [repeat]
-" q-hjkl> to push code around. repeat.vim is used to make these commands
-" repeatable with '.'
-" FIXME Would be nice to not clobber the 'z' mark
-nm qh <Plug>MyNmapQh
-nm qj <Plug>MyNmapQj
-nm qk <Plug>MyNmapQk
-nm ql i<Space><Esc>
-nm q> <Plug>MyNmapQgt
-nm q< <Plug>MyNmapQlt
-nn <silent> <Plug>MyNmapQh :cal <SID>QH()<CR>:cal repeat#set("\<Plug>MyNmapQh")<CR>
-nn <silent> <Plug>MyNmapQj m`o<Esc>``:cal repeat#set("\<Plug>MyNmapQj")<CR>
-nn <silent> <Plug>MyNmapQk m`O<Esc>``:cal repeat#set("\<Plug>MyNmapQk")<CR>
-nn <silent> <Plug>MyNmapQgt m`i<Tab><Esc>``:cal repeat#set("\<Plug>MyNmapQgt")<CR>
-nn <silent> <Plug>MyNmapQlt :cal <SID>Qlt()<CR>:cal repeat#set("\<Plug>MyNmapQlt")<CR>
 
 " [surround]
 " ds to delete surround and restore cursor position
@@ -319,15 +290,6 @@ nn <silent> <Space>n :NERDTreeToggle<CR>
 " ------------------------------------------------------------------------------
 " Insert mode
 " ------------------------------------------------------------------------------
-
-" Steal back mappings for ([{'"` from AutoPairs. We have to use the VimEnter
-" autocmd trick because plugins are loaded after this file.
-autocmd VimEnter,BufEnter,BufWinEnter * ino <buffer> <silent> ( <C-R>=<SID>MyAutoPairsInsert('(')<CR>
-autocmd VimEnter,BufEnter,BufWinEnter * ino <buffer> <silent> [ <C-R>=<SID>MyAutoPairsInsert('[')<CR>
-autocmd VimEnter,BufEnter,BufWinEnter * ino <buffer> <silent> { <C-R>=<SID>MyAutoPairsInsert('{')<CR>
-autocmd VimEnter,BufEnter,BufWinEnter * ino <buffer> <silent> ' <C-R>=<SID>MyAutoPairsInsert("'")<CR>
-autocmd VimEnter,BufEnter,BufWinEnter * ino <buffer> <silent> " <C-R>=<SID>MyAutoPairsInsert('"')<CR>
-autocmd VimEnter,BufEnter,BufWinEnter * ino <buffer> <silent> ` <C-R>=<SID>MyAutoPairsInsert('`')<CR>
 
 " Ctrl+space for omnicomplete
 im <C-Space> <C-x><C-o>
@@ -472,22 +434,6 @@ function! <SID>StartGhcid()
   endif
 endfun
 
-" qh behavior: move code to the left if there's room
-function! <SID>QH()
-  if getline('.')[0] == ' '
-    exec "norm hm`0x``i\<Space>\<Esc>l"
-  endif
-endfunction
-
-" q< behavior: shift code to the left if there's room
-" FIXME: This just assumes shiftwidth=2 and ignores shiftround
-function! <SID>Qlt()
-  let l = getline('.')
-  if l[0] == ' ' && l[1] == ' '
-    exec "norm 2hm`02x``i\<Space>\<Space>\<Esc>l"
-  endif
-endfunction
-
 function! <SID>EchoQuickFixEntry()
   let entries = getqflist()
   let bufnr = bufnr('%')
@@ -500,19 +446,6 @@ function! <SID>EchoQuickFixEntry()
   endfor
 endfunction
 
-" Fix up AutoPairsInsert a bit to make it less annoying. When my cursor is up
-" against a character, I typically don't want a pair, and if I do, I'll just
-" type it myself.
-function! <SID>MyAutoPairsInsert(key)
-  let c = getline('.')[col('.')-1]
-  if c == a:key
-    return <Right>
-  elseif c == ' ' || col('$') <= col('.')
-    return AutoPairsInsert(a:key)
-  else
-    return a:key
-  endif
-endfunction
 
 " ==============================================================================
 " Autocommands
@@ -625,25 +558,6 @@ ca snipedit UltiSnipsEdit
 " Plugin settings
 " ==============================================================================
 
-" [airline]
-" let g:airline_symbols_ascii = 1
-" let g:airline_theme='gruvbox'
-
-" [AutoPairs]
-" Which symbols are automatically paired
-let g:AutoPairs = { '(': ')', '[': ']', '{': '}', "'": "'", '"': '"', '`': '`' }
-let g:AutoPairsMapBS = 1 " Let AutoPairs handle <Backspace> (deletes pair)
-let g:AutoPairsMapSpace = 1 " Let AutoPairs insert a space before the closing pair
-" Don't handle <CR> in insert mode specially (cause it's brokenish)
-let g:AutoPairsMapCR = 0
-let g:AutoPairsCenterLine = 0
-" Disable a bunch of random key bindings
-let g:AutoPairsShortcutToggle = ''
-let g:AutoPairsShortcutFastWrap = ''
-let g:AutoPairsShortcutJump = ''
-let g:AutoPairsShortcutBackInsert = ''
-let g:AutoPairsMapCh = 0
-
 " [EasyMotion]
 let g:EasyMotion_do_mapping = 0 " Don't make any key mappings
 let g:EasyMotion_smartcase = 1
@@ -668,20 +582,12 @@ let g:fzf_buffers_jump = 1
 let g:ghcid_background = 1
 
 " [haskell]
-" let g:haskell_indent_disable = 1
+let g:haskell_indent_disable = 1
 let g:haskell_enable_backpack = 1
 let g:haskell_enable_pattern_synonyms = 1
 let g:haskell_enable_quantification = 1
 let g:haskell_enable_recursivedo = 1
 let g:haskell_enable_typeroles = 1
-let g:haskell_indent_bare_where = 0
-let g:haskell_indent_before_where = 0
-let g:haskell_indent_case = 2
-let g:haskell_indent_if = 2
-let g:haskell_indent_in = 0
-let g:haskell_indent_let = 2
-let g:haskell_indent_where = 0
-" let g:haskell_classic_highlighting = 1
 
 " [highlightedyank]
 let g:highlightedyank_highlight_duration = 500 " highlight yank for 500ms
@@ -750,13 +656,14 @@ au FileType haskell nn <buffer> <silent> <Space>p m`:%!stylish-haskell<CR>``
 au FileType haskell nn <buffer> <Space>ff :Ag (<Bslash>b)<C-r><C-w><Bslash>b[ <Bslash>t<Bslash>n]+::<CR>
 au FileType haskell nn <buffer> <Space>ft :Rg (data<Bar>newtype<Bar>Type)( +)<Bslash>b<C-r><C-w><Bslash>b<CR>
 " au FileType haskell nn <Space>p :cal LanguageClient_textDocument_formatting()<CR>
-" Swap ; and : in Haskell
-au FileType haskell ino ; :
-au FileType haskell ino : ;
-au FileType haskell nn r; r:
-au FileType haskell nn r: r;
+" Swap ; and : in Haskell, PureScript
+au FileType haskell,purescript ino ; :
+au FileType haskell,purescript ino : ;
+au FileType haskell,purescript nn r; r:
+au FileType haskell,purescript nn r: r;
 " Start ghcid automatically
 " au FileType haskell au BufWinEnter *.hs :cal <SID>StartGhcid()
+au FileType haskell nn <Space>it m`"ayiwI<C-r>=system('cabal new-repl -v0 --repl-options=-fno-code --repl-options=-v0 2>/dev/null <<< ":t <C-r>a"')<CR><Esc>``
 
 " On <Enter>, go to error and close quickfix list
 au FileType qf nn <silent> <buffer> <CR> <CR>:ccl<CR>

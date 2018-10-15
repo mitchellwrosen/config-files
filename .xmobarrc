@@ -1,4 +1,4 @@
-Config { font         = "xft:Hack:pixelsize=12"
+Config { font         = "xft:Hack:pixelsize=14"
        , bgColor      = "black"
        , fgColor      = "grey"
        , position     = Top
@@ -20,7 +20,7 @@ Config { font         = "xft:Hack:pixelsize=12"
                         10
 
                     , Run DiskIO
-                        [("/", "<read>↓ <write>↑")]
+                        [("/", "<read>/<write>")]
                         []
                         10
 
@@ -83,5 +83,5 @@ Config { font         = "xft:Hack:pixelsize=12"
                     , Run Date "%a %b %_d %l:%M" "date" 600
                     ]
        , alignSep = "}{"
-       , template = "%StdinReader% }{ %uptime% | %multicpu% | %memory% | %diskio% | %thermal0% %thermal1% | %default:Master% | %wlp4s0wi% %dynnetwork% | %battery% | <fc=orange>%date%</fc>"
+       , template = "%StdinReader% }{ %uptime% | %multicpu% | %thermal0% %thermal1% | %memory% | %diskio% | %default:Master% | %wlp4s0wi% %dynnetwork% | %battery% | <fc=orange>%date%</fc>"
        }

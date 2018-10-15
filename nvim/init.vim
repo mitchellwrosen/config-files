@@ -299,7 +299,7 @@ ino <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 ino <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
 ino <C-u> <Nop>
-ino <C-u>. ‧
+ino <C-u>. ∙
 ino <C-u>.. •
 ino <C-u>- ⁃
 ino <C-u>!! ‼
@@ -308,38 +308,13 @@ ino <C-u>?? ⁇
 ino <C-u>?! ⁈
 ino <C-u>* ⁎
 ino <C-u>** ⁑
-" Greek Heta
-ino <C-u>gh ͱ
+ino <C-u>x ×
+ino <C-u>/ ÷
+ino <C-u>- −
+ino <C-u>= ≡
 
-ino <C-u>a ᴀ
-ino <C-u>b ʙ
-ino <C-u>c ᴄ
-ino <C-u>d ᴅ
-ino <C-u>e ᴇ
-ino <C-u>f ꜰ
-ino <C-u>g ɢ
-ino <C-u>h ʜ
-ino <C-u>i ɪ
-ino <C-u>j ᴊ
-ino <C-u>k ᴋ
-ino <C-u>l ʟ
-ino <C-u>m ᴍ
-ino <C-u>n ɴ
-ino <C-u>o ᴏ
-ino <C-u>p ᴘ
-ino <C-u>q 𝕢
-" ꞯ
-ino <C-u>r ʀ
-ino <C-u>s ꜱ
-ino <C-u>t ᴛ
-ino <C-u>u ᴜ
-ino <C-u>v ᴠ
-ino <C-u>w ẇ
-" ᴡ
-ino <C-u>y ʏ
-" No small capital X
-ino <C-u>x ẋ
-ino <C-u>z ᴢ
+ino <C-u>C ℂ
+ino <C-u>R ℝ
 
 " ------------------------------------------------------------------------------
 " Visual mode

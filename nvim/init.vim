@@ -299,8 +299,7 @@ ino <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 ino <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
 ino <C-u> <Nop>
-ino <C-u>. ∙
-ino <C-u>.. •
+
 ino <C-u>- ⁃
 ino <C-u>!! ‼
 ino <C-u>!? ⁉
@@ -311,10 +310,89 @@ ino <C-u>** ⁑
 ino <C-u>x ×
 ino <C-u>/ ÷
 ino <C-u>- −
-ino <C-u>= ≡
 
 ino <C-u>C ℂ
+ino <C-u>Q ℚ
 ino <C-u>R ℝ
+ino <C-u>Z ℤ
+ino <C-u><- ←
+ino <C-u>-> →
+ino <C-u>=> ⇒
+ino <C-u>forall ∀
+ino <C-u>complement ∁
+ino <C-u>pdiff ∂
+ino <C-u>exists ∃
+ino <C-u>nexists ∄
+ino <C-u>empty ∅
+ino <C-u>incr ∆
+ino <C-u>nabla ∇
+ino <C-u>elem ∈
+ino <C-u>nelem ∉
+ino <C-u>selem ∊
+ino <C-u>contains ∋
+ino <C-u>ncontains ∌
+ino <C-u>scontains ∍
+ino <C-u>endofproof ∎
+ino <C-u>nproduct ∏
+ino <C-u>ncoproduct ∐
+ino <C-u>nsum ∑
+ino <C-u>minus −
+ino <C-u>minusplus ∓
+ino <C-u>dotplus ∔
+ino <C-u>div ∕
+ino <C-u>setminus ∖
+ino <C-u>asterisk ∗
+ino <C-u>ring ∘
+ino <C-u>. ∘
+ino <C-u>bullet ∙
+ino <C-u>root2 √
+ino <C-u>root3 ∛
+ino <C-u>root4 ∜
+ino <C-u>proportional ∝
+ino <C-u>infinity ∞
+ino <C-u>rangle ∟
+ino <C-u>angle ∠
+ino <C-u>mangle ∡
+ino <C-u>sangle ∢
+ino <C-u>divides ∣
+ino <C-u>ndivides ∤
+ino <C-u>parallel ∥
+ino <C-u>nparallel ∦
+ino <C-u>and ∧
+ino <C-u>or ∨
+ino <C-u>intersection ∩
+ino <C-u>union ∪
+ino <C-u>integral ∫
+ino <C-u>integral2 ∬
+ino <C-u>integral3 ∭
+" ∮ ∯ ∰ ∱ ∲ ∳
+ino <C-u>therefore ∴
+ino <C-u>because ∵
+ino <C-u>ratio ∶
+ino <C-u>proportion ∷
+ino <C-u>:: ∷
+ino <C-u>dotminus ∸
+ino <C-u>excess ∹
+ino <C-u>gproportion ∺
+ino <C-u>homothetic ∻
+ino <C-u>tilde ∼
+
+ino <C-u>neq ≠
+ino <C-u>/= ≠
+ino <C-u>eq ≡
+ino <C-u>= ≡
+ino <C-u>lte ≤
+ino <C-u>gte ≥
+ino <C-u>nlt ≮
+ino <C-u>ngt ≯
+
+ino <C-u>cplus ⊕
+
+ino <C-u>dot ⋅
+
+ino <C-u>perpendicular ⟂
+
+ino <C-u>; ⨾
 
 " ------------------------------------------------------------------------------
 " Visual mode
@@ -520,6 +598,8 @@ ia zor ∨
 ia zempty ∅
 ia zunion ∪
 ia zintersect ∩
+
+ia zbullet •
 
 " ------------------------------------------------------------------------------
 " Command mode

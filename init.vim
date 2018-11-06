@@ -269,8 +269,7 @@ nm <Space>m <Plug>CommentaryLine
 
 " [fzf]
 " Space-o ("open") to fuzzy file search, both git- and everything-variants
-nn <Space>o :GFiles<CR>
-nn <Space>O :Files<CR>
+nn <expr> <Space>o (len(system('git rev-parse')) ? ':Files' : ':GFiles')."\<CR>"
 " Space-f ("find") the word under the cursor
 nn <Space>f :Rg <C-r><C-w><CR>
 " Space-k (because it's a home-row key) to fuzzy-search buffers

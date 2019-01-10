@@ -140,6 +140,8 @@ no : ;
 " Disable annoying command search 'q:' that I never use
 map q: <Nop>
 
+map Q @q
+
 " [vim-easymotion]
 " gf to 'go find' some far-away character (above or below)
 map gf <Plug>(easymotion-bd-f)
@@ -1447,10 +1449,10 @@ au FileType haskell nn <buffer> <Space>ff :Ag (<Bslash>b)<C-r><C-w><Bslash>b[ <B
 au FileType haskell nn <buffer> <Space>ft :Rg (data<Bar>newtype<Bar>Type)( +)<Bslash>b<C-r><C-w><Bslash>b<CR>
 " au FileType haskell nn <Space>p :cal LanguageClient_textDocument_formatting()<CR>
 " Swap ; and : in Haskell, PureScript
-au FileType haskell,purescript ino ; :
-au FileType haskell,purescript ino : ;
-au FileType haskell,purescript nn r; r:
-au FileType haskell,purescript nn r: r;
+au FileType elm,haskell,purescript ino ; :
+au FileType elm,haskell,purescript ino : ;
+au FileType elm,haskell,purescript nn r; r:
+au FileType elm,haskell,purescript nn r: r;
 " Start ghcid automatically
 " au FileType haskell au BufWinEnter *.hs :cal <SID>StartGhcid()
 au FileType haskell nn <Space>it m`"ayiwI<C-r>=system('cabal new-repl -v0 --repl-options=-fno-code --repl-options=-v0 2>/dev/null <<< ":t <C-r>a"')<CR><Esc>``

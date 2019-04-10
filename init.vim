@@ -83,6 +83,8 @@ Plug 'chriskempson/base16-vim'
 
 Plug 'SirVer/ultisnips'
 
+Plug 'vmchale/dhall-vim'
+
 cal plug#end()
 " Automatically calls syntax on, filetype plugin indent on
 
@@ -1358,7 +1360,7 @@ let g:EasyMotion_keys = 'ASDGHKLQWERTYUIOPZXCVBNMFJ;'
 
 " [elm]
 let g:elm_setup_keybindings = 0 " Don't make any key mappings
-let g:elm_format_autosave = 0 " Don't run elm-format on save
+let g:elm_format_autosave = 1 " Run elm-format on save
 
 " [exchange]
 " Don't make any key mappings

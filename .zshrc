@@ -57,10 +57,6 @@ typeset -U path
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
 
-if [ -e /home/mitchell/.nix-profile/etc/profile.d/nix.sh ]; then
-  . /home/mitchell/.nix-profile/etc/profile.d/nix.sh;
-fi
-
 # [base16-shell]
 BASE16_SHELL="$HOME/.config/base16-shell/"
 [ -n "$PS1" ] && \
@@ -71,4 +67,5 @@ BASE16_SHELL="$HOME/.config/base16-shell/"
 # pacman -S zsh-autosuggestions
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-export SENTENAI_MONOREPO=cabal
+source /etc/profile.d/nix.sh
+source /etc/profile.d/nix-daemon.sh

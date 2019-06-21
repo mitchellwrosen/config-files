@@ -10,7 +10,6 @@
 " * XX = exchange line
 "
 " TODO
-" * Open ghcid buffer on hovering over something in quickfix
 " * shada?
 " * Alt-K doesn't seem to work
 " * Make 'sp' etc repeatable
@@ -29,9 +28,6 @@ cal plug#begin('~/.vim/plugged')
 " Language Server Protocol implementation
 " Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh', 'for': 'haskell' }
 
-" Long jump around with gf
-Plug 'easymotion/vim-easymotion'
-
 " Fuzzy search source code, files, etc
 " :help fzf-vim
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -43,6 +39,7 @@ Plug 'godlygeek/tabular'
 " Highlight yanks
 Plug 'machakann/vim-highlightedyank'
 
+" Sign column
 Plug 'mhinz/vim-signify'
 
 " Vim quickfix improvements
@@ -74,16 +71,14 @@ Plug 'tpope/vim-surround'
 " Language-specific syntax highlighting and such
 Plug 'ElmCast/elm-vim', { 'for': 'elm' }
 Plug 'LnL7/vim-nix', { 'for': 'nix' }
-Plug 'neovimhaskell/haskell-vim'
+Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
 Plug 'purescript-contrib/purescript-vim', { 'for': 'purescript' }
-
-Plug 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim', 'for': 'haskell' }
 
 Plug 'chriskempson/base16-vim'
 
 Plug 'SirVer/ultisnips'
 
-Plug 'vmchale/dhall-vim'
+Plug 'vmchale/dhall-vim', { 'for': 'dhall' }
 
 cal plug#end()
 " Automatically calls syntax on, filetype plugin indent on
@@ -143,10 +138,6 @@ no : ;
 map q: <Nop>
 
 map Q @q
-
-" [vim-easymotion]
-" gf to 'go find' some far-away character (above or below)
-map gf <Plug>(easymotion-bd-f)
 
 " ------------------------------------------------------------------------------
 " Normal mode
@@ -1296,24 +1287,6 @@ function! <SID>StripTrailingWhitespaces()
   cal cursor(l, c)
 endfun
 
-" [ghcid]
-" Start ghcid automatically. Only attempt to start it once.
-let s:ghcid_started = 0
-function! <SID>StartGhcid()
-  if s:ghcid_started == 0
-    let s:ghcid_started = 1
-    if filereadable(".ghcid")
-      exec "Ghcid"
-    elseif filereadable("cabal.project")
-      exec "Ghcid -c 'cabal new-repl'"
-    elseif filereadable("stack.yaml")
-      exec "Ghcid -c 'stack ghci'"
-    elseif filereadable(expand('%'))
-      exec "Ghcid -c 'ghci " . expand('%') . "'"
-    endif
-  endif
-endfun
-
 function! <SID>EchoQuickFixEntry()
   let entries = getqflist()
   let bufnr = bufnr('%')
@@ -1371,10 +1344,6 @@ let g:exchange_no_mappings = 1
 " than replace the current buffer (which would open 2 copies)
 let g:fzf_buffers_jump = 1
 
-" [ghcid]
-" Don't pop up when there are warnings
-let g:ghcid_background = 1
-
 " [haskell]
 let g:haskell_indent_disable = 1
 let g:haskell_enable_backpack = 1
@@ -1417,7 +1386,6 @@ let g:signify_vcs_list = [ 'git' ]
 " [surround]
 " Don't let surround provide any magic mappings
 let g:surround_no_mappings = 1
-" let g:surround_32 = "OINK \r OINK"
 
 " [UltiSnips]
 let g:UltiSnipsUsePythonVersion = 3 " Tell UltiSnips to use Python 3 (in case auto-detect doesn't work)
@@ -1437,14 +1405,15 @@ let g:UltiSnipsJumpBackwardTrigger="<C-k>"
 " Space-p ("pretty ") to format Elm code
 au FileType elm nn <buffer> <silent> <Space>p :ElmFormat<CR>
 
-au FileType fzf,ghcid setl laststatus=0
+au FileType fzf setl laststatus=0
   \| au BufLeave <buffer> setl laststatus=2
 " Escape to quit little annoying temporary buffers
-au FileType fzf,ghcid nn <silent> <buffer> <Esc> :q<CR>
+au FileType fzf nn <silent> <buffer> <Esc> :q<CR>
 
-" Space-p to format Haskell code with stylish-haskell (much less aggressive
-" than brittany).
+" Space-p to format Haskell code with stylish-haskell
 au FileType haskell nn <buffer> <silent> <Space>p m`:%!stylish-haskell<CR>``
+" Trying out ormolu as well
+au FileType haskell nn <buffer> <silent> <Space>P m`:%!ormolu -c ormolu.yaml %<CR>``
 " <Space>ff to find-function (ag can match over multiple lines)
 " <Space>ft to find-type (ripgrep is faster)
 au FileType haskell nn <buffer> <Space>ff :Ag (<Bslash>b)<C-r><C-w><Bslash>b[ <Bslash>t<Bslash>n]+::<CR>
@@ -1455,8 +1424,6 @@ au FileType elm,haskell,purescript ino ; :
 au FileType elm,haskell,purescript ino : ;
 au FileType elm,haskell,purescript nn r; r:
 au FileType elm,haskell,purescript nn r: r;
-" Start ghcid automatically
-" au FileType haskell au BufWinEnter *.hs :cal <SID>StartGhcid()
 au FileType haskell nn <Space>it m`"ayiwI<C-r>=system('cabal new-repl -v0 --repl-options=-fno-code --repl-options=-v0 2>/dev/null <<< ":t <C-r>a"')<CR><Esc>``
 
 " On <Enter>, go to error and close quickfix list

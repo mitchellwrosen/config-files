@@ -189,11 +189,6 @@ nn ,j m`J``
 " Ctrl+S to search-and-replace in the file
 nn <C-s> :%s//g<Left><Left>
 
-" Move tabs with Shift-hl
-" Trying to wean myself off tabs, so I commented this out
-" nn <S-h> gT
-" nn <S-l> gt
-
 " Move buffers with Ctrl+jk
 nn <silent> <C-j> :bn<CR>
 nn <silent> <C-k> :bp<CR>
@@ -1228,6 +1223,10 @@ vn * y/<C-r>"<CR>
 " After yank, leave cursor at the end of the highlight
 vn y y`]
 
+nn <silent> <Space>s m`vip<Esc>:silent '<,'>w !repld-send<CR>``
+nn <silent> <Space>S m`:silent w !repld-send<CR>``
+vn <silent> <Space>s m`<Esc>:silent '<,'>w !repld-send<CR>``
+
 " Ctrl+S to search-and-replace
 xn <C-s> :s//g<Left><Left>
 
@@ -1410,10 +1409,10 @@ au FileType fzf setl laststatus=0
 " Escape to quit little annoying temporary buffers
 au FileType fzf nn <silent> <buffer> <Esc> :q<CR>
 
-" Space-p to format Haskell code with stylish-haskell
-au FileType haskell nn <buffer> <silent> <Space>p m`:%!stylish-haskell<CR>``
-" Trying out ormolu as well
-au FileType haskell nn <buffer> <silent> <Space>P m`:%!ormolu -c ormolu.yaml %<CR>``
+" Space-p to format Haskell code
+au FileType haskell nn <buffer> <silent> <Space>p m`!ipormolu -o XPatternSynonyms<CR>``
+au FileType haskell vn <buffer> <silent> <Space>p m`!ormolu -o XPatternSynonyms<CR>``
+" au FileType haskell nn <buffer> <silent> <Space>p m`:%!stylish-haskell<CR>``
 " <Space>ff to find-function (ag can match over multiple lines)
 " <Space>ft to find-type (ripgrep is faster)
 au FileType haskell nn <buffer> <Space>ff :Ag (<Bslash>b)<C-r><C-w><Bslash>b[ <Bslash>t<Bslash>n]+::<CR>

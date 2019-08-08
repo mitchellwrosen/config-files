@@ -1269,10 +1269,16 @@ tno <A-[> <Esc>
 " (stolen from https://github.com/junegunn/fzf.vim#advanced-customization)
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
+  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
   \   <bang>0 ? fzf#vim#with_preview('up:60%')
   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
   \   <bang>0)
+command! -nargs=* Rgu
+  \ call fzf#vim#grep(
+  \   'rg --line-number --multiline --multiline-dotall --no-heading --color=always '.shellescape(<q-args>),
+  \   0,
+  \   fzf#vim#with_preview('up:70%'),
+  \   1)
 
 " ==============================================================================
 " Functions
@@ -1416,7 +1422,8 @@ au FileType haskell vn <buffer> <silent> <Space>p m`!ormolu -o XPatternSynonyms<
 " <Space>ff to find-function (ag can match over multiple lines)
 " <Space>ft to find-type (ripgrep is faster)
 au FileType haskell nn <buffer> <Space>ff :Ag (<Bslash>b)<C-r><C-w><Bslash>b[ <Bslash>t<Bslash>n]+::<CR>
-au FileType haskell nn <buffer> <Space>ft :Rg (data<Bar>newtype<Bar>Type)( +)<Bslash>b<C-r><C-w><Bslash>b<CR>
+au FileType haskell nn <buffer> <Space>ft :Rg (data<Bar>newtype<Bar>type)( +)<Bslash>b<C-r><C-w><Bslash>b<CR>
+au FileType haskell nn <buffer> <Space>fa :Rgu (\b<C-r><C-w>\b\s+::)<Bar>((data(\sfamily)?<Bar>newtype<Bar>type(\sfamily)?)\s+\b<C-r><C-w>\b)<Bar>(class\s+(\(.*\)\s+=>\s+)?\b<C-r><C-w>\b\s+where)<CR>
 " au FileType haskell nn <Space>p :cal LanguageClient_textDocument_formatting()<CR>
 " Swap ; and : in Haskell, PureScript
 au FileType elm,haskell,purescript ino ; :

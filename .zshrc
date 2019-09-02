@@ -41,10 +41,12 @@ alias vim=nvim
 alias gvi='NVIM_GTK_NO_HEADERBAR=1 nvim-gtk'
 alias gvim='NVIM_GTK_NO_HEADERBAR=1 nvim-gtk'
 
-EDITOR=vim
-PATH=~/.ghcup/bin:~/.local/bin:~/.npm/node_modules/.bin:$PATH
-PROMPT='%(1j.%j .)%(?..%F{red}%?%f )%~ '
-RPROMPT='${vcs_info_msg_0_}'
+export EDITOR=vim
+export PATH=~/.ghcup/bin:~/.local/bin:~/golang/bin:~/.npm/node_modules/.bin:$PATH
+export PROMPT='%(1j.%j .)%(?..%F{red}%?%f )%~ '
+export RPROMPT='${vcs_info_msg_0_}'
+
+export GOPATH=~/golang
 
 function cd {
   builtin cd "$@"
@@ -66,6 +68,3 @@ BASE16_SHELL="$HOME/.config/base16-shell/"
 # [zsh-autosuggestions]
 # pacman -S zsh-autosuggestions
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-
-source /etc/profile.d/nix.sh
-source /etc/profile.d/nix-daemon.sh

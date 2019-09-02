@@ -128,10 +128,6 @@ set wim=list:longest,full      " wild menu completion behavior
 " Key mappings
 " ==============================================================================
 
-" ------------------------------------------------------------------------------
-" All modes
-" ------------------------------------------------------------------------------
-
 " Swap ; and ;
 no ; :
 no : ;
@@ -139,11 +135,8 @@ no : ;
 " Disable annoying command search 'q:' that I never use
 map q: <Nop>
 
+" Shortcut for common case: recording into q (qq), then replaying (Q)
 map Q @q
-
-" ------------------------------------------------------------------------------
-" Normal mode
-" ------------------------------------------------------------------------------
 
 " <Tab> to save
 nn <silent> <Tab> :w<CR>
@@ -158,13 +151,20 @@ nm k gk
 " Big JK to move around (very fast and common)
 nn J <C-d>
 nn K <C-u>
+xn J <C-d>
+xn K <C-u>
+
 " Wean myself off <C-d>, <C-u> (though I still have to use these hotkeys in
 " pagers and such...)
 nn <C-d> <Nop>
 nn <C-u> <Nop>
+xn <C-d> <Nop>
+xn <C-u> <Nop>
 
 " Make Y yank to the end of line, similar to how C and D behave
 nn Y y$
+" After visual mode yank, leave cursor at the end of the highlight
+vn y y`]
 
 " U to redo, since U is not very useful by default. I like having undo and
 " redo so similar.
@@ -174,19 +174,23 @@ nn <C-r> <Nop>
 
 " Don't highlight matches *and* jump at the same time; only highlight
 nn * *``
+vn * y/<C-r>"<CR>
 nn # #``
 
 " Follow >>/<< shifted text around with the cursor
 nm >> <Plug>MyNmapLl
 nm << <Plug>MyNmapHh
+" Get it to repeat with '.'
 nn <silent> <Plug>MyNmapLl >>ll:cal repeat#set("\<Plug>MyNmapLl")<CR>
 nn <silent> <Plug>MyNmapHh <<hh:cal repeat#set("\<Plug>MyNmapHh")<CR>
 
-" ,jk to join (and reverse join)
+" ,j to join (since J moves down half a page)
 nn ,j m`J``
 
 " Ctrl+S to search-and-replace in the file
 nn <C-s> :%s//g<Left><Left>
+xn <C-s> :s//g<Left><Left>
+
 
 " Move buffers with Ctrl+jk
 nn <silent> <C-j> :bn<CR>
@@ -198,6 +202,11 @@ nn <expr> <silent> <Space>d len(getbufinfo({'buflisted': 1})) ==? 1 ? ":q\<CR>" 
 " Move vertical splits with Ctrl+hl (sorry, horizontal splits)
 nn <C-h> <C-w>h
 nn <C-l> <C-w>l
+
+" github.com/mitchellwrosen/repld stuff
+nn <silent> <Space>s m`vip<Esc>:silent '<,'>w !repld-send<CR>``
+nn <silent> <Space>S m`:silent w !repld-send<CR>``
+vn <silent> <Space>s m`<Esc>:silent '<,'>w !repld-send<CR>``
 
 " [surround]
 " ds to delete surround and restore cursor position
@@ -231,6 +240,13 @@ nm SS( mz<Plug>Yssurround)`z
 nm SS[ mz<Plug>Yssurround]`z
 nm SS{ mz<Plug>Yssurround}`z
 nm SSp mz<Plug>Yssurround)`z
+xm s' <Plug>VSurround'
+xm s" <Plug>VSurround"
+xm s( <Plug>VSurround)
+xm s[ <Plug>VSurround]
+xm s{ <Plug>VSurround}
+xm sp <Plug>VSurround)
+
 
 " [tabular]
 " Space-a to align on the word under the cursor
@@ -245,16 +261,20 @@ nm Xw <Plug>(Exchange)e
 nm XW <Plug>(Exchange)E
 nm X <Plug>(Exchange)
 nm XX <Plug>(ExchangeLine)
+xm x <Plug>(Exchange)
 
 " [qf]
 " Toggle the quickfix ("location") menu; move thru quickfix items with Alt+jk
+" Hmm... I never seem to use these... do they even work? Wtf is quickfix?
 nm <Space>l <Plug>(qf_qf_toggle)
 nm <A-j> <Plug>(qf_qf_next)
 nm <A-k> <Plug>(qf_qf_prev)
 
-" [commentary]
+" [vim-commentary]
 " Toggle comment
 nm <Space>m <Plug>CommentaryLine
+vm <Space>m <Plug>Commentary
+
 
 " [fzf]
 " Space-o ("open") to fuzzy file search, both git- and everything-variants
@@ -266,6 +286,9 @@ nn <Space>f :Rg <C-r><C-w><CR>
 vn <Space>f "vy:Rg <C-r>v<CR>
 " Space-k (because it's a home-row key) to fuzzy-search buffers
 nn <Space>k :Buffers<CR>
+" Space-f ("find") the selected contents
+" FIXME Does this even work?
+vm <Space>f y:Ag <C-r>"<CR>
 
 " [NERDTree]
 nn <silent> <Space>n :NERDTreeToggle<CR>
@@ -290,6 +313,212 @@ ino <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 ino <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
 ino <C-u> <Nop>
+
+" ------------------------------------------------------------------------------
+" Terminal mode
+" ------------------------------------------------------------------------------
+
+" Escape terminal mode with <Esc>
+tno <Esc> <C-\><C-n>
+tno <A-[> <Esc>
+
+" ==============================================================================
+" Commands
+" ==============================================================================
+
+" command! Vimrc e "~/.config/nvim/init.vim"
+
+" Add :Rg command to call ripgrep
+" (stolen from https://github.com/junegunn/fzf.vim#advanced-customization)
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
+command! -nargs=* Rgu
+  \ call fzf#vim#grep(
+  \   'rg --line-number --multiline --multiline-dotall --no-heading --color=always '.shellescape(<q-args>),
+  \   0,
+  \   fzf#vim#with_preview('up:70%'),
+  \   1)
+
+" ==============================================================================
+" Functions
+" ==============================================================================
+
+" Remove trailing whitespace, then restore cursor position
+function! <SID>StripTrailingWhitespaces()
+  let l = line(".")
+  let c = col(".")
+  %s/\s\+$//e
+  cal cursor(l, c)
+endfun
+
+" function! <SID>EchoQuickFixEntry()
+"   let entries = getqflist()
+"   let bufnr = bufnr('%')
+"   let lnum = line('.')
+"   for e in entries
+"     if e.bufnr == bufnr && e.lnum == lnum
+"       echo e.text
+"       return
+"     endif
+"   endfor
+" endfunction
+
+
+" ==============================================================================
+" Autocommands
+" ==============================================================================
+
+" Jump to last cursor position on file open
+au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "norm! g`\"" | endif
+
+" Strip trailing whitespace on save
+au BufWritePre * cal <SID>StripTrailingWhitespaces()
+
+" Echo the quickfix entry on the current line, if any
+" au CursorMoved * cal <SID>EchoQuickFixEntry()
+
+" ------------------------------------------------------------------------------
+" Command mode
+" ------------------------------------------------------------------------------
+
+" [UltiSnips]
+" Edit snippets of current file type
+ca snipedit UltiSnipsEdit
+
+" ==============================================================================
+" Plugin settings
+" ==============================================================================
+
+" [elm]
+let g:elm_setup_keybindings = 0 " Don't make any key mappings
+let g:elm_format_autosave = 1 " Run elm-format on save
+
+" [exchange]
+" Don't make any key mappings
+let g:exchange_no_mappings = 1
+
+" [fzf]
+" If the buffer is already open in another tab or window, jump to it rather
+" than replace the current buffer (which would open 2 copies)
+let g:fzf_buffers_jump = 1
+
+" [go]
+let g:go_auto_sameids = 1 " highlight all uses of identifier under cursor
+" let g:go_auto_type_info = 1 " show type info for identifier under cursor
+let g:go_doc_keywordprg_enabled = 0 " don't hijack my K key
+" let g:go_metalinter_autosave = 1 " run metalinter on save
+let g:go_textobj_enabled = 0 " don't add custom text objects
+let g:go_updatetime = 0 " don't delay for identifier-under-cursor things
+
+" [haskell]
+let g:haskell_indent_disable = 1
+let g:haskell_enable_backpack = 1
+let g:haskell_enable_pattern_synonyms = 1
+let g:haskell_enable_quantification = 1
+let g:haskell_enable_recursivedo = 1
+let g:haskell_enable_typeroles = 1
+
+" [highlightedyank]
+let g:highlightedyank_highlight_duration = 500 " highlight yank for 500ms
+let g:highlightedyank_max_lines = 50
+
+" [LanguageClient]
+" " Specify the language-specific executables to run the LSP server
+" let g:LanguageClient_serverCommands = {} " { 'haskell': ['hie-wrapper', '--lsp', '-d', '-l', '.HieWrapperLog'] }
+" " Use global settings.json file
+" let g:LanguageClient_settingsPath = "/home/mitchell/.config/lsp/settings.json"
+" " LanguageClient doesn't seem to work very well, so verbosely log everything it
+" " tries to do.
+" let g:LanguageClient_loggingLevel = 'DEBUG'
+" let g:LanguageClient_loggingFile = ".LanguageClientLog"
+
+" [multiple-cursors]
+let g:multi_cursor_use_default_mapping = 0
+let g:multi_cursor_start_word_key = '<C-n>'
+" let g:multi_cursor_select_all_word_key = '<A-n>'
+" let g:multi_cursor_start_key = 'g<C-n>'
+" let g:multi_cursor_select_all_key = 'g<A-n>'
+let g:multi_cursor_next_key = '<C-n>'
+let g:multi_cursor_prev_key = '<C-p>'
+" let g:multi_cursor_skip_key = '<C-x>'
+let g:multi_cursor_quit_key = '<Esc>'
+
+" [signify]
+let g:signify_sign_change = 'Δ'
+let g:signify_sign_delete = '-'
+" I only use git, so only bother integrating with it (performance win!)
+let g:signify_vcs_list = [ 'git' ]
+
+" [surround]
+" Don't let surround provide any magic mappings
+let g:surround_no_mappings = 1
+
+" [UltiSnips]
+let g:UltiSnipsUsePythonVersion = 3 " Tell UltiSnips to use Python 3 (in case auto-detect doesn't work)
+let g:UltiSnipsSnippetsDir = "~/.config/nvim/UltiSnips" " Read snippets from this directory
+let g:UltiSnipsEditSplit = 'horizontal' " Open snippets file with a horizontal split with :snipedit
+" Unset annoying key mappings that can't be avoided
+let g:UltiSnipsExpandTrigger="<C-j>"
+let g:UltiSnipsListSnippets="<Nop>"
+let g:UltiSnipsJumpForwardTrigger="<C-j>"
+let g:UltiSnipsJumpBackwardTrigger="<C-k>"
+
+" ==============================================================================
+" Filetype-specific settings
+" ==============================================================================
+
+au FileType fzf setl laststatus=0
+  \| au BufLeave <buffer> setl laststatus=2
+" Escape to quit little annoying temporary buffers
+au FileType fzf nn <silent> <buffer> <Esc> :q<CR>
+
+" Golang likes tabs, so show them as spaces
+au FileType go setl lcs=tab:\ \ ,trail:·,nbsp:+
+
+" Space-p to format Haskell code
+au FileType haskell nn <buffer> <silent> <Space>p m`!ipormolu -o XPatternSynonyms<CR>``
+au FileType haskell vn <buffer> <silent> <Space>p m`!ormolu -o XPatternSynonyms<CR>``
+" au FileType haskell nn <buffer> <silent> <Space>p m`:%!stylish-haskell<CR>``
+" <Space>ff to find-function (ag can match over multiple lines)
+" <Space>ft to find-type (ripgrep is faster)
+au FileType haskell nn <buffer> <Space>ff :Ag (<Bslash>b)<C-r><C-w><Bslash>b[ <Bslash>t<Bslash>n]+::<CR>
+au FileType haskell nn <buffer> <Space>ft :Rg (data<Bar>newtype<Bar>type)\s+<C-r><C-w>\b<CR>
+au FileType haskell nn <buffer> <Space>fa :Rgu (<C-r><C-w>\b\s+::)<Bar>((data(\sfamily)?<Bar>newtype<Bar>type(\sfamily)?)\s+<C-r><C-w>\b)<Bar>(class\s+(\(.*\)\s+=>\s+)?<C-r><C-w>\b\s+where)<CR>
+" au FileType haskell nn <Space>p :cal LanguageClient_textDocument_formatting()<CR>
+" Swap ; and : in Haskell, PureScript
+au FileType elm,haskell,purescript ino ; :
+au FileType elm,haskell,purescript ino : ;
+au FileType elm,haskell,purescript nn r; r:
+au FileType elm,haskell,purescript nn r: r;
+au FileType haskell nn <Space>it m`"ayiwI<C-r>=system('cabal new-repl -v0 --repl-options=-fno-code --repl-options=-v0 2>/dev/null <<< ":t <C-r>a"')<CR><Esc>``
+
+" On <Enter>, go to error and close quickfix list
+au FileType qf nn <silent> <buffer> <CR> <CR>:ccl<CR>
+
+" ==============================================================================
+" nvim-gtk settings
+" ==============================================================================
+
+if exists('g:GtkGuiLoaded')
+  cal rpcnotify(1, 'Gui', 'Font', 'Hasklig 18')
+endif
+
+" ==============================================================================
+
+" Notes to myself:
+"
+" 'o' in visual swaps cursor location
+" g<C-a> in visual mode turns 1\n1\n1\n1 into 2\n3\n4\n5
+" gi
+" gv
+
+" ==============================================================================
+" Unicode goodies
+" ==============================================================================
 
 "       ▼  Controls and Latin-1 Suppl.
 "  U+00A0    ¡ ¢ £ ¤ ¥ ¦ § ¨ © ª « ¬ ­ ® ¯
@@ -1732,252 +1961,3 @@ ino <C-U>[9 𝟡
 " U+1F890  🢐 🢑 🢒 🢓 🢔 🢕 🢖 🢗 🢘 🢙 🢚 🢛
 " U+1F8A0  🢠 🢡 🢢 🢣 🢤 🢥 🢦 🢧 🢨 🢩 🢪 🢫
 
-" ------------------------------------------------------------------------------
-" Visual mode
-" ------------------------------------------------------------------------------
-
-" Same as insert mode
-xn J <C-d>
-xn K <C-u>
-xn <C-d> <Nop>
-xn <C-u> <Nop>
-
-" Make visual mode * work like normal mode *
-vn * y/<C-r>"<CR>
-
-" After yank, leave cursor at the end of the highlight
-vn y y`]
-
-nn <silent> <Space>s m`vip<Esc>:silent '<,'>w !repld-send<CR>``
-nn <silent> <Space>S m`:silent w !repld-send<CR>``
-vn <silent> <Space>s m`<Esc>:silent '<,'>w !repld-send<CR>``
-
-" Ctrl+S to search-and-replace
-xn <C-s> :s//g<Left><Left>
-
-" [exchange]
-" x to exchange. vd and vx have the same default behavior (delete), so we
-" don't lose any functionality here.
-xm x <Plug>(Exchange)
-
-" [vim-commentary]
-" Toggle comment
-vm <Space>m <Plug>Commentary
-
-" [vim-surround]
-xm s' <Plug>VSurround'
-xm s" <Plug>VSurround"
-xm s( <Plug>VSurround)
-xm s[ <Plug>VSurround]
-xm s{ <Plug>VSurround}
-xm sp <Plug>VSurround)
-
-" [fzf.vim]
-" Space-f ("find") the selected contents
-vm <Space>f y:Ag <C-r>"<CR>
-
-" ------------------------------------------------------------------------------
-" Terminal mode
-" ------------------------------------------------------------------------------
-
-" Escape terminal mode with <Esc>
-tno <Esc> <C-\><C-n>
-tno <A-[> <Esc>
-
-" ==============================================================================
-" Commands
-" ==============================================================================
-
-" command! Vimrc e "~/.config/nvim/init.vim"
-
-" Add :Rg command to call ripgrep
-" (stolen from https://github.com/junegunn/fzf.vim#advanced-customization)
-command! -bang -nargs=* Rg
-  \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
-  \   <bang>0 ? fzf#vim#with_preview('up:60%')
-  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \   <bang>0)
-command! -nargs=* Rgu
-  \ call fzf#vim#grep(
-  \   'rg --line-number --multiline --multiline-dotall --no-heading --color=always '.shellescape(<q-args>),
-  \   0,
-  \   fzf#vim#with_preview('up:70%'),
-  \   1)
-
-" ==============================================================================
-" Functions
-" ==============================================================================
-
-" Remove trailing whitespace, then restore cursor position
-function! <SID>StripTrailingWhitespaces()
-  let l = line(".")
-  let c = col(".")
-  %s/\s\+$//e
-  cal cursor(l, c)
-endfun
-
-function! <SID>EchoQuickFixEntry()
-  let entries = getqflist()
-  let bufnr = bufnr('%')
-  let lnum = line('.')
-  for e in entries
-    if e.bufnr == bufnr && e.lnum == lnum
-      echo e.text
-      return
-    endif
-  endfor
-endfunction
-
-
-" ==============================================================================
-" Autocommands
-" ==============================================================================
-
-" Jump to last cursor position on file open
-au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "norm! g`\"" | endif
-
-" Strip trailing whitespace on save
-au BufWritePre * cal <SID>StripTrailingWhitespaces()
-
-" Echo the quickfix entry on the current line, if any
-" au CursorMoved * cal <SID>EchoQuickFixEntry()
-
-" ------------------------------------------------------------------------------
-" Command mode
-" ------------------------------------------------------------------------------
-
-" [UltiSnips]
-" Edit snippets of current file type
-ca snipedit UltiSnipsEdit
-
-" ==============================================================================
-" Plugin settings
-" ==============================================================================
-
-" [elm]
-let g:elm_setup_keybindings = 0 " Don't make any key mappings
-let g:elm_format_autosave = 1 " Run elm-format on save
-
-" [exchange]
-" Don't make any key mappings
-let g:exchange_no_mappings = 1
-
-" [fzf]
-" If the buffer is already open in another tab or window, jump to it rather
-" than replace the current buffer (which would open 2 copies)
-let g:fzf_buffers_jump = 1
-
-" [go]
-let g:go_auto_sameids = 1 " highlight all uses of identifier under cursor
-" let g:go_auto_type_info = 1 " show type info for identifier under cursor
-let g:go_doc_keywordprg_enabled = 0 " don't hijack my K key
-" let g:go_metalinter_autosave = 1 " run metalinter on save
-let g:go_textobj_enabled = 0 " don't add custom text objects
-let g:go_updatetime = 0 " don't delay for identifier-under-cursor things
-
-" [haskell]
-let g:haskell_indent_disable = 1
-let g:haskell_enable_backpack = 1
-let g:haskell_enable_pattern_synonyms = 1
-let g:haskell_enable_quantification = 1
-let g:haskell_enable_recursivedo = 1
-let g:haskell_enable_typeroles = 1
-
-" [highlightedyank]
-let g:highlightedyank_highlight_duration = 500 " highlight yank for 500ms
-let g:highlightedyank_max_lines = 50
-
-" [LanguageClient]
-" " Specify the language-specific executables to run the LSP server
-" let g:LanguageClient_serverCommands = {} " { 'haskell': ['hie-wrapper', '--lsp', '-d', '-l', '.HieWrapperLog'] }
-" " Use global settings.json file
-" let g:LanguageClient_settingsPath = "/home/mitchell/.config/lsp/settings.json"
-" " LanguageClient doesn't seem to work very well, so verbosely log everything it
-" " tries to do.
-" let g:LanguageClient_loggingLevel = 'DEBUG'
-" let g:LanguageClient_loggingFile = ".LanguageClientLog"
-
-" [multiple-cursors]
-let g:multi_cursor_use_default_mapping = 0
-let g:multi_cursor_start_word_key = '<C-n>'
-" let g:multi_cursor_select_all_word_key = '<A-n>'
-" let g:multi_cursor_start_key = 'g<C-n>'
-" let g:multi_cursor_select_all_key = 'g<A-n>'
-let g:multi_cursor_next_key = '<C-n>'
-let g:multi_cursor_prev_key = '<C-p>'
-" let g:multi_cursor_skip_key = '<C-x>'
-let g:multi_cursor_quit_key = '<Esc>'
-
-" [signify]
-let g:signify_sign_change = 'Δ'
-let g:signify_sign_delete = '-'
-" I only use git, so only bother integrating with it (performance win!)
-let g:signify_vcs_list = [ 'git' ]
-
-" [surround]
-" Don't let surround provide any magic mappings
-let g:surround_no_mappings = 1
-
-" [UltiSnips]
-let g:UltiSnipsUsePythonVersion = 3 " Tell UltiSnips to use Python 3 (in case auto-detect doesn't work)
-let g:UltiSnipsSnippetsDir = "~/.config/nvim/UltiSnips" " Read snippets from this directory
-let g:UltiSnipsEditSplit = 'horizontal' " Open snippets file with a horizontal split with :snipedit
-" Unset annoying key mappings that can't be avoided
-let g:UltiSnipsExpandTrigger="<C-j>"
-let g:UltiSnipsListSnippets="<Nop>"
-let g:UltiSnipsJumpForwardTrigger="<C-j>"
-let g:UltiSnipsJumpBackwardTrigger="<C-k>"
-
-" ==============================================================================
-" Filetype-specific settings
-" ==============================================================================
-
-" [elm-vim]
-" Space-p ("pretty ") to format Elm code
-au FileType elm nn <buffer> <silent> <Space>p :ElmFormat<CR>
-
-au FileType fzf setl laststatus=0
-  \| au BufLeave <buffer> setl laststatus=2
-" Escape to quit little annoying temporary buffers
-au FileType fzf nn <silent> <buffer> <Esc> :q<CR>
-
-" Golang likes tabs, so show them as spaces
-au FileType go setl lcs=tab:\ \ ,trail:·,nbsp:+
-
-" Space-p to format Haskell code
-au FileType haskell nn <buffer> <silent> <Space>p m`!ipormolu -o XPatternSynonyms<CR>``
-au FileType haskell vn <buffer> <silent> <Space>p m`!ormolu -o XPatternSynonyms<CR>``
-" au FileType haskell nn <buffer> <silent> <Space>p m`:%!stylish-haskell<CR>``
-" <Space>ff to find-function (ag can match over multiple lines)
-" <Space>ft to find-type (ripgrep is faster)
-au FileType haskell nn <buffer> <Space>ff :Ag (<Bslash>b)<C-r><C-w><Bslash>b[ <Bslash>t<Bslash>n]+::<CR>
-au FileType haskell nn <buffer> <Space>ft :Rg (data<Bar>newtype<Bar>type)\s+<C-r><C-w>\b<CR>
-au FileType haskell nn <buffer> <Space>fa :Rgu (<C-r><C-w>\b\s+::)<Bar>((data(\sfamily)?<Bar>newtype<Bar>type(\sfamily)?)\s+<C-r><C-w>\b)<Bar>(class\s+(\(.*\)\s+=>\s+)?<C-r><C-w>\b\s+where)<CR>
-" au FileType haskell nn <Space>p :cal LanguageClient_textDocument_formatting()<CR>
-" Swap ; and : in Haskell, PureScript
-au FileType elm,haskell,purescript ino ; :
-au FileType elm,haskell,purescript ino : ;
-au FileType elm,haskell,purescript nn r; r:
-au FileType elm,haskell,purescript nn r: r;
-au FileType haskell nn <Space>it m`"ayiwI<C-r>=system('cabal new-repl -v0 --repl-options=-fno-code --repl-options=-v0 2>/dev/null <<< ":t <C-r>a"')<CR><Esc>``
-
-" On <Enter>, go to error and close quickfix list
-au FileType qf nn <silent> <buffer> <CR> <CR>:ccl<CR>
-
-" ==============================================================================
-" nvim-gtk settings
-" ==============================================================================
-
-if exists('g:GtkGuiLoaded')
-  cal rpcnotify(1, 'Gui', 'Font', 'Hasklig 18')
-endif
-
-" ==============================================================================
-
-" Notes to myself:
-"
-" 'o' in visual swaps cursor location
-" g<C-a> in visual mode turns 1111 into 1234
-" gi
-" gv

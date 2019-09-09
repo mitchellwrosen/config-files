@@ -67,6 +67,9 @@ Plug 'tpope/vim-surround'
 
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
 " Language-specific syntax highlighting and such
 Plug 'ElmCast/elm-vim', { 'for': 'elm' }
 Plug 'LnL7/vim-nix', { 'for': 'nix' }

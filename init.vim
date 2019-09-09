@@ -25,9 +25,6 @@
 
 cal plug#begin('~/.vim/plugged')
 
-" Language Server Protocol implementation
-" Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh', 'for': 'haskell' }
-
 " Fuzzy search source code, files, etc
 " :help fzf-vim
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -68,18 +65,18 @@ Plug 'tpope/vim-repeat'
 " :help surround
 Plug 'tpope/vim-surround'
 
+Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+
 " Language-specific syntax highlighting and such
 Plug 'ElmCast/elm-vim', { 'for': 'elm' }
 Plug 'LnL7/vim-nix', { 'for': 'nix' }
 Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
 Plug 'purescript-contrib/purescript-vim', { 'for': 'purescript' }
 Plug 'fatih/vim-go', { 'for': 'go' }
+Plug 'vmchale/dhall-vim', { 'for': 'dhall' }
 
 Plug 'chriskempson/base16-vim'
 
-Plug 'SirVer/ultisnips'
-
-Plug 'vmchale/dhall-vim', { 'for': 'dhall' }
 
 cal plug#end()
 " Automatically calls syntax on, filetype plugin indent on
@@ -115,12 +112,14 @@ set nosol                      " don't jump cursor to start of line when moving
 set so=10                      " leave lines when scrolling
 set sr                         " shift to multiple of shiftwidth
 set sw=2
+set scl=yes                    " always draw signcolumn
 set scs                        " don't ignore case if search contains uppercase char
 set si                         " smart autoindenting when starting a new line
 set sts=2                      " tab key makes 2 spaces
 set title                      " put filename in window title
 set tm=500                     " only wait .5s for key sequence to complete
 set udf                        " persist undo history across buffer exits
+set ut=200                     " fire CursorHold after 200ms (default 4000ms)
 set wmnu                       " complete commands with a little menu
 set wim=list:longest,full      " wild menu completion behavior
 
@@ -141,8 +140,8 @@ map Q @q
 " <Tab> to save
 nn <silent> <Tab> :w<CR>
 
-" <Enter> to clear the current search
-nn <silent> <Enter> :noh<CR>
+" ? to clear the current search
+nn <silent> ? :noh<CR>
 
 " Prevent the cursor from jumping past a wrapped line when moving up and down
 nm j gj
@@ -293,13 +292,18 @@ vm <Space>f y:Ag <C-r>"<CR>
 " [NERDTree]
 nn <silent> <Space>n :NERDTreeToggle<CR>
 
-" [LanguageClient]
-" nn <Space>sc :cal LanguageClient_textDocument_references()<CR>
-" nn <Space>ss :cal LanguageClient_textDocument_documentSymbol()<CR>
-" nn <F2> :cal LanguageClient_textDocument_rename()<CR>
-" nn gt :cal LanguageClient_textDocument_hover()<CR>
-" nn gd :cal LanguageClient_textDocument_definition()<CR>
-" nn <silent> <Space>sm :cal LanguageClient_contextMenu()<CR>
+" [coc.nvim]
+function! s:HandleEnter()
+  if coc#util#has_float()
+    call coc#util#float_hide()
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+nm <silent> <Right> <Plug>(coc-diagnostic-next)
+nm <silent> gd <Plug>(coc-definition)
+nn <silent> <Enter> :call <SID>HandleEnter()<CR>
+
 
 " ------------------------------------------------------------------------------
 " Insert mode
@@ -309,7 +313,8 @@ nn <silent> <Space>n :NERDTreeToggle<CR>
 im <C-Space> <C-x><C-o>
 
 " When a popup menu is visible, move thru it with tab and select with enter
-ino <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" ino <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+ino <expr> <Tab> pumvisible() ? "\<C-n>" : coc#refresh()
 ino <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
 ino <C-u> <Nop>
@@ -457,16 +462,6 @@ let g:signify_vcs_list = [ 'git' ]
 " Don't let surround provide any magic mappings
 let g:surround_no_mappings = 1
 
-" [UltiSnips]
-let g:UltiSnipsUsePythonVersion = 3 " Tell UltiSnips to use Python 3 (in case auto-detect doesn't work)
-let g:UltiSnipsSnippetsDir = "~/.config/nvim/UltiSnips" " Read snippets from this directory
-let g:UltiSnipsEditSplit = 'horizontal' " Open snippets file with a horizontal split with :snipedit
-" Unset annoying key mappings that can't be avoided
-let g:UltiSnipsExpandTrigger="<C-j>"
-let g:UltiSnipsListSnippets="<Nop>"
-let g:UltiSnipsJumpForwardTrigger="<C-j>"
-let g:UltiSnipsJumpBackwardTrigger="<C-k>"
-
 " ==============================================================================
 " Filetype-specific settings
 " ==============================================================================
@@ -504,7 +499,7 @@ au FileType qf nn <silent> <buffer> <CR> <CR>:ccl<CR>
 " ==============================================================================
 
 if exists('g:GtkGuiLoaded')
-  cal rpcnotify(1, 'Gui', 'Font', 'Hasklig 18')
+  cal rpcnotify(1, 'Gui', 'Font', 'PragmataPro Mono Liga 18')
 endif
 
 " ==============================================================================
@@ -1793,7 +1788,7 @@ ino <C-U>bgamma 𝛄
 ino <C-U>bdelta 𝛅
 ino <C-U>bepsilon 𝛆
 ino <C-U>bzeta 𝛇
-ino <C-U>beta 𝛈
+" ino <C-U>beta 𝛈
 ino <C-U>btheta 𝛉
 ino <C-U>biota 𝛊
 ino <C-U>bkappa 𝛋

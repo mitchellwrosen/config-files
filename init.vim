@@ -303,9 +303,20 @@ function! s:HandleEnter()
     call CocAction('doHover')
   endif
 endfunction
+" <Left>/<Right> to jump around warnings/errors (annoying that it's only
+" buffer-local)
+nm <silent> <Left> <Plug>(coc-diagnostic-prev)
 nm <silent> <Right> <Plug>(coc-diagnostic-next)
+" gd to go to definition of thing under cursor
+" Also <Del> (trying it out since it's one key)
 nm <silent> gd <Plug>(coc-definition)
+nm <silent> <Del> <Plug>(coc-definition)
+" <Enter> to show type of thing under cursor
 nn <silent> <Enter> :call <SID>HandleEnter()<CR>
+" <Space>i to open quickfix
+nn <silent> <Space>i :CocFix<CR>
+" Backspace to open all warnings/errors in a list
+nn <silent> <BS> :CocList diagnostics<CR>
 
 
 " ------------------------------------------------------------------------------

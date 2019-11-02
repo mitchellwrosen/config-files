@@ -151,21 +151,24 @@ nm j gj
 nm k gk
 
 " J/K to move around blocks
-nn <silent> J /^\S<CR>:nohl<CR>
-nn <silent> K ?^\S<CR>:nohl<CR>
-xn <silent> J /^\S<CR>:nohl<CR>
-xn <silent> K ?^\S<CR>:nohl<CR>
+" nn <silent> J /^\S<CR>:nohl<CR>
+" nn <silent> K ?^\S<CR>:nohl<CR>
+" xn <silent> J /^\S<CR>:nohl<CR>
+" xn <silent> K ?^\S<CR>:nohl<CR>
+nn <expr> <silent> J <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
+nn <expr> <silent> K <SID>CursorBelowBlankLine() ? "{{j" : "{j"
+xn <expr> <silent> J <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
+xn <expr> <silent> K <SID>CursorBelowBlankLine() ? "{{j" : "{j"
 
 " Kinda better paragraph movement than the defaults
-nn <expr> <silent> } <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
-nn <expr> <silent> { <SID>CursorBelowBlankLine() ? "{{j" : "{j"
-xn <expr> <silent> } <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
-xn <expr> <silent> { <SID>CursorBelowBlankLine() ? "{{j" : "{j"
-
-" nn } <C-d>
-" nn { <C-u>
-" xn } <C-d>
-" xn { <C-u>
+" nn <expr> <silent> } <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
+" nn <expr> <silent> { <SID>CursorBelowBlankLine() ? "{{j" : "{j"
+" xn <expr> <silent> } <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
+" xn <expr> <silent> { <SID>CursorBelowBlankLine() ? "{{j" : "{j"
+nn } <C-d>
+nn { <C-u>
+xn } <C-d>
+xn { <C-u>
 
 " Make Y yank to the end of line, similar to how C and D behave
 nn Y y$

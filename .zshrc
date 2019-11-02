@@ -34,12 +34,14 @@ precmd() {
   vcs_info
 }
 
+alias cat=bat
 alias g=git
-alias ls='ls --color'
+alias ls=exa
 alias vi=nvim
 alias vim=nvim
 alias gvi='NVIM_GTK_NO_HEADERBAR=1 nvim-gtk'
 alias gvim='NVIM_GTK_NO_HEADERBAR=1 nvim-gtk'
+alias tree='exa -T'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'

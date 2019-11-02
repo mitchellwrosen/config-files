@@ -40,6 +40,10 @@ alias vi=nvim
 alias vim=nvim
 alias gvi='NVIM_GTK_NO_HEADERBAR=1 nvim-gtk'
 alias gvim='NVIM_GTK_NO_HEADERBAR=1 nvim-gtk'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
 
 export EDITOR=vim
 export PATH=~/.ghcup/bin:~/.local/bin:~/golang/bin:~/.npm/node_modules/.bin:$PATH

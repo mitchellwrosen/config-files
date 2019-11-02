@@ -150,18 +150,22 @@ nn <silent> ? :noh<CR>
 nm j gj
 nm k gk
 
-" Big JK to move around (very fast and common)
-nn J <C-d>
-nn K <C-u>
-xn J <C-d>
-xn K <C-u>
+" J/K to move around blocks
+nn <silent> J /^\S<CR>:nohl<CR>
+nn <silent> K ?^\S<CR>:nohl<CR>
+xn <silent> J /^\S<CR>:nohl<CR>
+xn <silent> K ?^\S<CR>:nohl<CR>
 
-" Wean myself off <C-d>, <C-u> (though I still have to use these hotkeys in
-" pagers and such...)
-nn <C-d> <Nop>
-nn <C-u> <Nop>
-xn <C-d> <Nop>
-xn <C-u> <Nop>
+" Kinda better paragraph movement than the defaults
+nn <expr> <silent> } <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
+nn <expr> <silent> { <SID>CursorBelowBlankLine() ? "{{j" : "{j"
+xn <expr> <silent> } <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
+xn <expr> <silent> { <SID>CursorBelowBlankLine() ? "{{j" : "{j"
+
+" nn } <C-d>
+" nn { <C-u>
+" xn } <C-d>
+" xn { <C-u>
 
 " Make Y yank to the end of line, similar to how C and D behave
 nn Y y$
@@ -186,13 +190,12 @@ nm << <Plug>MyNmapHh
 nn <silent> <Plug>MyNmapLl >>ll:cal repeat#set("\<Plug>MyNmapLl")<CR>
 nn <silent> <Plug>MyNmapHh <<hh:cal repeat#set("\<Plug>MyNmapHh")<CR>
 
-" ,j to join (since J moves down half a page)
+" ,j to join (since J moves down)
 nn ,j m`J``
 
 " Ctrl+S to search-and-replace in the file
 nn <C-s> :%s//g<Left><Left>
 xn <C-s> :s//g<Left><Left>
-
 
 " Move buffers with Ctrl+jk
 nn <silent> <C-j> :bn<CR>
@@ -366,13 +369,25 @@ command! -nargs=* Rgu
 " Functions
 " ==============================================================================
 
+
+" Is the cursor on a blank line?
+function! <SID>CursorOnBlankLine()
+  return getline('.') == ''
+endfun
+
+" Is the cursor below a blank line?
+function! <SID>CursorBelowBlankLine()
+  return getline(line('.')-1) == ''
+endfun
+
 " Remove trailing whitespace, then restore cursor position
 function! <SID>StripTrailingWhitespaces()
-  let l = line(".")
-  let c = col(".")
+  let l = line('.')
+  let c = col('.')
   %s/\s\+$//e
   cal cursor(l, c)
 endfun
+
 
 " function! <SID>EchoQuickFixEntry()
 "   let entries = getqflist()
@@ -499,11 +514,11 @@ au FileType haskell nn <buffer> <Space>ft :Rg (data<Bar>newtype<Bar>type)\s+<C-r
 au FileType haskell nn <buffer> <Space>fa :Rgu (<C-r><C-w>\b\s+::)<Bar>((data(\sfamily)?<Bar>newtype<Bar>type(\sfamily)?)\s+<C-r><C-w>\b)<Bar>(class\s+(\(.*\)\s+=>\s+)?<C-r><C-w>\b\s+where)<CR>
 " au FileType haskell nn <Space>p :cal LanguageClient_textDocument_formatting()<CR>
 " Swap ; and : in Haskell, PureScript
-au FileType elm,haskell,purescript ino ; :
-au FileType elm,haskell,purescript ino : ;
-au FileType elm,haskell,purescript nn r; r:
-au FileType elm,haskell,purescript nn r: r;
-au FileType haskell nn <Space>it m`"ayiwI<C-r>=system('cabal new-repl -v0 --repl-options=-fno-code --repl-options=-v0 2>/dev/null <<< ":t <C-r>a"')<CR><Esc>``
+au FileType elm,haskell,purescript ino <buffer> ; :
+au FileType elm,haskell,purescript ino <buffer> : ;
+au FileType elm,haskell,purescript nn <buffer> r; r:
+au FileType elm,haskell,purescript nn <buffer> r: r;
+au FileType haskell nn <buffer> <Space>it m`"ayiwI<C-r>=system('cabal new-repl -v0 --repl-options=-fno-code --repl-options=-v0 2>/dev/null <<< ":t <C-r>a"')<CR><Esc>``
 
 " On <Enter>, go to error and close quickfix list
 au FileType qf nn <silent> <buffer> <CR> <CR>:ccl<CR>

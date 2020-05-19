@@ -74,3 +74,7 @@ BASE16_SHELL="$HOME/.config/base16-shell/"
 # [zsh-autosuggestions]
 # pacman -S zsh-autosuggestions
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# direnv
+eval "$(direnv hook zsh)"
+export DIRENV_LOG_FORMAT= # shut direnv up when I cd around

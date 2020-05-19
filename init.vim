@@ -65,8 +65,10 @@ Plug 'tpope/vim-repeat'
 " :help surround
 Plug 'tpope/vim-surround'
 
+" Autocomplete thingy
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 
+" Statusline thingies
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
@@ -79,7 +81,6 @@ Plug 'fatih/vim-go', { 'for': 'go' }
 Plug 'vmchale/dhall-vim', { 'for': 'dhall' }
 
 Plug 'chriskempson/base16-vim'
-
 
 cal plug#end()
 " Automatically calls syntax on, filetype plugin indent on
@@ -112,6 +113,7 @@ set nofen                      " never fold
 set nojs                       " insert one space after ., ?, ! chars when joining
 set noml                       " disable modelines
 set nosol                      " don't jump cursor to start of line when moving
+set nu
 set so=10                      " leave lines when scrolling
 set sr                         " shift to multiple of shiftwidth
 set sw=2
@@ -157,8 +159,8 @@ nm k gk
 " xn <silent> K ?^\S<CR>:nohl<CR>
 nn <expr> <silent> J <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
 nn <expr> <silent> K <SID>CursorBelowBlankLine() ? "{{j" : "{j"
-xn <expr> <silent> J <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
-xn <expr> <silent> K <SID>CursorBelowBlankLine() ? "{{j" : "{j"
+xn J }
+xn K {
 
 " Kinda better paragraph movement than the defaults
 " nn <expr> <silent> } <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
@@ -344,8 +346,9 @@ ino <C-u> <Nop>
 " ------------------------------------------------------------------------------
 
 " Escape terminal mode with <Esc>
-tno <Esc> <C-\><C-n>
-tno <A-[> <Esc>
+" But this messes with fzf right now... disabling
+" tno <Esc> <C-\><C-n>
+" tno <A-[> <Esc>
 
 " ==============================================================================
 " Commands

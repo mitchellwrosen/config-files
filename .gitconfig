@@ -1,21 +1,20 @@
 [alias]
-   a      = add
+   a      = add --all --patch
    alias  = "!git config -l | grep alias | cut -c 7-"
-   aa     = add --all
-   ai     = add --interactive
    b      = branch -vv
    c      = commit
    ca     = commit --amend
    co     = checkout
-   d      = diff
-   ds     = diff --staged
+   cp     = cherry-pick
+   d      = diff --word-diff=\"color\"
+   delete-merged-branches = "!git branch --merged HEAD | grep -v '*' | xargs git branch -d"
+   ds     = diff --word-diff=\"color\" --staged
    f      = "!git ls-files | grep -i"
+   fetch  = fetch --prune
    g      = grep -Iin
-   ga     = !git grep -Iin
    l      = log --graph --abbrev-commit --decorate --relative-date --format=format:'%C(bold blue)%h %C(bold magenta)(%ar) %C(bold white)%s%C(reset) %C(white)- %an%C(auto)%d'
    la     = log --graph --abbrev-commit --decorate --relative-date --format=format:'%C(bold blue)%h %C(bold magenta)(%ar) %C(bold white)%s%C(reset) %C(white)- %an%C(auto)%d' --all
    l2     = log --graph --abbrev-commit --decorate --relative-date --format=format:'%C(bold blue)%h %C(bold magenta)%aD %C(bold white)%s%C(reset) %C(white)- %an%C(auto)%d' --all
-   master = checkout master
    next   = "!git checkout $(git rev-list HEAD..master | tail -n 1)"
    push   = push --tags
    r      = reset
@@ -23,15 +22,14 @@
    r2     = reset HEAD^^
    rb     = rebase
    rbi    = rebase -i
+   rc     = rebase --continue
+   ro     = rebase --onto
    s      = status --short
-   sa     = stash apply
-   sl     = stash list
-   ss     = stash save
    sync   = "!git fetch upstream && git rebase upstream/master"
-   wd     = diff --word-diff=\"color\"
-   wds    = diff --word-diff=\"color\" --staged
    x      = commit -m
    xa     = commit -am
+   find-merge = "!sh -c 'commit=$0 && branch=${1:-HEAD} && (git rev-list $commit..$branch --ancestry-path | cat -n; git rev-list $commit..$branch --first-parent | cat -n) | sort -k2 -s | uniq -f1 -d | sort -n | tail -1 | cut -f2'"
+
 [color]
    ui = true
    diff = true
@@ -53,8 +51,8 @@
    changed = bold yellow
    untracked = bold red
 [core]
-  whitespace = trailing-space,space-before-tab
-  editor = nvim
+   whitespace = trailing-space,space-before-tab
+   editor = nvim
 [diff]
    renames = copies
    mnemonicprefix = true
@@ -62,13 +60,16 @@
 [difftool]
    prompt = false
 [merge]
+   conflictstyle = diff3
    ff = false
 [pager]
    color = true
 [pull]
    rebase = true
 [push]
-   default = tracking
+   default = current
+[rebase]
+   autoStash = true
 [user]
    name = Mitchell Rosen
    email = mitchellwrosen@gmail.com

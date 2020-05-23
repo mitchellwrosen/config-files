@@ -65,19 +65,19 @@ Plug 'tpope/vim-repeat'
 " :help surround
 Plug 'tpope/vim-surround'
 
-" Autocomplete thingy
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 
-" Statusline thingies
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+
+" Run ormolu on save
+Plug 'sdiehl/vim-ormolu', { 'for': 'haskell' }
 
 " Language-specific syntax highlighting and such
 Plug 'ElmCast/elm-vim', { 'for': 'elm' }
 Plug 'LnL7/vim-nix', { 'for': 'nix' }
 Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
 Plug 'purescript-contrib/purescript-vim', { 'for': 'purescript' }
-Plug 'fatih/vim-go', { 'for': 'go' }
 Plug 'vmchale/dhall-vim', { 'for': 'dhall' }
 
 Plug 'chriskempson/base16-vim'
@@ -159,8 +159,8 @@ nm k gk
 " xn <silent> K ?^\S<CR>:nohl<CR>
 nn <expr> <silent> J <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
 nn <expr> <silent> K <SID>CursorBelowBlankLine() ? "{{j" : "{j"
-xn J }
-xn K {
+xn <expr> <silent> J <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
+xn <expr> <silent> K <SID>CursorBelowBlankLine() ? "{{j" : "{j"
 
 " Kinda better paragraph movement than the defaults
 " nn <expr> <silent> } <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
@@ -214,7 +214,7 @@ nn <C-h> <C-w>h
 nn <C-l> <C-w>l
 
 " github.com/mitchellwrosen/repld stuff
-nn <silent> <Space>s m`vip<Esc>:silent '<,'>w !repld-send<CR>``
+nn <silent> <Space>s m`vip<Esc>:silent '<,'>w !repld-send --no-echo<CR>``
 nn <silent> <Space>S m`:silent w !repld-send<CR>``
 vn <silent> <Space>s m`<Esc>:silent '<,'>w !repld-send<CR>``
 
@@ -487,6 +487,9 @@ let g:multi_cursor_prev_key = '<C-p>'
 " let g:multi_cursor_skip_key = '<C-x>'
 let g:multi_cursor_quit_key = '<Esc>'
 
+" [ormolu]
+let g:ormolu_disable = 1
+
 " [signify]
 let g:signify_sign_change = 'Δ'
 let g:signify_sign_delete = '-'
@@ -510,13 +513,11 @@ au FileType fzf nn <silent> <buffer> <Esc> :q<CR>
 au FileType go setl lcs=tab:\ \ ,trail:·,nbsp:+
 
 " Space-p to format Haskell code
-au FileType haskell nn <buffer> <silent> <Space>p m`!ipormolu -o XPatternSynonyms<CR>``
-au FileType haskell vn <buffer> <silent> <Space>p m`!ormolu -o XPatternSynonyms<CR>``
-" au FileType haskell nn <buffer> <silent> <Space>p m`:%!stylish-haskell<CR>``
+au FileType haskell nn <buffer> <silent> <Space>p :call RunOrmolu()<CR>
 " <Space>ff to find-function (ag can match over multiple lines)
 " <Space>ft to find-type (ripgrep is faster)
 au FileType haskell nn <buffer> <Space>ff :Ag (<Bslash>b)<C-r><C-w><Bslash>b[ <Bslash>t<Bslash>n]+::<CR>
-au FileType haskell nn <buffer> <Space>ft :Rg (data<Bar>newtype<Bar>type)\s+<C-r><C-w>\b<CR>
+au FileType haskell nn <buffer> <Space>ft :Rg (((data<Bar>newtype<Bar>type)\s+)<Bar>class .*)\b<C-r><C-w>\b<CR>
 au FileType haskell nn <buffer> <Space>fa :Rgu (<C-r><C-w>\b\s+::)<Bar>((data(\sfamily)?<Bar>newtype<Bar>type(\sfamily)?)\s+<C-r><C-w>\b)<Bar>(class\s+(\(.*\)\s+=>\s+)?<C-r><C-w>\b\s+where)<CR>
 " au FileType haskell nn <Space>p :cal LanguageClient_textDocument_formatting()<CR>
 " Swap ; and : in Haskell, PureScript
@@ -528,6 +529,8 @@ au FileType haskell nn <buffer> <Space>it m`"ayiwI<C-r>=system('cabal new-repl -
 
 " On <Enter>, go to error and close quickfix list
 au FileType qf nn <silent> <buffer> <CR> <CR>:ccl<CR>
+
+au FileType unison setlocal commentstring=--\ %s
 
 " ==============================================================================
 " nvim-gtk settings

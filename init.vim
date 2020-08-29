@@ -6,8 +6,7 @@
 " * S = surround WORD
 " * SS = surround line
 " * U = redo
-" * X = exchange (x in visual mode)
-" * XX = exchange line
+" * x = exchange
 "
 " TODO
 " * shada?
@@ -23,7 +22,7 @@
 " Plugins
 " ==============================================================================
 
-cal plug#begin('~/.vim/plugged')
+cal plug#begin(stdpath('data') . '/plugged')
 
 " Fuzzy search source code, files, etc
 " :help fzf-vim
@@ -70,13 +69,10 @@ Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
-" Run ormolu on save
+Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
 Plug 'sdiehl/vim-ormolu', { 'for': 'haskell' }
-
-" Language-specific syntax highlighting and such
 Plug 'ElmCast/elm-vim', { 'for': 'elm' }
 Plug 'LnL7/vim-nix', { 'for': 'nix' }
-Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
 Plug 'purescript-contrib/purescript-vim', { 'for': 'purescript' }
 Plug 'vmchale/dhall-vim', { 'for': 'dhall' }
 
@@ -257,20 +253,20 @@ xm s[ <Plug>VSurround]
 xm s{ <Plug>VSurround}
 xm sp <Plug>VSurround)
 
-
 " [tabular]
 " Space-a to align on the word under the cursor
 nn <silent> <Space>a m`:execute "Tabularize /" . expand("<cWORD>")<CR>``
 
 " [exchange]
-" X ("exchange") once to yank, X again to exchange with the first yank
+" x ("exchange") once to yank, x again to exchange with the first yank
+nm x <Plug>(Exchange)
 " Manually make [exhange] replace 'w' with 'e', as vim does for e.g. 'c'
-"
-" XX to exchange-yank the whole line
-nm Xw <Plug>(Exchange)e
-nm XW <Plug>(Exchange)E
-nm X <Plug>(Exchange)
-nm XX <Plug>(ExchangeLine)
+nm xw <Plug>(Exchange)e
+nm xW <Plug>(Exchange)E
+" xx to exchange-yank the whole line (and return cursor to where it was)
+nm xx m`<Plug>(ExchangeLine)``
+" xc to clear the exchange
+nm xc <Plug>(ExchangeClear)
 xm x <Plug>(Exchange)
 
 " [qf]
@@ -1993,4 +1989,3 @@ ino <C-U>[9 𝟡
 " U+1F880  🢀 🢁 🢂 🢃 🢄 🢇
 " U+1F890  🢐 🢑 🢒 🢓 🢔 🢕 🢖 🢗 🢘 🢙 🢚 🢛
 " U+1F8A0  🢠 🢡 🢢 🢣 🢤 🢥 🢦 🢧 🢨 🢩 🢪 🢫
-

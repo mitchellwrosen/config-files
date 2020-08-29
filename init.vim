@@ -60,6 +60,8 @@ Plug 'tpope/vim-commentary'
 " Make '.' repeat more things out of the box
 Plug 'tpope/vim-repeat'
 
+Plug 'tpope/vim-fugitive'
+
 " Some surround helpers.
 " :help surround
 Plug 'tpope/vim-surround'
@@ -322,7 +324,6 @@ nn <silent> <Space>i :CocFix<CR>
 " Backspace to open all warnings/errors in a list
 nn <silent> <BS> :CocList diagnostics<CR>
 
-
 " ------------------------------------------------------------------------------
 " Insert mode
 " ------------------------------------------------------------------------------
@@ -428,6 +429,14 @@ ca snipedit UltiSnipsEdit
 " ==============================================================================
 " Plugin settings
 " ==============================================================================
+
+" [vim-airline/vim-airline]
+let g:airline_extensions = ['branch', 'coc', 'fugitiveline', 'tabline']
+let g:airline#extensions#coc#error_symbol = '✗ '
+let g:airline#extensions#coc#warning_symbol = '⚠ '
+let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+let g:airline_section_a = airline#section#create_left(['mode', 'crypt', 'paste', 'keymap', 'spell', 'capslock', 'iminsert'])
+let g:airline_section_y = ''
 
 " [elm]
 let g:elm_setup_keybindings = 0 " Don't make any key mappings

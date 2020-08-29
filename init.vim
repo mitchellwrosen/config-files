@@ -98,7 +98,7 @@ endif
 set bg=dark
 set aw                         " write when leaving a buffer
 set cb=unnamed,unnamedplus     " yank also copies to both clipboards
-set cc=81                      " highlight column 81
+set cc=121                     " highlight column
 set cul                        " higlight the current line
 set et                         " convert tabs to spaces
 set gp=rg\ --vimgrep           " use rg to grep

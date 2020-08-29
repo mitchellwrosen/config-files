@@ -23,6 +23,8 @@ window:
     columns: 0
     lines: 0
 
+  dynamic_title: true
+
   # Window padding (changes require restart)
   #
   # Blank space added around the window in pixels. This padding is not scaled
@@ -199,9 +201,9 @@ colors:
 #   - Linear
 #
 # Specifying a `duration` of `0` will disable the visual bell.
-visual_bell:
-  animation: EaseOutExpo
-  duration: 0
+# visual_bell:
+#   animation: EaseOutExpo
+#   duration: 0
 
 # Background opacity
 #
@@ -244,8 +246,6 @@ selection:
   # the selection clipboard. Otherwise, it will only be copied to the selection
   # clipboard.
   save_to_clipboard: false
-
-dynamic_title: true
 
 cursor:
   # Cursor style

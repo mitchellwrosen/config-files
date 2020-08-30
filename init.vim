@@ -41,9 +41,6 @@ Plug 'mhinz/vim-signify'
 " Vim quickfix improvements
 Plug 'romainl/vim-qf'
 
-" File browser, only load when used
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-
 " Multiple cursors for quick and dirty renaming. Very handy.
 Plug 'terryma/vim-multiple-cursors'
 
@@ -65,6 +62,8 @@ Plug 'tpope/vim-fugitive'
 " Some surround helpers.
 " :help surround
 Plug 'tpope/vim-surround'
+
+Plug 'mcchrish/nnn.vim'
 
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 
@@ -283,7 +282,6 @@ nm <A-k> <Plug>(qf_qf_prev)
 nm <Space>m <Plug>CommentaryLine
 vm <Space>m <Plug>Commentary
 
-
 " [fzf]
 " Space-o ("open") to fuzzy file search, both git- and everything-variants
 nn <expr> <Space>o (len(system('git rev-parse')) ? ':Files' : ':GFiles')."\<CR>"
@@ -298,8 +296,8 @@ nn <Space>k :Buffers<CR>
 " FIXME Does this even work?
 vm <Space>f y:Ag <C-r>"<CR>
 
-" [NERDTree]
-nn <silent> <Space>n :NERDTreeToggle<CR>
+" [mcchrish/nnn.vim]
+nn <silent> <Space>n :NnnPicker<CR>
 
 " [coc.nvim]
 function! s:HandleEnter()
@@ -471,15 +469,10 @@ let g:haskell_enable_typeroles = 1
 let g:highlightedyank_highlight_duration = 500 " highlight yank for 500ms
 let g:highlightedyank_max_lines = 50
 
-" [LanguageClient]
-" " Specify the language-specific executables to run the LSP server
-" let g:LanguageClient_serverCommands = {} " { 'haskell': ['hie-wrapper', '--lsp', '-d', '-l', '.HieWrapperLog'] }
-" " Use global settings.json file
-" let g:LanguageClient_settingsPath = "/home/mitchell/.config/lsp/settings.json"
-" " LanguageClient doesn't seem to work very well, so verbosely log everything it
-" " tries to do.
-" let g:LanguageClient_loggingLevel = 'DEBUG'
-" let g:LanguageClient_loggingFile = ".LanguageClientLog"
+" [mcchrish/nnn.vim]
+let g:nnn#set_default_mappings = 0
+let g:nnn#command = 'nnn -c -n'
+let g:nnn#layout = { 'window': { 'height': 0.9, 'width': 0.5, 'xoffset': 0.99 }}
 
 " [multiple-cursors]
 let g:multi_cursor_use_default_mapping = 0

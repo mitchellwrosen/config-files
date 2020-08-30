@@ -26,47 +26,36 @@ cal plug#begin(stdpath('data') . '/plugged')
 
 Plug 'chriskempson/base16-vim'
 Plug 'ElmCast/elm-vim', { 'for': 'elm' }
-" Align on words
-Plug 'godlygeek/tabular'
-" Fuzzy search source code, files, etc
-Plug 'junegunn/fzf.vim'
+Plug 'godlygeek/tabular' " Align on words
+Plug 'junegunn/fzf.vim' " Fuzzy search source code, files, etc
+Plug 'justinmk/vim-sneak' " two-letter f/t
+Plug 'liuchengxu/vim-which-key'
 Plug 'LnL7/vim-nix', { 'for': 'nix' }
-" Rainbow parens
-" Plug 'luochen1990/rainbow'
-" File browser thingy
-Plug 'mcchrish/nnn.vim'
-" Sign column
-Plug 'mhinz/vim-signify'
+Plug 'mcchrish/nnn.vim' " File browser thingy, kinda sucks, what's better?
+Plug 'mhinz/vim-signify' " Sign column
+Plug 'mhinz/vim-startify' " Startup screen
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
-Plug 'psliwka/vim-smoothie'
+Plug 'psliwka/vim-smoothie' " Smooth paging up and down
 Plug 'purescript-contrib/purescript-vim', { 'for': 'purescript' }
-" Automatically unhighlight when cursor moves
-Plug 'romainl/vim-cool'
-" Vim quickfix improvements
-Plug 'romainl/vim-qf'
+Plug 'romainl/vim-cool' " Automatically unhighlight when cursor moves
+Plug 'romainl/vim-qf' " Vim quickfix improvements
+Plug 'RRethy/vim-illuminate' " Highlight occurrences of the word under the cursor
 Plug 'sdiehl/vim-ormolu', { 'for': 'haskell' }
-" Multiple cursors for quick and dirty renaming. Very handy.
-Plug 'terryma/vim-multiple-cursors'
-" Swap the location of two selections. Occasionally useful.
-Plug 'tommcdo/vim-exchange'
-" Improved 'ga' behavior (shows unicode code point, vim digraph, etc. of
-" character under cursor)
-Plug 'tpope/vim-characterize'
-" Quick (un-)commenting
-Plug 'tpope/vim-commentary'
+Plug 'terryma/vim-multiple-cursors' " Multiple cursors for quick and dirty renaming
+Plug 'tommcdo/vim-exchange' " Swap the location of two selections
+Plug 'tpope/vim-characterize' " Improved 'ga'
+Plug 'tpope/vim-commentary' " Quick (un-)commenting
 Plug 'tpope/vim-fugitive'
-" Make '.' repeat more things out of the box
-Plug 'tpope/vim-repeat'
-" Some surround helpers.
-Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat' " Make '.' repeat more things out of the box
+Plug 'tpope/vim-surround' " Some surround helpers
+Plug 'unblevable/quick-scope' " Highlight the first, second, etc. instances of characters on a line
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vmchale/dhall-vim', { 'for': 'dhall' }
 Plug 'Yggdroot/indentLine'
 
-cal plug#end()
-" Automatically calls syntax on, filetype plugin indent on
+cal plug#end() " Automatically calls syntax on, filetype plugin indent on
 
 " ==============================================================================
 " Basic settings
@@ -106,7 +95,7 @@ set si                         " smart autoindenting when starting a new line
 set smc=180                    " dont bother syntax-highlighting past this column
 set sts=2                      " tab key makes 2 spaces
 set title                      " put filename in window title
-set tm=500                     " only wait .5s for key sequence to complete
+set tm=300                     " only wait this many ms for key sequence to complete
 set udf                        " persist undo history across buffer exits
 set ut=200                     " fire CursorHold after 200ms (default 4000ms)
 set wmnu                       " complete commands with a little menu
@@ -118,20 +107,25 @@ set wim=list:longest,full      " wild menu completion behavior
 
 " Swap ; and ;
 no ; :
-no : ;
+nm : <Plug>Sneak_;
+
+" Swap 0 and ^
+no 0 ^
+no ^ 0
+
+" Show help on <Space>
+nn <silent> <Space> :WhichKey '<Space>'<CR>
+vn <silent> <Space> :WhichKeyVisual '<Space>'<CR>
+nn <silent> ? :WhichKey '?'<CR>
+
+" <Tab> to switch to the previously edited buffer
+nn <Tab> <C-^>
 
 " Disable annoying command search 'q:' that I never use
 map q: <Nop>
 
 " Shortcut for common case: recording into q (qq), then replaying (Q)
 map Q @q
-
-" <Tab> to switch to the previously edited buffer
-nn <Tab> <C-^>
-" nn <silent> <Tab> :w<CR>
-
-" ? to clear the current search
-" nn <silent> ? :noh<CR>
 
 " Prevent the cursor from jumping past a wrapped line when moving up and down
 nm j gj
@@ -140,25 +134,21 @@ nm k gk
 nm J <Plug>(SmoothieForwards)
 nm K <Plug>(SmoothieBackwards)
 
-" J/K to move around blocks
-" nn <silent> J /^\S<CR>:noh<CR>
-" nn <silent> K ?^\S<CR>:noh<CR>
-" xn <silent> J /^\S<CR>:noh<CR>
-" xn <silent> K ?^\S<CR>:noh<CR>
-" nn <expr> <silent> J <SID>CursorOnBlankLine() ? "/\\S<CR>:noh<CR>" : "}/\\S<CR>:noh<CR>"
-" nn <expr> <silent> K <SID>CursorBelowBlankLine() ? "{{j" : "{j"
-" xn <expr> <silent> J <SID>CursorOnBlankLine() ? "/\\S<CR>:noh<CR>" : "}/\\S<CR>:noh<CR>"
-" xn <expr> <silent> K <SID>CursorBelowBlankLine() ? "{{j" : "{j"
+nm f <Plug>Sneak_f
+nm F <Plug>Sneak_F
+nm t <Plug>Sneak_t
+nm t <Plug>Sneak_T
+nm z <Plug>Sneak_s
+nm Z <Plug>Sneak_S
+xm z <Plug>Sneak_s
+xm Z <Plug>Sneak_S
+" omap ? <Plug>Sneak_s
+" omap ? <Plug>Sneak_S
 
-" Kinda better paragraph movement than the defaults
-" nn <expr> <silent> } <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
-" nn <expr> <silent> { <SID>CursorBelowBlankLine() ? "{{j" : "{j"
-" xn <expr> <silent> } <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
-" xn <expr> <silent> { <SID>CursorBelowBlankLine() ? "{{j" : "{j"
-nn } <C-d>
-nn { <C-u>
-xn } <C-d>
-xn { <C-u>
+" nn } <C-d>
+" nn { <C-u>
+" xn } <C-d>
+" xn { <C-u>
 
 " Make Y yank to the end of line, similar to how C and D behave
 nn Y y$
@@ -408,7 +398,6 @@ function! <SID>StripTrailingWhitespaces()
   cal cursor(l, c)
 endfun
 
-
 " function! <SID>EchoQuickFixEntry()
 "   let entries = getqflist()
 "   let bufnr = bufnr('%')
@@ -458,6 +447,10 @@ au mitchellwrosen FileType elm,haskell,purescript nn <buffer> r; r:
 au mitchellwrosen FileType elm,haskell,purescript nn <buffer> r: r;
 au mitchellwrosen FileType haskell nn <buffer> <Space>it m`"ayiwI<C-r>=system('cabal new-repl -v0 --repl-options=-fno-code --repl-options=-v0 2>/dev/null <<< ":t <C-r>a"')<CR><Esc>``
 
+" In startify screen, undo my j=gj, k=gk mappings, because they press 'g'
+au mitchellwrosen FileType startify nn <buffer> j j
+au mitchellwrosen FileType startify nn <buffer> k k
+
 " On <Enter>, go to error and close quickfix list
 au mitchellwrosen FileType qf nn <silent> <buffer> <CR> <CR>:ccl<CR>
 
@@ -502,6 +495,10 @@ let g:go_doc_keywordprg_enabled = 0 " don't hijack my K key
 let g:go_textobj_enabled = 0 " don't add custom text objects
 let g:go_updatetime = 0 " don't delay for identifier-under-cursor things
 
+" [justinmk/vim-sneak]
+" Make sneak use the search highlighting
+hi! link Sneak Search
+
 " [haskell]
 let g:haskell_indent_disable = 1
 let g:haskell_enable_backpack = 1
@@ -510,8 +507,47 @@ let g:haskell_enable_quantification = 1
 let g:haskell_enable_recursivedo = 1
 let g:haskell_enable_typeroles = 1
 
-" [luochen1990/rainbow]
-" let g:rainbow_active = 1
+" [liuchengxu/vim-which-key]
+let g:which_key_use_floating_win = 1
+let g:which_key_hspace = 1
+cal which_key#register('<Space>', 'g:which_key_map_space')
+let g:which_key_map_space = {
+      \ 'a': 'align',
+      \ 'd': 'delete-buffer',
+      \ 'f': 'find',
+      \ 'h': 'history',
+      \ 'k': 'find-buffer',
+      \ 'm': 'comment',
+      \ 'n': 'file-browser',
+      \ 'o': 'find-file',
+      \ 'S': 'repld-send-buffer',
+      \ 's': 'repld-send',
+      \ }
+cal which_key#register('?', 'g:which_key_map_question')
+" Why are some buffer things broken?
+let g:which_key_map_question = {
+      \ 'b':
+      \   { 'name': '+buffer',
+      \     'f': ['call feedkeys("<Space>k")', 'find-buffer (<Space>k)'],
+      \     'p': ['<C-k>', 'prev-buffer (<C-k>)'],
+      \     'n': ['<C-j>', 'next-buffer (<C-j>)'],
+      \     'd': ['<Space>d', 'delete-buffer (<Space>d)'],
+      \     's': ['<Tab>', 'swap-buffer (<Tab>)'],
+      \   },
+      \ 'w':
+      \   { 'name': '+window',
+      \     'h': ['<C-h>', 'window-left (<C-h>)'],
+      \     'l': ['<C-l>', 'window-right (<C-l>)'],
+      \   },
+      \ 's': ['<C-s>', 'search (<C-s>)'],
+      \ 'Q': ['call feedkeys("@q")', 'execute-macro-q'],
+      \ 'x':
+      \   { 'name': '+exchange',
+      \     'c': ['call feedkeys("xc")', 'exchange-clear (xc)'],
+      \     'l': ['call feedkeys("xx")', 'exchange-line (xx)'],
+      \     'w': ['call feedkeys("xw")', 'exchange-word (xw)'],
+      \   },
+      \ }
 
 " [mcchrish/nnn.vim]
 let g:nnn#set_default_mappings = 0
@@ -537,15 +573,35 @@ let g:smoothie_base_speed = 15
 let g:smoothie_no_default_mappings = 1
 let g:smoothie_update_interval = 10
 
-" [signify]
+" [mhinz/signify]
 let g:signify_sign_change = 'Δ'
 let g:signify_sign_delete = '-'
 " I only use git, so only bother integrating with it (performance win!)
 let g:signify_vcs_list = [ 'git' ]
 
+" [mhinz/vim-startify]
+let g:startify_custom_footer = ['   [e]  empty buffer', '   [q]  quit']
+let g:startify_custom_header = []
+let g:startify_custom_indices = ['a', 's', 'd', 'f', 'l', 'g', 'h', 'w', 'r', 'u', 'o', 'p', 't', 'y', 'z', 'x', 'c', 'v', 'm', ',', '.', '/', 'b', 'n', '1', '2', '3', '4', '5', '6']
+let g:startify_enable_special = 0
+" faster startup
+let g:startify_enable_unsafe = 1
+let g:startify_files_number = 30
+let g:startify_lists = [{ 'type': 'files' }]
+let g:startify_relative_path = 1
+
+" [RRethy/vim-illuminate]
+" highlight immediately
+let g:Illuminate_delay = 0
+" don't highlight the word under the cursor
+let g:Illuminate_highlightUnderCursor = 0
+
 " [surround]
 " Don't let surround provide any magic mappings
 let g:surround_no_mappings = 1
+
+" [unblevable/quick-scope]
+let g:qs_max_chars = 120
 
 " [Yggdroot/indentLine]
 " let g:indentLine_setColors = 0

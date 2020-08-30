@@ -24,60 +24,47 @@
 
 cal plug#begin(stdpath('data') . '/plugged')
 
-" Fuzzy search source code, files, etc
-" :help fzf-vim
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
-
+Plug 'chriskempson/base16-vim'
+Plug 'ElmCast/elm-vim', { 'for': 'elm' }
 " Align on words
 Plug 'godlygeek/tabular'
-
-" Highlight yanks
-Plug 'machakann/vim-highlightedyank'
-
+" Fuzzy search source code, files, etc
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'LnL7/vim-nix', { 'for': 'nix' }
+" Rainbow parens
+" Plug 'luochen1990/rainbow'
+" File browser thingy
+Plug 'mcchrish/nnn.vim'
 " Sign column
 Plug 'mhinz/vim-signify'
-
+Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
+Plug 'psliwka/vim-smoothie'
+Plug 'purescript-contrib/purescript-vim', { 'for': 'purescript' }
+" Automatically unhighlight when cursor moves
+Plug 'romainl/vim-cool'
 " Vim quickfix improvements
 Plug 'romainl/vim-qf'
-
+Plug 'sdiehl/vim-ormolu', { 'for': 'haskell' }
 " Multiple cursors for quick and dirty renaming. Very handy.
 Plug 'terryma/vim-multiple-cursors'
-
 " Swap the location of two selections. Occasionally useful.
 Plug 'tommcdo/vim-exchange'
-
 " Improved 'ga' behavior (shows unicode code point, vim digraph, etc. of
 " character under cursor)
 Plug 'tpope/vim-characterize'
-
 " Quick (un-)commenting
 Plug 'tpope/vim-commentary'
-
+Plug 'tpope/vim-fugitive'
 " Make '.' repeat more things out of the box
 Plug 'tpope/vim-repeat'
-
-Plug 'tpope/vim-fugitive'
-
 " Some surround helpers.
-" :help surround
 Plug 'tpope/vim-surround'
-
-Plug 'mcchrish/nnn.vim'
-
-Plug 'neoclide/coc.nvim', { 'branch': 'release' }
-
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-
-Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
-Plug 'sdiehl/vim-ormolu', { 'for': 'haskell' }
-Plug 'ElmCast/elm-vim', { 'for': 'elm' }
-Plug 'LnL7/vim-nix', { 'for': 'nix' }
-Plug 'purescript-contrib/purescript-vim', { 'for': 'purescript' }
 Plug 'vmchale/dhall-vim', { 'for': 'dhall' }
-
-Plug 'chriskempson/base16-vim'
+Plug 'Yggdroot/indentLine'
 
 cal plug#end()
 " Automatically calls syntax on, filetype plugin indent on
@@ -117,6 +104,7 @@ set sw=2
 set scl=yes                    " always draw signcolumn
 set scs                        " don't ignore case if search contains uppercase char
 set si                         " smart autoindenting when starting a new line
+set smc=180                    " dont bother syntax-highlighting past this column
 set sts=2                      " tab key makes 2 spaces
 set title                      " put filename in window title
 set tm=500                     " only wait .5s for key sequence to complete
@@ -139,25 +127,29 @@ map q: <Nop>
 " Shortcut for common case: recording into q (qq), then replaying (Q)
 map Q @q
 
-" <Tab> to save
-nn <silent> <Tab> :w<CR>
+" <Tab> to switch to the previously edited buffer
+nn <Tab> <C-^>
+" nn <silent> <Tab> :w<CR>
 
 " ? to clear the current search
-nn <silent> ? :noh<CR>
+" nn <silent> ? :noh<CR>
 
 " Prevent the cursor from jumping past a wrapped line when moving up and down
 nm j gj
 nm k gk
 
+nm J <Plug>(SmoothieForwards)
+nm K <Plug>(SmoothieBackwards)
+
 " J/K to move around blocks
-" nn <silent> J /^\S<CR>:nohl<CR>
-" nn <silent> K ?^\S<CR>:nohl<CR>
-" xn <silent> J /^\S<CR>:nohl<CR>
-" xn <silent> K ?^\S<CR>:nohl<CR>
-nn <expr> <silent> J <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
-nn <expr> <silent> K <SID>CursorBelowBlankLine() ? "{{j" : "{j"
-xn <expr> <silent> J <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
-xn <expr> <silent> K <SID>CursorBelowBlankLine() ? "{{j" : "{j"
+" nn <silent> J /^\S<CR>:noh<CR>
+" nn <silent> K ?^\S<CR>:noh<CR>
+" xn <silent> J /^\S<CR>:noh<CR>
+" xn <silent> K ?^\S<CR>:noh<CR>
+" nn <expr> <silent> J <SID>CursorOnBlankLine() ? "/\\S<CR>:noh<CR>" : "}/\\S<CR>:noh<CR>"
+" nn <expr> <silent> K <SID>CursorBelowBlankLine() ? "{{j" : "{j"
+" xn <expr> <silent> J <SID>CursorOnBlankLine() ? "/\\S<CR>:noh<CR>" : "}/\\S<CR>:noh<CR>"
+" xn <expr> <silent> K <SID>CursorBelowBlankLine() ? "{{j" : "{j"
 
 " Kinda better paragraph movement than the defaults
 " nn <expr> <silent> } <SID>CursorOnBlankLine() ? "/\\S<CR>:nohl<CR>" : "}/\\S<CR>:nohl<CR>"
@@ -307,6 +299,7 @@ function! s:HandleEnter()
     call CocAction('doHover')
   endif
 endfunction
+
 " <Left>/<Right> to jump around warnings/errors (annoying that it's only
 " buffer-local)
 nm <silent> <Left> <Plug>(coc-diagnostic-prev)
@@ -407,22 +400,48 @@ endfun
 " Autocommands
 " ==============================================================================
 
+aug mitchellwrosen
+  autocmd!
+aug END
+
 " Jump to last cursor position on file open
-au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "norm! g`\"" | endif
+au mitchellwrosen BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "norm! g`\"" | endif
 
 " Strip trailing whitespace on save
-au BufWritePre * cal <SID>StripTrailingWhitespaces()
+au mitchellwrosen BufWritePre * cal <SID>StripTrailingWhitespaces()
+
+au mitchellwrosen FileType fzf setl laststatus=0
+  \| au BufLeave <buffer> setl laststatus=2
+" Escape to quit little annoying temporary buffers
+au mitchellwrosen FileType fzf nn <silent> <buffer> <Esc> :q<CR>
+
+" Golang likes tabs, so show them as spaces
+au mitchellwrosen FileType go setl lcs=tab:\ \ ,trail:·,nbsp:+
+
+" Space-p to format Haskell code
+au mitchellwrosen FileType haskell nn <buffer> <silent> <Space>p :call RunOrmolu()<CR>
+" <Space>ff to find-function (ag can match over multiple lines)
+" <Space>ft to find-type (ripgrep is faster)
+au mitchellwrosen FileType haskell nn <buffer> <Space>ff :Ag (<Bslash>b)<C-r><C-w><Bslash>b[ <Bslash>t<Bslash>n]+::<CR>
+au mitchellwrosen FileType haskell nn <buffer> <Space>ft :Rg (((data<Bar>newtype<Bar>type)\s+)<Bar>class .*)\b<C-r><C-w>\b<CR>
+au mitchellwrosen FileType haskell nn <buffer> <Space>fa :Rgu (<C-r><C-w>\b\s+::)<Bar>((data(\sfamily)?<Bar>newtype<Bar>type(\sfamily)?)\s+<C-r><C-w>\b)<Bar>(class\s+(\(.*\)\s+=>\s+)?<C-r><C-w>\b\s+where)<CR>
+" Swap ; and : in Haskell, PureScript
+au mitchellwrosen FileType elm,haskell,purescript ino <buffer> ; :
+au mitchellwrosen FileType elm,haskell,purescript ino <buffer> : ;
+au mitchellwrosen FileType elm,haskell,purescript nn <buffer> r; r:
+au mitchellwrosen FileType elm,haskell,purescript nn <buffer> r: r;
+au mitchellwrosen FileType haskell nn <buffer> <Space>it m`"ayiwI<C-r>=system('cabal new-repl -v0 --repl-options=-fno-code --repl-options=-v0 2>/dev/null <<< ":t <C-r>a"')<CR><Esc>``
+
+" On <Enter>, go to error and close quickfix list
+au mitchellwrosen FileType qf nn <silent> <buffer> <CR> <CR>:ccl<CR>
+
+au mitchellwrosen FileType unison setlocal commentstring=--\ %s
+
+" Briefly highlight yanks
+au mitchellwrosen TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=500}
 
 " Echo the quickfix entry on the current line, if any
 " au CursorMoved * cal <SID>EchoQuickFixEntry()
-
-" ------------------------------------------------------------------------------
-" Command mode
-" ------------------------------------------------------------------------------
-
-" [UltiSnips]
-" Edit snippets of current file type
-ca snipedit UltiSnipsEdit
 
 " ==============================================================================
 " Plugin settings
@@ -448,6 +467,8 @@ let g:exchange_no_mappings = 1
 " If the buffer is already open in another tab or window, jump to it rather
 " than replace the current buffer (which would open 2 copies)
 let g:fzf_buffers_jump = 1
+let g:fzf_layout = { 'window': { 'width': 0.95, 'height': 0.95 } }
+let $FZF_DEFAULT_OPTS = '--layout=reverse --inline-info'
 
 " [go]
 let g:go_auto_sameids = 1 " highlight all uses of identifier under cursor
@@ -465,9 +486,8 @@ let g:haskell_enable_quantification = 1
 let g:haskell_enable_recursivedo = 1
 let g:haskell_enable_typeroles = 1
 
-" [highlightedyank]
-let g:highlightedyank_highlight_duration = 500 " highlight yank for 500ms
-let g:highlightedyank_max_lines = 50
+" [luochen1990/rainbow]
+" let g:rainbow_active = 1
 
 " [mcchrish/nnn.vim]
 let g:nnn#set_default_mappings = 0
@@ -488,6 +508,11 @@ let g:multi_cursor_quit_key = '<Esc>'
 " [ormolu]
 let g:ormolu_disable = 1
 
+" [psliwka/vim-smoothie]
+let g:smoothie_base_speed = 15
+let g:smoothie_no_default_mappings = 1
+let g:smoothie_update_interval = 10
+
 " [signify]
 let g:signify_sign_change = 'Δ'
 let g:signify_sign_delete = '-'
@@ -498,37 +523,12 @@ let g:signify_vcs_list = [ 'git' ]
 " Don't let surround provide any magic mappings
 let g:surround_no_mappings = 1
 
-" ==============================================================================
-" Filetype-specific settings
-" ==============================================================================
-
-au FileType fzf setl laststatus=0
-  \| au BufLeave <buffer> setl laststatus=2
-" Escape to quit little annoying temporary buffers
-au FileType fzf nn <silent> <buffer> <Esc> :q<CR>
-
-" Golang likes tabs, so show them as spaces
-au FileType go setl lcs=tab:\ \ ,trail:·,nbsp:+
-
-" Space-p to format Haskell code
-au FileType haskell nn <buffer> <silent> <Space>p :call RunOrmolu()<CR>
-" <Space>ff to find-function (ag can match over multiple lines)
-" <Space>ft to find-type (ripgrep is faster)
-au FileType haskell nn <buffer> <Space>ff :Ag (<Bslash>b)<C-r><C-w><Bslash>b[ <Bslash>t<Bslash>n]+::<CR>
-au FileType haskell nn <buffer> <Space>ft :Rg (((data<Bar>newtype<Bar>type)\s+)<Bar>class .*)\b<C-r><C-w>\b<CR>
-au FileType haskell nn <buffer> <Space>fa :Rgu (<C-r><C-w>\b\s+::)<Bar>((data(\sfamily)?<Bar>newtype<Bar>type(\sfamily)?)\s+<C-r><C-w>\b)<Bar>(class\s+(\(.*\)\s+=>\s+)?<C-r><C-w>\b\s+where)<CR>
-" au FileType haskell nn <Space>p :cal LanguageClient_textDocument_formatting()<CR>
-" Swap ; and : in Haskell, PureScript
-au FileType elm,haskell,purescript ino <buffer> ; :
-au FileType elm,haskell,purescript ino <buffer> : ;
-au FileType elm,haskell,purescript nn <buffer> r; r:
-au FileType elm,haskell,purescript nn <buffer> r: r;
-au FileType haskell nn <buffer> <Space>it m`"ayiwI<C-r>=system('cabal new-repl -v0 --repl-options=-fno-code --repl-options=-v0 2>/dev/null <<< ":t <C-r>a"')<CR><Esc>``
-
-" On <Enter>, go to error and close quickfix list
-au FileType qf nn <silent> <buffer> <CR> <CR>:ccl<CR>
-
-au FileType unison setlocal commentstring=--\ %s
+" [Yggdroot/indentLine]
+" let g:indentLine_setColors = 0
+let g:indentLine_color_term = 239
+" let g:indentLine_char = '│'
+let g:indentLine_char = '┊'
+" let g:indentLine_char_list = ['│', '┊']
 
 " ==============================================================================
 " nvim-gtk settings

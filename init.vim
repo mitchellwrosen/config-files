@@ -24,13 +24,15 @@
 
 cal plug#begin(stdpath('data') . '/plugged')
 
-Plug 'chriskempson/base16-vim'
 Plug 'ElmCast/elm-vim', { 'for': 'elm' }
+Plug 'LnL7/vim-nix', { 'for': 'nix' }
+Plug 'RRethy/vim-illuminate' " Highlight occurrences of the word under the cursor
+Plug 'Yggdroot/indentLine'
+Plug 'chriskempson/base16-vim'
 Plug 'godlygeek/tabular' " Align on words
 Plug 'junegunn/fzf.vim' " Fuzzy search source code, files, etc
 Plug 'justinmk/vim-sneak' " two-letter f/t
 Plug 'liuchengxu/vim-which-key'
-Plug 'LnL7/vim-nix', { 'for': 'nix' }
 Plug 'mcchrish/nnn.vim' " File browser thingy, kinda sucks, what's better?
 Plug 'mhinz/vim-signify' " Sign column
 Plug 'mhinz/vim-startify' " Startup screen
@@ -38,9 +40,9 @@ Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
 Plug 'psliwka/vim-smoothie' " Smooth paging up and down
 Plug 'purescript-contrib/purescript-vim', { 'for': 'purescript' }
+Plug 'rhysd/git-messenger.vim'
 Plug 'romainl/vim-cool' " Automatically unhighlight when cursor moves
 Plug 'romainl/vim-qf' " Vim quickfix improvements
-Plug 'RRethy/vim-illuminate' " Highlight occurrences of the word under the cursor
 Plug 'sdiehl/vim-ormolu', { 'for': 'haskell' }
 Plug 'terryma/vim-multiple-cursors' " Multiple cursors for quick and dirty renaming
 Plug 'tommcdo/vim-exchange' " Swap the location of two selections
@@ -53,7 +55,6 @@ Plug 'unblevable/quick-scope' " Highlight the first, second, etc. instances of c
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vmchale/dhall-vim', { 'for': 'dhall' }
-Plug 'Yggdroot/indentLine'
 
 cal plug#end() " Automatically calls syntax on, filetype plugin indent on
 
@@ -258,6 +259,10 @@ nm <Space>l <Plug>(qf_qf_toggle)
 nm <A-j> <Plug>(qf_qf_next)
 nm <A-k> <Plug>(qf_qf_prev)
 
+" [rhysd/git-messenger.vim]
+" blame the line under the cursor
+nm <Space>b <Plug>(git-messenger)
+
 " [vim-commentary]
 " Toggle comment
 nm <Space>m <Plug>CommentaryLine
@@ -336,20 +341,20 @@ command! -bar BCommits call fzf#vim#buffer_commits(1)
 command! -bar -nargs=? -complete=buffer Buffers
   \ call fzf#vim#buffers(
   \   <q-args>,
-  \   fzf#vim#with_preview({'options': ['-0', '-1', '--info=inline', '--layout=reverse-list']}, 'right:60%'),
-  \   1)
+  \   fzf#vim#with_preview({'options': ['--info=inline', '--layout=reverse-list']}, 'right:60%'),
+  \   0)
 
 command! -nargs=? -complete=dir Files
   \ call fzf#vim#files(
   \   <q-args>,
-  \   fzf#vim#with_preview({'options': ['-0', '-1', '--info=inline', '--layout=reverse-list']}, 'right:60%'),
-  \   1)
+  \   fzf#vim#with_preview({'options': ['--info=inline', '--layout=reverse-list']}, 'right:60%'),
+  \   0)
 
 command! -nargs=? GFiles
   \ call fzf#vim#gitfiles(
   \   <q-args>,
-  \   fzf#vim#with_preview({'options': ['-0', '-1', '--info=inline', '--layout=reverse-list']}, 'right:60%'),
-  \   1)
+  \   fzf#vim#with_preview({'options': ['--info=inline', '--layout=reverse-list']}, 'right:60%'),
+  \   0)
 
 " Would be nice if '-1' worked here https://github.com/junegunn/fzf/issues/1750
 " function! <SID>Rg(query)
@@ -365,15 +370,15 @@ command! -nargs=* Rg
   \ call fzf#vim#grep(
   \   'rg --column --line-number --no-heading --color=always -- '.shellescape(<q-args>),
   \   1,
-  \   fzf#vim#with_preview({'options': ['-0', '-1', '--info=inline', '--layout=reverse-list']}, 'right:60%'),
-  \   1)
+  \   fzf#vim#with_preview({'options': ['--border', '--info=inline', '--layout=reverse-list']}, 'right:60%'),
+  \   0)
 
 command! -nargs=* Rgu
   \ call fzf#vim#grep(
   \   'rg --line-number --multiline --multiline-dotall --no-heading --color=always -- '.shellescape(<q-args>),
   \   0,
-  \   fzf#vim#with_preview({'options': ['-0', '-1', '--info=inline', '--layout=reverse-list']}, 'right:60%'),
-  \   1)
+  \   fzf#vim#with_preview({'options': ['--border', '--info=inline', '--layout=reverse-list']}, 'right:60%'),
+  \   0)
 
 " ==============================================================================
 " Functions
@@ -466,14 +471,6 @@ au mitchellwrosen TextYankPost * silent! lua vim.highlight.on_yank {higroup="Inc
 " Plugin settings
 " ==============================================================================
 
-" [vim-airline/vim-airline]
-let g:airline_extensions = ['branch', 'coc', 'fugitiveline', 'tabline']
-let g:airline#extensions#coc#error_symbol = '✗ '
-let g:airline#extensions#coc#warning_symbol = '⚠ '
-let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
-let g:airline_section_a = airline#section#create_left(['mode', 'crypt', 'paste', 'keymap', 'spell', 'capslock', 'iminsert'])
-let g:airline_section_y = ''
-
 " [elm]
 let g:elm_setup_keybindings = 0 " Don't make any key mappings
 let g:elm_format_autosave = 1 " Run elm-format on save
@@ -482,11 +479,6 @@ let g:elm_format_autosave = 1 " Run elm-format on save
 " Don't make any key mappings
 let g:exchange_no_mappings = 1
 
-" [fzf]
-" If the buffer is already open in another tab or window, jump to it rather
-" than replace the current buffer (which would open 2 copies)
-let g:fzf_buffers_jump = 1
-
 " [go]
 let g:go_auto_sameids = 1 " highlight all uses of identifier under cursor
 " let g:go_auto_type_info = 1 " show type info for identifier under cursor
@@ -494,6 +486,12 @@ let g:go_doc_keywordprg_enabled = 0 " don't hijack my K key
 " let g:go_metalinter_autosave = 1 " run metalinter on save
 let g:go_textobj_enabled = 0 " don't add custom text objects
 let g:go_updatetime = 0 " don't delay for identifier-under-cursor things
+
+" [junegunn/fzf.vim]
+" If the buffer is already open in another tab or window, jump to it rather
+" than replace the current buffer (which would open 2 copies)
+let g:fzf_buffers_jump = 1
+let g:fzf_layout = { 'window': { 'height': 0.9, 'width': 0.9 } }
 
 " [justinmk/vim-sneak]
 " Make sneak use the search highlighting
@@ -590,6 +588,19 @@ let g:startify_files_number = 30
 let g:startify_lists = [{ 'type': 'files' }]
 let g:startify_relative_path = 1
 
+" [rhysd/git-messenger.vim]
+let g:git_messenger_always_into_popup = v:true
+let g:git_messenger_extra_blame_args = '-w'
+let g:git_messenger_no_default_mappings = v:true
+
+function! <SID>setup_git_messenger_popup() abort
+  nmap <buffer><Enter> q
+  nmap <buffer><Esc> q
+  nmap <buffer>h o
+  nmap <buffer>l O
+endfunction
+autocmd mitchellwrosen FileType gitmessengerpopup call <SID>setup_git_messenger_popup()
+
 " [RRethy/vim-illuminate]
 " highlight immediately
 let g:Illuminate_delay = 0
@@ -602,6 +613,14 @@ let g:surround_no_mappings = 1
 
 " [unblevable/quick-scope]
 let g:qs_max_chars = 120
+
+" [vim-airline/vim-airline]
+let g:airline_extensions = ['branch', 'coc', 'fugitiveline', 'tabline']
+let g:airline#extensions#coc#error_symbol = '✗ '
+let g:airline#extensions#coc#warning_symbol = '⚠ '
+let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+let g:airline_section_a = airline#section#create_left(['mode', 'crypt', 'paste', 'keymap', 'spell', 'capslock', 'iminsert'])
+let g:airline_section_y = ''
 
 " [Yggdroot/indentLine]
 " let g:indentLine_setColors = 0

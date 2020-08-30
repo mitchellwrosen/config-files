@@ -62,9 +62,6 @@ function cd {
 # Nub the path
 typeset -U path
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
-
 # [base16-shell]
 BASE16_SHELL="$HOME/.config/base16-shell/"
 [ -n "$PS1" ] && \

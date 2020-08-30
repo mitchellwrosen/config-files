@@ -29,7 +29,6 @@ Plug 'ElmCast/elm-vim', { 'for': 'elm' }
 " Align on words
 Plug 'godlygeek/tabular'
 " Fuzzy search source code, files, etc
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'LnL7/vim-nix', { 'for': 'nix' }
 " Rainbow parens
@@ -274,19 +273,17 @@ nm <A-k> <Plug>(qf_qf_prev)
 nm <Space>m <Plug>CommentaryLine
 vm <Space>m <Plug>Commentary
 
-" [fzf]
+" [junegunn/fzf.vim]
 " Space-o ("open") to fuzzy file search, both git- and everything-variants
 nn <expr> <Space>o (len(system('git rev-parse')) ? ':Files' : ':GFiles')."\<CR>"
 " Space-f ("find") the word under the cursor
 nn <Space>f :Rg <C-r><C-w><CR>
 " Would be nice to do this without yanking?
-" Why doesn't this work...
-vn <Space>f "vy:Rg <C-r>v<CR>
+vn <Space>f y:Rg <C-r>"<CR>
 " Space-k (because it's a home-row key) to fuzzy-search buffers
 nn <Space>k :Buffers<CR>
-" Space-f ("find") the selected contents
-" FIXME Does this even work?
-vm <Space>f y:Ag <C-r>"<CR>
+" Space-h to see the git history of the current file
+nn <Space>h :BCommits<CR>
 
 " [mcchrish/nnn.vim]
 nn <silent> <Space>n :NnnPicker<CR>
@@ -344,19 +341,48 @@ ino <C-u> <Nop>
 
 " command! Vimrc e "~/.config/nvim/init.vim"
 
-" Add :Rg command to call ripgrep
-" (stolen from https://github.com/junegunn/fzf.vim#advanced-customization)
-command! -bang -nargs=* Rg
+command! -bar BCommits call fzf#vim#buffer_commits(1)
+
+command! -bar -nargs=? -complete=buffer Buffers
+  \ call fzf#vim#buffers(
+  \   <q-args>,
+  \   fzf#vim#with_preview({'options': ['-0', '-1', '--info=inline', '--layout=reverse-list']}, 'right:60%'),
+  \   1)
+
+command! -nargs=? -complete=dir Files
+  \ call fzf#vim#files(
+  \   <q-args>,
+  \   fzf#vim#with_preview({'options': ['-0', '-1', '--info=inline', '--layout=reverse-list']}, 'right:60%'),
+  \   1)
+
+command! -nargs=? GFiles
+  \ call fzf#vim#gitfiles(
+  \   <q-args>,
+  \   fzf#vim#with_preview({'options': ['-0', '-1', '--info=inline', '--layout=reverse-list']}, 'right:60%'),
+  \   1)
+
+" Would be nice if '-1' worked here https://github.com/junegunn/fzf/issues/1750
+" function! <SID>Rg(query)
+"   let command_fmt = 'rg --column --line-number --no-heading --color=always -- %s || true'
+"   let initial_command = printf(command_fmt, shellescape(a:query))
+"   let reload_command = printf(command_fmt, '{q}')
+"   let spec = {'options': ['-0', '-1', '--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+"   call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), 1)
+" endfunction
+" command! -nargs=* Rg call <SID>Rg(<q-args>)
+
+command! -nargs=* Rg
   \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
-  \   <bang>0 ? fzf#vim#with_preview('up:60%')
-  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \   <bang>0)
+  \   'rg --column --line-number --no-heading --color=always -- '.shellescape(<q-args>),
+  \   1,
+  \   fzf#vim#with_preview({'options': ['-0', '-1', '--info=inline', '--layout=reverse-list']}, 'right:60%'),
+  \   1)
+
 command! -nargs=* Rgu
   \ call fzf#vim#grep(
-  \   'rg --line-number --multiline --multiline-dotall --no-heading --color=always '.shellescape(<q-args>),
+  \   'rg --line-number --multiline --multiline-dotall --no-heading --color=always -- '.shellescape(<q-args>),
   \   0,
-  \   fzf#vim#with_preview('up:70%'),
+  \   fzf#vim#with_preview({'options': ['-0', '-1', '--info=inline', '--layout=reverse-list']}, 'right:60%'),
   \   1)
 
 " ==============================================================================
@@ -467,8 +493,6 @@ let g:exchange_no_mappings = 1
 " If the buffer is already open in another tab or window, jump to it rather
 " than replace the current buffer (which would open 2 copies)
 let g:fzf_buffers_jump = 1
-let g:fzf_layout = { 'window': { 'width': 0.95, 'height': 0.95 } }
-let $FZF_DEFAULT_OPTS = '--layout=reverse --inline-info'
 
 " [go]
 let g:go_auto_sameids = 1 " highlight all uses of identifier under cursor

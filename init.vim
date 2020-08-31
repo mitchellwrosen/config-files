@@ -27,12 +27,12 @@ cal plug#begin(stdpath('data') . '/plugged')
 Plug 'ElmCast/elm-vim', { 'for': 'elm' }
 Plug 'LnL7/vim-nix', { 'for': 'nix' }
 Plug 'RRethy/vim-illuminate' " Highlight occurrences of the word under the cursor
-Plug 'Yggdroot/indentLine'
+Plug 'Yggdroot/indentLine' " show markers every 2 columns of leading whitespace
 Plug 'chriskempson/base16-vim'
 Plug 'godlygeek/tabular' " Align on words
 Plug 'junegunn/fzf.vim' " Fuzzy search source code, files, etc
 Plug 'justinmk/vim-sneak' " two-letter f/t
-Plug 'liuchengxu/vim-which-key'
+Plug 'liuchengxu/vim-which-key' " thingy to tell me my own hotkeys (requires manual work)
 Plug 'mcchrish/nnn.vim' " File browser thingy, kinda sucks, what's better?
 Plug 'mhinz/vim-signify' " Sign column
 Plug 'mhinz/vim-startify' " Startup screen
@@ -55,6 +55,7 @@ Plug 'unblevable/quick-scope' " Highlight the first, second, etc. instances of c
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vmchale/dhall-vim', { 'for': 'dhall' }
+" Plug 'voldikss/vim-floaterm' " floating terminal, almost good but nah
 
 cal plug#end() " Automatically calls syntax on, filetype plugin indent on
 
@@ -68,59 +69,58 @@ if filereadable(expand("~/.vimrc_background"))
   so ~/.vimrc_background
 endif
 
-set bg=dark
-set aw                         " write when leaving a buffer
-set cb=unnamed,unnamedplus     " yank also copies to both clipboards
-set cc=121                     " highlight column
-set cul                        " higlight the current line
-set et                         " convert tabs to spaces
-set gp=rg\ --vimgrep           " use rg to grep
-set hid                        " don't abandon out-of-sight buffers
-set ic                         " case-insensitive searching
-set icm=split                  " show live command substitutions
-set lz                         " don't draw during e.g. applying a macro
-set lbr                        " wrap lines in a more visually pleasing way
-set lcs=tab:>\ ,trail:·,nbsp:+ " trailing whitespace markers
-set list                       " show trailing whitespace, tabs, etc.
-set nofen                      " never fold
-set nojs                       " insert one space after ., ?, ! chars when joining
-set noml                       " disable modelines
-set nosol                      " don't jump cursor to start of line when moving
-set nu
-set so=10                      " leave lines when scrolling
-set sr                         " shift to multiple of shiftwidth
-set sw=2
-set scl=yes                    " always draw signcolumn
-set scs                        " don't ignore case if search contains uppercase char
-set si                         " smart autoindenting when starting a new line
-set smc=180                    " dont bother syntax-highlighting past this column
-set sts=2                      " tab key makes 2 spaces
-set title                      " put filename in window title
-set tm=300                     " only wait this many ms for key sequence to complete
-set udf                        " persist undo history across buffer exits
-set ut=200                     " fire CursorHold after 200ms (default 4000ms)
-set wmnu                       " complete commands with a little menu
-set wim=list:longest,full      " wild menu completion behavior
+se bg=dark
+se aw                         " write when leaving a buffer
+se cb=unnamed,unnamedplus     " yank also copies to both clipboards
+se cc=121                     " highlight column
+se cul                        " higlight the current line
+se et                         " convert tabs to spaces
+se gp=rg\ --vimgrep           " use rg to grep
+se hid                        " don't abandon out-of-sight buffers
+se ic                         " case-insensitive searching
+se icm=split                  " show live command substitutions
+se lz                         " don't draw during e.g. applying a macro
+se lbr                        " wrap lines in a more visually pleasing way
+se lcs=tab:>\ ,trail:·,nbsp:+ " trailing whitespace markers
+se list                       " show trailing whitespace, tabs, etc.
+se nofen                      " never fold
+se nojs                       " insert one space after ., ?, ! chars when joining
+se noml                       " disable modelines
+se nosol                      " don't jump cursor to start of line when moving
+se nu
+se so=10                      " leave lines when scrolling
+se sr                         " shift to multiple of shiftwidth
+se sw=2
+se scl=yes                    " always draw signcolumn
+se scs                        " don't ignore case if search contains uppercase char
+se si                         " smart autoindenting when starting a new line
+se smc=180                    " dont bother syntax-highlighting past this column
+se sts=2                      " tab key makes 2 spaces
+se title                      " put filename in window title
+se tm=300                     " only wait this many ms for key sequence to complete
+se udf                        " persist undo history across buffer exits
+se ut=200                     " fire CursorHold after 200ms (default 4000ms)
+se wmnu                       " complete commands with a little menu
+se wim=list:longest,full      " wild menu completion behavior
 
 " ==============================================================================
 " Key mappings
 " ==============================================================================
 
-" Swap ; and ;
 no ; :
-nm : <Plug>Sneak_;
 
-" Swap 0 and ^
 no 0 ^
 no ^ 0
 
-" Show help on <Space>
-nn <silent> <Space> :WhichKey '<Space>'<CR>
-vn <silent> <Space> :WhichKeyVisual '<Space>'<CR>
-nn <silent> ? :WhichKey '?'<CR>
-
 " <Tab> to switch to the previously edited buffer
 nn <Tab> <C-^>
+
+" d. to delete the current line
+nn d. ^D
+
+" Prevent the cursor from jumping past a wrapped line when moving up and down
+nm j gj
+nm k gk
 
 " Disable annoying command search 'q:' that I never use
 map q: <Nop>
@@ -128,23 +128,8 @@ map q: <Nop>
 " Shortcut for common case: recording into q (qq), then replaying (Q)
 map Q @q
 
-" Prevent the cursor from jumping past a wrapped line when moving up and down
-nm j gj
-nm k gk
-
-nm J <Plug>(SmoothieForwards)
-nm K <Plug>(SmoothieBackwards)
-
-nm f <Plug>Sneak_f
-nm F <Plug>Sneak_F
-nm t <Plug>Sneak_t
-nm t <Plug>Sneak_T
-nm z <Plug>Sneak_s
-nm Z <Plug>Sneak_S
-xm z <Plug>Sneak_s
-xm Z <Plug>Sneak_S
-" omap ? <Plug>Sneak_s
-" omap ? <Plug>Sneak_S
+nn r; r:
+nn r: r;
 
 " nn } <C-d>
 " nn { <C-u>
@@ -154,7 +139,7 @@ xm Z <Plug>Sneak_S
 " Make Y yank to the end of line, similar to how C and D behave
 nn Y y$
 " After visual mode yank, leave cursor at the end of the highlight
-vn y y`]
+vn Y y`]
 
 " U to redo, since U is not very useful by default. I like having undo and
 " redo so similar.
@@ -197,119 +182,8 @@ nn <silent> <Space>s m`vip<Esc>:silent '<,'>w !repld-send --no-echo<CR>``
 nn <silent> <Space>S m`:silent w !repld-send<CR>``
 vn <silent> <Space>s m`<Esc>:silent '<,'>w !repld-send<CR>``
 
-" [surround]
-" ds to delete surround and restore cursor position
-" s to surround inner word and restore cursor position
-" S to surround inner WORD and restore cursor position
-" SS to surround current line restore cursor position
-nm ds' mz<Plug>Dsurround'`zh
-nm ds" mz<Plug>Dsurround"`zh
-nm ds( mz<Plug>Dsurround)`zh
-nm ds[ mz<Plug>Dsurround]`zh
-nm ds{ mz<Plug>Dsurround}`zh
-nm dsp mz<Plug>Dsurround)`zh
-nm ds<Space> mz<Plug>Dsurround <Space>`zh
-nm s' mz<Plug>Csurround w'`zl
-nm s" mz<Plug>Csurround w"`zl
-nm s( mz<Plug>Csurround w)`zl
-nm s[ mz<Plug>Csurround w]`zl
-nm s{ mz<Plug>Csurround w}`zl
-nm sp mz<Plug>Csurround w)`zl
-nm s<Space> mz<Plug>Csurround w <Space>`zl
-nm S' mz<Plug>Csurround W'`zl
-nm S" mz<Plug>Csurround W"`zl
-nm S( mz<Plug>Csurround W)`zl
-nm S[ mz<Plug>Csurround W]`zl
-nm S{ mz<Plug>Csurround W}`zl
-nm Sp mz<Plug>Csurround W)`zl
-nm S<Space> mz<Plug>Csurround W <Space>`zl
-nm SS' mz<Plug>Yssurround'`z
-nm SS" mz<Plug>Yssurround"`z
-nm SS( mz<Plug>Yssurround)`z
-nm SS[ mz<Plug>Yssurround]`z
-nm SS{ mz<Plug>Yssurround}`z
-nm SSp mz<Plug>Yssurround)`z
-xm s' <Plug>VSurround'
-xm s" <Plug>VSurround"
-xm s( <Plug>VSurround)
-xm s[ <Plug>VSurround]
-xm s{ <Plug>VSurround}
-xm sp <Plug>VSurround)
-
-" [tabular]
-" Space-a to align on the word under the cursor
-nn <silent> <Space>a m`:execute "Tabularize /" . expand("<cWORD>")<CR>``
-
-" [exchange]
-" x ("exchange") once to yank, x again to exchange with the first yank
-nm x <Plug>(Exchange)
-" Manually make [exhange] replace 'w' with 'e', as vim does for e.g. 'c'
-nm xw <Plug>(Exchange)e
-nm xW <Plug>(Exchange)E
-" xx to exchange-yank the whole line (and return cursor to where it was)
-nm xx m`<Plug>(ExchangeLine)``
-" xc to clear the exchange
-nm xc <Plug>(ExchangeClear)
-xm x <Plug>(Exchange)
-
-" [qf]
-" Toggle the quickfix ("location") menu; move thru quickfix items with Alt+jk
-" Hmm... I never seem to use these... do they even work? Wtf is quickfix?
-nm <Space>l <Plug>(qf_qf_toggle)
-nm <A-j> <Plug>(qf_qf_next)
-nm <A-k> <Plug>(qf_qf_prev)
-
-" [rhysd/git-messenger.vim]
-" blame the line under the cursor
-nm <Space>b <Plug>(git-messenger)
-
-" [vim-commentary]
-" Toggle comment
-nm <Space>m <Plug>CommentaryLine
-vm <Space>m <Plug>Commentary
-
-" [junegunn/fzf.vim]
-" Space-o ("open") to fuzzy file search, both git- and everything-variants
-nn <expr> <Space>o (len(system('git rev-parse')) ? ':Files' : ':GFiles')."\<CR>"
-" Space-f ("find") the word under the cursor
-nn <Space>f :Rg <C-r><C-w><CR>
-" Would be nice to do this without yanking?
-vn <Space>f y:Rg <C-r>"<CR>
-" Space-k (because it's a home-row key) to fuzzy-search buffers
-nn <Space>k :Buffers<CR>
-" Space-h to see the git history of the current file
-nn <Space>h :BCommits<CR>
-
-" [mcchrish/nnn.vim]
-nn <silent> <Space>n :NnnPicker<CR>
-
-" [coc.nvim]
-function! s:HandleEnter()
-  if coc#util#has_float()
-    call coc#util#float_hide()
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-
-" <Left>/<Right> to jump around warnings/errors (annoying that it's only
-" buffer-local)
-nm <silent> <Left> <Plug>(coc-diagnostic-prev)
-nm <silent> <Right> <Plug>(coc-diagnostic-next)
-" gd to go to definition of thing under cursor
-" Also <Del> (trying it out since it's one key)
-nm <silent> gd <Plug>(coc-definition)
-nm <silent> <Del> <Plug>(coc-definition)
-" <Enter> to show type of thing under cursor
-nn <silent> <Enter> :call <SID>HandleEnter()<CR>
-" <Space>i to open quickfix
-nn <silent> <Space>i :CocFix<CR>
-" Backspace to open all warnings/errors in a list
-nn <silent> <BS> :CocList diagnostics<CR>
-
-" ------------------------------------------------------------------------------
-" Insert mode
-" ------------------------------------------------------------------------------
+ino ; :
+ino : ;
 
 " Ctrl+space for omnicomplete
 im <C-Space> <C-x><C-o>
@@ -325,9 +199,6 @@ ino <C-u> <Nop>
 " Terminal mode
 " ------------------------------------------------------------------------------
 
-" Escape terminal mode with <Esc>
-" But this messes with fzf right now... disabling
-" tno <Esc> <C-\><C-n>
 " tno <A-[> <Esc>
 
 " ==============================================================================
@@ -335,6 +206,103 @@ ino <C-u> <Nop>
 " ==============================================================================
 
 " command! Vimrc e "~/.config/nvim/init.vim"
+
+" ==============================================================================
+" Functions
+" ==============================================================================
+
+" Is the cursor on a blank line?
+function! <SID>CursorOnBlankLine()
+  return getline('.') == ''
+endfun
+
+" Is the cursor below a blank line?
+function! <SID>CursorBelowBlankLine()
+  return getline(line('.')-1) == ''
+endfun
+
+" Remove trailing whitespace, then restore cursor position
+function! <SID>StripTrailingWhitespaces()
+  let l = line('.')
+  let c = col('.')
+  %s/\s\+$//e
+  cal cursor(l, c)
+endfun
+
+" function! <SID>EchoQuickFixEntry()
+"   let entries = getqflist()
+"   let bufnr = bufnr('%')
+"   let lnum = line('.')
+"   for e in entries
+"     if e.bufnr == bufnr && e.lnum == lnum
+"       echo e.text
+"       return
+"     endif
+"   endfor
+" endfunction
+
+" ==============================================================================
+" Autocommands
+" ==============================================================================
+
+aug mitchellwrosen
+  autocmd!
+aug END
+
+" Jump to last cursor position on file open
+au mitchellwrosen BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "norm! g`\"" | endif
+
+" Strip trailing whitespace on save
+au mitchellwrosen BufWritePre * cal <SID>StripTrailingWhitespaces()
+
+" Golang likes tabs, so show them as spaces
+au mitchellwrosen FileType go setl lcs=tab:\ \ ,trail:·,nbsp:+
+
+" On <Enter>, go to error and close quickfix list
+au mitchellwrosen FileType qf nn <silent> <buffer> <CR> <CR>:ccl<CR>
+
+au mitchellwrosen FileType unison setlocal commentstring=--\ %s
+
+" Esc escapes terminal mode
+au mitchellwrosen TermOpen * tno <buffer> <Esc> <C-\><C-n>
+" forcibly exit a terminal buffer, because there's nothing to save
+au mitchellwrosen TermOpen * nn <silent> <buffer> <Space>d :bd!<CR>
+
+" Briefly highlight yanks
+au mitchellwrosen TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=500}
+
+" Echo the quickfix entry on the current line, if any
+" au CursorMoved * cal <SID>EchoQuickFixEntry()
+
+" ==============================================================================
+" Plugin settings
+" ==============================================================================
+
+" [ElmCast/elm-vim]
+let g:elm_setup_keybindings = 0 " Don't make any key mappings
+let g:elm_format_autosave = 1 " Run elm-format on save
+
+" [godlygeek/tabular]
+" Space-a to align on the word under the cursor
+nn <silent> <Space>a m`:exe "Tabularize /" . expand("<cWORD>")<CR>``
+
+" [junegunn/fzf.vim]
+" If the buffer is already open in another tab or window, jump to it rather
+" than replace the current buffer (which would open 2 copies)
+let g:fzf_buffers_jump = 1
+let g:fzf_layout = { 'window': { 'height': 0.9, 'width': 0.9 } }
+
+" [junegunn/fzf.vim]
+" Space-o ("open") to fuzzy file search, both git- and everything-variants
+nn <expr> <Space>o (len(system('git rev-parse')) ? ':Files' : ':GFiles')."\<CR>"
+" Space-f ("find") the word under the cursor
+nn <Space>f :Rg <C-r><C-w><CR>
+" Would be nice to do this without yanking?
+vn <Space>f y:Rg <C-r>"<CR>
+" Space-k (because it's a home-row key) to fuzzy-search buffers
+nn <Space>k :Buffers<CR>
+" Space-h to see the git history of the current file
+nn <Space>h :BCommits<CR>
 
 command! -bar BCommits call fzf#vim#buffer_commits(1)
 
@@ -380,130 +348,34 @@ command! -nargs=* Rgu
   \   fzf#vim#with_preview({'options': ['--border', '--info=inline', '--layout=reverse-list']}, 'right:60%'),
   \   0)
 
-" ==============================================================================
-" Functions
-" ==============================================================================
-
-
-" Is the cursor on a blank line?
-function! <SID>CursorOnBlankLine()
-  return getline('.') == ''
-endfun
-
-" Is the cursor below a blank line?
-function! <SID>CursorBelowBlankLine()
-  return getline(line('.')-1) == ''
-endfun
-
-" Remove trailing whitespace, then restore cursor position
-function! <SID>StripTrailingWhitespaces()
-  let l = line('.')
-  let c = col('.')
-  %s/\s\+$//e
-  cal cursor(l, c)
-endfun
-
-" function! <SID>EchoQuickFixEntry()
-"   let entries = getqflist()
-"   let bufnr = bufnr('%')
-"   let lnum = line('.')
-"   for e in entries
-"     if e.bufnr == bufnr && e.lnum == lnum
-"       echo e.text
-"       return
-"     endif
-"   endfor
-" endfunction
-
-
-" ==============================================================================
-" Autocommands
-" ==============================================================================
-
-aug mitchellwrosen
-  autocmd!
-aug END
-
-" Jump to last cursor position on file open
-au mitchellwrosen BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "norm! g`\"" | endif
-
-" Strip trailing whitespace on save
-au mitchellwrosen BufWritePre * cal <SID>StripTrailingWhitespaces()
-
 au mitchellwrosen FileType fzf setl laststatus=0
   \| au BufLeave <buffer> setl laststatus=2
 " Escape to quit little annoying temporary buffers
 au mitchellwrosen FileType fzf nn <silent> <buffer> <Esc> :q<CR>
+" Unmap Esc quitting terminal mode, so fzf handles it (result: one Esc closes fzf)
+au mitchellwrosen FileType fzf tunma <buffer> <Esc>
 
-" Golang likes tabs, so show them as spaces
-au mitchellwrosen FileType go setl lcs=tab:\ \ ,trail:·,nbsp:+
-
-" Space-p to format Haskell code
-au mitchellwrosen FileType haskell nn <buffer> <silent> <Space>p :call RunOrmolu()<CR>
 " <Space>ff to find-function (ag can match over multiple lines)
 " <Space>ft to find-type (ripgrep is faster)
 au mitchellwrosen FileType haskell nn <buffer> <Space>ff :Ag (<Bslash>b)<C-r><C-w><Bslash>b[ <Bslash>t<Bslash>n]+::<CR>
 au mitchellwrosen FileType haskell nn <buffer> <Space>ft :Rg (((data<Bar>newtype<Bar>type)\s+)<Bar>class .*)\b<C-r><C-w>\b<CR>
 au mitchellwrosen FileType haskell nn <buffer> <Space>fa :Rgu (<C-r><C-w>\b\s+::)<Bar>((data(\sfamily)?<Bar>newtype<Bar>type(\sfamily)?)\s+<C-r><C-w>\b)<Bar>(class\s+(\(.*\)\s+=>\s+)?<C-r><C-w>\b\s+where)<CR>
-" Swap ; and : in Haskell, PureScript
-au mitchellwrosen FileType elm,haskell,purescript ino <buffer> ; :
-au mitchellwrosen FileType elm,haskell,purescript ino <buffer> : ;
-au mitchellwrosen FileType elm,haskell,purescript nn <buffer> r; r:
-au mitchellwrosen FileType elm,haskell,purescript nn <buffer> r: r;
-au mitchellwrosen FileType haskell nn <buffer> <Space>it m`"ayiwI<C-r>=system('cabal new-repl -v0 --repl-options=-fno-code --repl-options=-v0 2>/dev/null <<< ":t <C-r>a"')<CR><Esc>``
-
-" In startify screen, undo my j=gj, k=gk mappings, because they press 'g'
-au mitchellwrosen FileType startify nn <buffer> j j
-au mitchellwrosen FileType startify nn <buffer> k k
-
-" On <Enter>, go to error and close quickfix list
-au mitchellwrosen FileType qf nn <silent> <buffer> <CR> <CR>:ccl<CR>
-
-au mitchellwrosen FileType unison setlocal commentstring=--\ %s
-
-" Briefly highlight yanks
-au mitchellwrosen TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=500}
-
-" Echo the quickfix entry on the current line, if any
-" au CursorMoved * cal <SID>EchoQuickFixEntry()
-
-" ==============================================================================
-" Plugin settings
-" ==============================================================================
-
-" [elm]
-let g:elm_setup_keybindings = 0 " Don't make any key mappings
-let g:elm_format_autosave = 1 " Run elm-format on save
-
-" [exchange]
-" Don't make any key mappings
-let g:exchange_no_mappings = 1
-
-" [go]
-let g:go_auto_sameids = 1 " highlight all uses of identifier under cursor
-" let g:go_auto_type_info = 1 " show type info for identifier under cursor
-let g:go_doc_keywordprg_enabled = 0 " don't hijack my K key
-" let g:go_metalinter_autosave = 1 " run metalinter on save
-let g:go_textobj_enabled = 0 " don't add custom text objects
-let g:go_updatetime = 0 " don't delay for identifier-under-cursor things
-
-" [junegunn/fzf.vim]
-" If the buffer is already open in another tab or window, jump to it rather
-" than replace the current buffer (which would open 2 copies)
-let g:fzf_buffers_jump = 1
-let g:fzf_layout = { 'window': { 'height': 0.9, 'width': 0.9 } }
 
 " [justinmk/vim-sneak]
 " Make sneak use the search highlighting
 hi! link Sneak Search
 
-" [haskell]
-let g:haskell_indent_disable = 1
-let g:haskell_enable_backpack = 1
-let g:haskell_enable_pattern_synonyms = 1
-let g:haskell_enable_quantification = 1
-let g:haskell_enable_recursivedo = 1
-let g:haskell_enable_typeroles = 1
+nm : <Plug>Sneak_;
+nm f <Plug>Sneak_f
+nm F <Plug>Sneak_F
+nm t <Plug>Sneak_t
+nm t <Plug>Sneak_T
+nm z <Plug>Sneak_s
+nm Z <Plug>Sneak_S
+xm z <Plug>Sneak_s
+xm Z <Plug>Sneak_S
+" omap ? <Plug>Sneak_s
+" omap ? <Plug>Sneak_S
 
 " [liuchengxu/vim-which-key]
 let g:which_key_use_floating_win = 1
@@ -532,20 +404,27 @@ let g:which_key_map_question = {
       \     'd': ['<Space>d', 'delete-buffer (<Space>d)'],
       \     's': ['<Tab>', 'swap-buffer (<Tab>)'],
       \   },
+      \ 'e':
+      \   { 'name': '+edit',
+      \     'j': ['<C-s>', 'find-and-replace (<C-s>)'],
+      \     'x':
+      \       { 'name': '+exchange',
+      \         'c': ['call feedkeys("xc")', 'exchange-clear (xc)'],
+      \         'l': ['call feedkeys("xx")', 'exchange-line (xx)'],
+      \         'w': ['call feedkeys("xw")', 'exchange-word (xw)'],
+      \       },
+      \   },
       \ 'w':
       \   { 'name': '+window',
       \     'h': ['<C-h>', 'window-left (<C-h>)'],
       \     'l': ['<C-l>', 'window-right (<C-l>)'],
       \   },
-      \ 's': ['<C-s>', 'search (<C-s>)'],
       \ 'Q': ['call feedkeys("@q")', 'execute-macro-q'],
-      \ 'x':
-      \   { 'name': '+exchange',
-      \     'c': ['call feedkeys("xc")', 'exchange-clear (xc)'],
-      \     'l': ['call feedkeys("xx")', 'exchange-line (xx)'],
-      \     'w': ['call feedkeys("xw")', 'exchange-word (xw)'],
-      \   },
       \ }
+
+nn <silent> <Space> :WhichKey '<Space>'<CR>
+vn <silent> <Space> :WhichKeyVisual '<Space>'<CR>
+nn <silent> ? :WhichKey '?'<CR>
 
 " [mcchrish/nnn.vim]
 let g:nnn#set_default_mappings = 0
@@ -563,13 +442,51 @@ let g:multi_cursor_prev_key = '<C-p>'
 " let g:multi_cursor_skip_key = '<C-x>'
 let g:multi_cursor_quit_key = '<Esc>'
 
-" [ormolu]
+" [neoclide/coc.nvim]
+" <Left>/<Right> to jump around warnings/errors (annoying that it's only buffer-local)
+nm <silent> <Left> <Plug>(coc-diagnostic-prev)
+nm <silent> <Right> <Plug>(coc-diagnostic-next)
+" gd to go to definition of thing under cursor
+" Also <Del> (trying it out since it's one key)
+nm <silent> gd <Plug>(coc-definition)
+nm <silent> <Del> <Plug>(coc-definition)
+" <Enter> to show type of thing under cursor
+nn <silent> <Enter> :call <SID>HandleEnter()<CR>
+" <Space>i to open quickfix
+nn <silent> <Space>i :CocFix<CR>
+" Backspace to open all warnings/errors in a list
+nn <silent> <BS> :CocList diagnostics<CR>
+
+function! s:HandleEnter()
+  if coc#util#has_float()
+    call coc#util#float_hide()
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" [neovimhaskell/haskell-vim]
+let g:haskell_indent_disable = 1
+let g:haskell_enable_backpack = 1
+let g:haskell_enable_pattern_synonyms = 1
+let g:haskell_enable_quantification = 1
+let g:haskell_enable_recursivedo = 1
+let g:haskell_enable_typeroles = 1
+
+" [romainl/vim-qf]
+" Toggle the quickfix ("location") menu; move thru quickfix items with Alt+jk
+" Hmm... I never seem to use these... do they even work? Wtf is quickfix?
+nm <Space>l <Plug>(qf_qf_toggle)
+nm <A-j> <Plug>(qf_qf_next)
+nm <A-k> <Plug>(qf_qf_prev)
+
+" [sdiehl/vim-ormolu]
 let g:ormolu_disable = 1
 
-" [psliwka/vim-smoothie]
-let g:smoothie_base_speed = 15
-let g:smoothie_no_default_mappings = 1
-let g:smoothie_update_interval = 10
+au mitchellwrosen FileType haskell nn <buffer> <silent> <Space>p :call RunOrmolu()<CR>
+
+" [mcchrish/nnn.vim]
+nn <silent> <Space>n :NnnPicker<CR>
 
 " [mhinz/signify]
 let g:signify_sign_change = 'Δ'
@@ -588,18 +505,36 @@ let g:startify_files_number = 30
 let g:startify_lists = [{ 'type': 'files' }]
 let g:startify_relative_path = 1
 
+" make floaterm not leave an empty buffer in startify
+" au User Startified setlocal buflisted
+
+" In startify screen, undo my j=gj, k=gk mappings, because they press 'g'
+au mitchellwrosen FileType startify nn <buffer> j j
+au mitchellwrosen FileType startify nn <buffer> k k
+
+" [psliwka/vim-smoothie]
+let g:smoothie_base_speed = 15
+let g:smoothie_no_default_mappings = 1
+let g:smoothie_update_interval = 10
+
+nm J <Plug>(SmoothieForwards)
+nm K <Plug>(SmoothieBackwards)
+
 " [rhysd/git-messenger.vim]
 let g:git_messenger_always_into_popup = v:true
 let g:git_messenger_extra_blame_args = '-w'
 let g:git_messenger_no_default_mappings = v:true
 
-function! <SID>setup_git_messenger_popup() abort
-  nmap <buffer><Enter> q
-  nmap <buffer><Esc> q
-  nmap <buffer>h o
-  nmap <buffer>l O
+" blame the line under the cursor
+nm <Space>b <Plug>(git-messenger)
+
+function! <SID>init_gitmessengerpopup() abort
+  nm <buffer><Enter> q
+  nm <buffer><Esc> q
+  nm <buffer>h o
+  nm <buffer>l O
 endfunction
-autocmd mitchellwrosen FileType gitmessengerpopup call <SID>setup_git_messenger_popup()
+autocmd mitchellwrosen FileType gitmessengerpopup call <SID>init_gitmessengerpopup()
 
 " [RRethy/vim-illuminate]
 " highlight immediately
@@ -607,11 +542,70 @@ let g:Illuminate_delay = 0
 " don't highlight the word under the cursor
 let g:Illuminate_highlightUnderCursor = 0
 
-" [surround]
+" [tommcdo/vim-exchange]
+" Don't make any key mappings
+let g:exchange_no_mappings = 1
+
+" x ("exchange") once to yank, x again to exchange with the first yank
+nm x <Plug>(Exchange)
+" Manually make [exhange] replace 'w' with 'e', as vim does for e.g. 'c'
+nm xw <Plug>(Exchange)e
+nm xW <Plug>(Exchange)E
+" xx to exchange-yank the whole line (and return cursor to where it was)
+nm xx m`<Plug>(ExchangeLine)``
+" xc to clear the exchange
+nm xc <Plug>(ExchangeClear)
+xm x <Plug>(Exchange)
+
+" [tpope/vim-commentary]
+" Toggle comment
+nm <Space>m <Plug>CommentaryLine
+vm <Space>m <Plug>Commentary
+
+" [tpope/vim-surround]
 " Don't let surround provide any magic mappings
 let g:surround_no_mappings = 1
 
+" ds to delete surround and restore cursor position
+" s to surround inner word and restore cursor position
+" S to surround inner WORD and restore cursor position
+" SS to surround current line restore cursor position
+nm ds' mz<Plug>Dsurround'`zh
+nm ds" mz<Plug>Dsurround"`zh
+nm ds( mz<Plug>Dsurround)`zh
+nm ds[ mz<Plug>Dsurround]`zh
+nm ds{ mz<Plug>Dsurround}`zh
+nm dsp mz<Plug>Dsurround)`zh
+nm ds<Space> mz<Plug>Dsurround <Space>`zh
+nm s' mz<Plug>Csurround w'`zl
+nm s" mz<Plug>Csurround w"`zl
+nm s( mz<Plug>Csurround w)`zl
+nm s[ mz<Plug>Csurround w]`zl
+nm s{ mz<Plug>Csurround w}`zl
+nm sp mz<Plug>Csurround w)`zl
+nm s<Space> mz<Plug>Csurround w <Space>`zl
+nm S' mz<Plug>Csurround W'`zl
+nm S" mz<Plug>Csurround W"`zl
+nm S( mz<Plug>Csurround W)`zl
+nm S[ mz<Plug>Csurround W]`zl
+nm S{ mz<Plug>Csurround W}`zl
+nm Sp mz<Plug>Csurround W)`zl
+nm S<Space> mz<Plug>Csurround W <Space>`zl
+nm SS' mz<Plug>Yssurround'`z
+nm SS" mz<Plug>Yssurround"`z
+nm SS( mz<Plug>Yssurround)`z
+nm SS[ mz<Plug>Yssurround]`z
+nm SS{ mz<Plug>Yssurround}`z
+nm SSp mz<Plug>Yssurround)`z
+xm s' <Plug>VSurround'
+xm s" <Plug>VSurround"
+xm s( <Plug>VSurround)
+xm s[ <Plug>VSurround]
+xm s{ <Plug>VSurround}
+xm sp <Plug>VSurround)
+
 " [unblevable/quick-scope]
+" let g:qs_lazy_highlight = 1 " only kick in after updatetime ms
 let g:qs_max_chars = 120
 
 " [vim-airline/vim-airline]
@@ -622,12 +616,18 @@ let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 let g:airline_section_a = airline#section#create_left(['mode', 'crypt', 'paste', 'keymap', 'spell', 'capslock', 'iminsert'])
 let g:airline_section_y = ''
 
+" [voldikss/vim-floaterm]
+" let g:floaterm_autoclose = 2
+" let g:floaterm_title = ''
+" nn <Space>tl :FloatermNew --height=0.9 --position=right --width=0.5<CR>
+" nn <silent> <Space>tt :Tt --height=0.9 --position=right --width=0.5<CR>
+
+" au mitchellwrosen FileType floaterm nn <buffer> <silent> <C-j> :FloatermNext<CR>
+" au mitchellwrosen FileType floaterm nn <buffer> <silent> <C-k> :FloatermPrev<CR>
+
 " [Yggdroot/indentLine]
-" let g:indentLine_setColors = 0
 let g:indentLine_color_term = 239
-" let g:indentLine_char = '│'
 let g:indentLine_char = '┊'
-" let g:indentLine_char_list = ['│', '┊']
 
 " ==============================================================================
 " nvim-gtk settings

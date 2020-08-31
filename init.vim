@@ -55,6 +55,8 @@ Plug 'unblevable/quick-scope' " Highlight the first, second, etc. instances of c
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vmchale/dhall-vim', { 'for': 'dhall' }
+Plug 'wellle/targets.vim'
+" https://github.com/voldikss/vim-floaterm/issues/163
 " Plug 'voldikss/vim-floaterm' " floating terminal, almost good but nah
 
 cal plug#end() " Automatically calls syntax on, filetype plugin indent on
@@ -96,10 +98,11 @@ se scs                        " don't ignore case if search contains uppercase c
 se si                         " smart autoindenting when starting a new line
 se smc=180                    " dont bother syntax-highlighting past this column
 se sts=2                      " tab key makes 2 spaces
+se tgc
 se title                      " put filename in window title
 se tm=300                     " only wait this many ms for key sequence to complete
 se udf                        " persist undo history across buffer exits
-se ut=200                     " fire CursorHold after 200ms (default 4000ms)
+se ut=100                     " fire CursorHold after 100ms (default 4000ms)
 se wmnu                       " complete commands with a little menu
 se wim=list:longest,full      " wild menu completion behavior
 
@@ -121,6 +124,12 @@ nn d. ^D
 " Prevent the cursor from jumping past a wrapped line when moving up and down
 nm j gj
 nm k gk
+
+" Center after every search movement
+nn n nzz
+nn n nzz
+vn N Nzz
+vn N Nzz
 
 " Disable annoying command search 'q:' that I never use
 map q: <Nop>
@@ -362,8 +371,10 @@ au mitchellwrosen FileType haskell nn <buffer> <Space>ft :Rg (((data<Bar>newtype
 au mitchellwrosen FileType haskell nn <buffer> <Space>fa :Rgu (<C-r><C-w>\b\s+::)<Bar>((data(\sfamily)?<Bar>newtype<Bar>type(\sfamily)?)\s+<C-r><C-w>\b)<Bar>(class\s+(\(.*\)\s+=>\s+)?<C-r><C-w>\b\s+where)<CR>
 
 " [justinmk/vim-sneak]
-" Make sneak use the search highlighting
-hi! link Sneak Search
+" "clever" sneak - pressing z without moving the cursor will move to the next match
+let g:sneak#s_next = 1
+" Disable highlighting
+hi! link Sneak None
 
 nm : <Plug>Sneak_;
 nm f <Plug>Sneak_f
@@ -374,8 +385,8 @@ nm z <Plug>Sneak_s
 nm Z <Plug>Sneak_S
 xm z <Plug>Sneak_s
 xm Z <Plug>Sneak_S
-" omap ? <Plug>Sneak_s
-" omap ? <Plug>Sneak_S
+om z <Plug>Sneak_s
+om Z <Plug>Sneak_S
 
 " [liuchengxu/vim-which-key]
 let g:which_key_use_floating_win = 1
@@ -624,6 +635,12 @@ let g:airline_section_y = ''
 
 " au mitchellwrosen FileType floaterm nn <buffer> <silent> <C-j> :FloatermNext<CR>
 " au mitchellwrosen FileType floaterm nn <buffer> <silent> <C-k> :FloatermPrev<CR>
+
+" [wellle/targets.vim]
+nm cil9 cil)
+nm cil0 cil)
+nm cin9 cin)
+nm cin0 cin)
 
 " [Yggdroot/indentLine]
 let g:indentLine_color_term = 239

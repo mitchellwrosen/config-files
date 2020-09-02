@@ -28,14 +28,17 @@ Plug 'ElmCast/elm-vim', { 'for': 'elm' }
 Plug 'LnL7/vim-nix', { 'for': 'nix' }
 Plug 'RRethy/vim-illuminate' " Highlight occurrences of the word under the cursor
 Plug 'Yggdroot/indentLine' " show markers every 2 columns of leading whitespace
-Plug 'chriskempson/base16-vim'
+" Plug 'chriskempson/base16-vim'
 Plug 'godlygeek/tabular' " Align on words
+Plug 'itchyny/lightline.vim'
 Plug 'junegunn/fzf.vim' " Fuzzy search source code, files, etc
 Plug 'justinmk/vim-sneak' " two-letter f/t
 Plug 'liuchengxu/vim-which-key' " thingy to tell me my own hotkeys (requires manual work)
 Plug 'mcchrish/nnn.vim' " File browser thingy, kinda sucks, what's better?
+Plug 'mengelbrecht/lightline-bufferline'
 Plug 'mhinz/vim-signify' " Sign column
 Plug 'mhinz/vim-startify' " Startup screen
+Plug 'morhetz/gruvbox'
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
 Plug 'psliwka/vim-smoothie' " Smooth paging up and down
@@ -52,8 +55,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat' " Make '.' repeat more things out of the box
 Plug 'tpope/vim-surround' " Some surround helpers
 Plug 'unblevable/quick-scope' " Highlight the first, second, etc. instances of characters on a line
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'vmchale/dhall-vim', { 'for': 'dhall' }
 Plug 'wellle/targets.vim'
 " https://github.com/voldikss/vim-floaterm/issues/163
@@ -66,10 +67,12 @@ cal plug#end() " Automatically calls syntax on, filetype plugin indent on
 " ==============================================================================
 
 " Colorscheme requires base16-shell, which writes ~/.vimrc_background
-if filereadable(expand("~/.vimrc_background"))
-  let base16colorspace=256
-  so ~/.vimrc_background
-endif
+" if filereadable(expand("~/.vimrc_background"))
+"   let base16colorspace=256
+"   so ~/.vimrc_background
+" endif
+
+colo gruvbox
 
 se bg=dark
 se cb=unnamed,unnamedplus     " yank also copies to both clipboards
@@ -87,6 +90,7 @@ se list                       " show trailing whitespace, tabs, etc.
 se nofen                      " never fold
 se nojs                       " insert one space after ., ?, ! chars when joining
 se noml                       " disable modelines
+se nosmd                      " don't show mode, since lightline handle that
 se nosol                      " don't jump cursor to start of line when moving
 se nu                         " show line number gutter
 se so=10                      " leave lines when scrolling
@@ -96,6 +100,7 @@ se sw=2
 se scs                        " don't ignore case if search contains uppercase char
 se si                         " smart autoindenting when starting a new line
 se smc=180                    " dont bother syntax-highlighting past this column
+se stal=2                     " always show the tabline
 se sts=2                      " tab key makes 2 spaces
 se tgc
 se title                      " put filename in window title
@@ -110,9 +115,6 @@ se wim=list:longest,full      " wild menu completion behavior
 " ==============================================================================
 
 no ; :
-
-no 0 ^
-no ^ 0
 
 " <Tab> to switch to the previously edited buffer
 nn <Tab> <C-^>
@@ -304,6 +306,8 @@ function! GetEditableWidth()
   return winwidth(0) - ((&number || &relativenumber) ? &numberwidth : 0) - &foldcolumn - (len(signlist) > 1 ? 2 : 0)
 endfunction
 
+nn <silent> <Space>t :call MitchellTerm()<CR>
+
 " ==============================================================================
 " Autocommands
 " ==============================================================================
@@ -372,19 +376,19 @@ command! -bar BCommits call fzf#vim#buffer_commits(1)
 command! -bar -nargs=? -complete=buffer Buffers
   \ call fzf#vim#buffers(
   \   <q-args>,
-  \   fzf#vim#with_preview({'options': ['--info=inline', '--layout=reverse-list']}, 'right:60%'),
+  \   fzf#vim#with_preview({'options': ['--info=inline', '--layout=reverse']}, 'down:60%'),
   \   0)
 
 command! -nargs=? -complete=dir Files
   \ call fzf#vim#files(
   \   <q-args>,
-  \   fzf#vim#with_preview({'options': ['--info=inline', '--layout=reverse-list']}, 'right:60%'),
+  \   fzf#vim#with_preview({'options': ['--info=inline', '--layout=reverse']}, 'down:60%'),
   \   0)
 
 command! -nargs=? GFiles
   \ call fzf#vim#gitfiles(
   \   <q-args>,
-  \   fzf#vim#with_preview({'options': ['--info=inline', '--layout=reverse-list']}, 'right:60%'),
+  \   fzf#vim#with_preview({'options': ['--info=inline', '--layout=reverse']}, 'down:60%'),
   \   0)
 
 " Would be nice if '-1' worked here https://github.com/junegunn/fzf/issues/1750
@@ -401,14 +405,14 @@ command! -nargs=* Rg
   \ call fzf#vim#grep(
   \   'rg --column --line-number --no-heading --color=always -- '.shellescape(<q-args>),
   \   1,
-  \   fzf#vim#with_preview({'options': ['--border', '--info=inline', '--layout=reverse-list']}, 'right:60%'),
+  \   fzf#vim#with_preview({'options': ['--border', '--info=inline', '--layout=reverse']}, 'down:60%'),
   \   0)
 
 command! -nargs=* Rgu
   \ call fzf#vim#grep(
   \   'rg --line-number --multiline --multiline-dotall --no-heading --color=always -- '.shellescape(<q-args>),
   \   0,
-  \   fzf#vim#with_preview({'options': ['--border', '--info=inline', '--layout=reverse-list']}, 'right:60%'),
+  \   fzf#vim#with_preview({'options': ['--border', '--info=inline', '--layout=reverse']}, 'down:60%'),
   \   0)
 
 au mitchellwrosen FileType fzf setl laststatus=0
@@ -423,6 +427,43 @@ au mitchellwrosen FileType fzf tunma <buffer> <Esc>
 au mitchellwrosen FileType haskell nn <buffer> <Space>ff :Ag (<Bslash>b)<C-r><C-w><Bslash>b[ <Bslash>t<Bslash>n]+::<CR>
 au mitchellwrosen FileType haskell nn <buffer> <Space>ft :Rg (((data<Bar>newtype<Bar>type)\s+)<Bar>class .*)\b<C-r><C-w>\b<CR>
 au mitchellwrosen FileType haskell nn <buffer> <Space>fa :Rgu (<C-r><C-w>\b\s+::)<Bar>((data(\sfamily)?<Bar>newtype<Bar>type(\sfamily)?)\s+<C-r><C-w>\b)<Bar>(class\s+(\(.*\)\s+=>\s+)?<C-r><C-w>\b\s+where)<CR>
+
+" [itchyny/lightline.vim]
+function! LightlineFilename()
+  let filename = expand('%:t')
+  " !=# '' ? expand('%:t') : '[No Name]'
+  let modified = &modified ? '+' : ''
+  return filename . modified
+endfunction
+
+let g:lightline = {}
+let g:lightline.active = {}
+let g:lightline.active.left = [ [ 'mode', 'paste' ], [ 'branch', 'filename', ] ]
+let g:lightline.active.right = [ [ 'lineinfo' ], [ 'percent' ], [ 'filetype' ] ]
+let g:lightline.colorscheme = 'gruvbox'
+let g:lightline.component_expand = {}
+let g:lightline.component_expand.buffers = 'lightline#bufferline#buffers'
+let g:lightline.component_function = {}
+let g:lightline.component_function.branch = 'FugitiveHead'
+let g:lightline.component_function.filename = 'LightlineFilename'
+let g:lightline.component_type = {}
+let g:lightline.component_type.buffers = 'tabsel'
+" let g:lightline.enable = {}
+" let g:lightline.enable.tabline = 1
+let g:lightline.mode_map = {
+      \ 'n': '𝓃ℴ𝓇𝓂𝒶ℓ',
+      \ 'i': '𝒾𝓃𝓈ℯ𝓇𝓉',
+      \ 'R': '𝓇ℯ𝓅ℓ𝒶𝒸ℯ',
+      \ 'v': '𝓋𝒾𝓈𝓊𝒶ℓ',
+      \ 'V': '𝓋𝒾𝓈𝓊𝒶ℓ–ℓ𝒾𝓃ℯ',
+      \ "\<C-v>": '𝓋𝒾𝓈𝓊𝒶ℓ–𝒷ℓℴ𝒸𝓀',
+      \ }
+let g:lightline.tab = {}
+let g:lightline.tab.active = [ 'tabnum', 'filename', 'modified' ]
+let g:lightline.tab.inactive = [ 'tabnum', 'filename', 'modified' ]
+let g:lightline.tabline = {}
+let g:lightline.tabline.left = [ [ 'buffers' ] ]
+let g:lightline.tabline.right = [ [ 'close' ] ]
 
 " [justinmk/vim-sneak]
 " "clever" sneak - pressing z without moving the cursor will move to the next match
@@ -496,6 +537,13 @@ nn <silent> ? :WhichKey '?'<CR>
 let g:nnn#set_default_mappings = 0
 let g:nnn#command = 'nnn -c -n'
 let g:nnn#layout = { 'window': { 'height': 0.9, 'width': 0.5, 'xoffset': 0.99 }}
+
+" [mengelbrecht/lightline-bufferline]
+let g:lightline#bufferline#modified = '+'
+
+" [morhetz/gruvbox]
+let g:gruvbox_italic = 1 " enable italics
+let g:gruvbox_improved_strings = 1 " thought this was supposed to extra-highlight strings?
 
 " [multiple-cursors]
 let g:multi_cursor_use_default_mapping = 0
@@ -676,14 +724,6 @@ vm sp <Plug>VSurround)
 " [unblevable/quick-scope]
 " let g:qs_lazy_highlight = 1 " only kick in after updatetime ms
 let g:qs_max_chars = 120
-
-" [vim-airline/vim-airline]
-let g:airline_extensions = ['branch', 'coc', 'fugitiveline', 'tabline']
-let g:airline#extensions#coc#error_symbol = '✗ '
-let g:airline#extensions#coc#warning_symbol = '⚠ '
-let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
-let g:airline_section_a = airline#section#create_left(['mode', 'crypt', 'paste', 'keymap', 'spell', 'capslock', 'iminsert'])
-let g:airline_section_y = ''
 
 " [voldikss/vim-floaterm]
 " let g:floaterm_autoclose = 2

@@ -65,14 +65,13 @@ cal plug#end() " Automatically calls syntax on, filetype plugin indent on
 " Basic settings
 " ==============================================================================
 
-" Colorscheme requires base15-shell, which writes ~/.vimrc_background
+" Colorscheme requires base16-shell, which writes ~/.vimrc_background
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256
   so ~/.vimrc_background
 endif
 
 se bg=dark
-se aw                         " write when leaving a buffer
 se cb=unnamed,unnamedplus     " yank also copies to both clipboards
 se cc=121                     " highlight column
 se cul                        " higlight the current line
@@ -89,11 +88,11 @@ se nofen                      " never fold
 se nojs                       " insert one space after ., ?, ! chars when joining
 se noml                       " disable modelines
 se nosol                      " don't jump cursor to start of line when moving
-se nu
+se nu                         " show line number gutter
 se so=10                      " leave lines when scrolling
 se sr                         " shift to multiple of shiftwidth
 se sw=2
-se scl=yes                    " always draw signcolumn
+" se scl=yes                    " always draw signcolumn
 se scs                        " don't ignore case if search contains uppercase char
 se si                         " smart autoindenting when starting a new line
 se smc=180                    " dont bother syntax-highlighting past this column
@@ -122,36 +121,37 @@ nn <Tab> <C-^>
 nn d. ^D
 
 " Prevent the cursor from jumping past a wrapped line when moving up and down
-nm j gj
-nm k gk
+nn j gj
+nn k gk
+
+nn H ^
+nn L $
+ono H ^
+ono L $
+vn H ^
+vn L g_
 
 " Center after every search movement
 nn n nzz
-nn n nzz
-vn N Nzz
+nn N Nzz
+vn n nzz
 vn N Nzz
 
 " Disable annoying command search 'q:' that I never use
-map q: <Nop>
+nn q: <Nop>
 
-" Shortcut for common case: recording into q (qq), then replaying (Q)
-map Q @q
+" Make it easier to replay the last macro recorded
+nn Q @@
 
 nn r; r:
 nn r: r;
-
-" nn } <C-d>
-" nn { <C-u>
-" xn } <C-d>
-" xn { <C-u>
 
 " Make Y yank to the end of line, similar to how C and D behave
 nn Y y$
 " After visual mode yank, leave cursor at the end of the highlight
 vn Y y`]
 
-" U to redo, since U is not very useful by default. I like having undo and
-" redo so similar.
+" U to redo. <C-r> comes from some plugin, maybe vim-repeat? (annoying)
 nn U <C-r>
 " Weaning myself of <C-R> to redo
 nn <C-r> <Nop>
@@ -180,9 +180,10 @@ nn <silent> <C-j> :bn<CR>
 nn <silent> <C-k> :bp<CR>
 
 " Delete the current buffer with Space-d, or quit vim if it's the only buffer
-nn <expr> <silent> <Space>d len(getbufinfo({'buflisted': 1})) ==? 1 ? ":q\<CR>" : ":bw\<CR>"
+nn <expr> <silent> <Space>d len(getbufinfo({'buflisted': 1})) ==? 1 ? ":q\<CR>" : ":bd\<CR>"
 
 " Move vertical splits with Ctrl+hl (sorry, horizontal splits)
+" I never use vertical splits anyway so these could be repurposed.
 nn <C-h> <C-w>h
 nn <C-l> <C-w>l
 
@@ -250,6 +251,59 @@ endfun
 "   endfor
 " endfunction
 
+let s:mitchell_term_bid = v:null
+let s:mitchell_term_wid = v:null
+
+let s:mitchell_term_opts = {}
+function! s:mitchell_term_opts.on_exit(jobid, data, event) abort
+  " If the terminal process exits before the buffer, close the buffer, too
+  if bufexists(s:mitchell_term_bid)
+    execute 'bw!' s:mitchell_term_bid
+  endif
+endfunction
+
+function! MitchellTerm()
+  if nvim_get_current_buf() ==# s:mitchell_term_bid
+    echo 'In terminal'
+
+  " Terminal window exists (even though it might be showing some other buffer)
+  elseif s:mitchell_term_wid !=# v:null && winbufnr(s:mitchell_term_wid) !=# -1
+    call nvim_win_close(s:mitchell_term_wid, v:false)
+
+  else
+    let editableWidth = GetEditableWidth()
+    let opts = {
+          \ 'col': 120 + winwidth(0) - editableWidth,
+          \ 'height': line('w$') - line('w0') + 1,
+          \ 'relative': 'editor',
+          \ 'row': 1,
+          \ 'style': 'minimal',
+          \ 'width': editableWidth - 120,
+          \ }
+
+    " Terminal window doesn't exist, but terminal buffer does
+    if bufexists(s:mitchell_term_bid)
+      let s:mitchell_term_wid = nvim_open_win(s:mitchell_term_bid, v:false, opts)
+      "
+    " Neither terminal window nor buffer exist
+    else
+      let s:mitchell_term_bid = nvim_create_buf(v:false, v:true)
+      let s:mitchell_term_wid = nvim_open_win(s:mitchell_term_bid, v:true, opts)
+      call termopen(&shell, s:mitchell_term_opts)
+      star
+    endif
+  endif
+endfunction
+
+" Compute the width of the editable part of the screen
+function! GetEditableWidth()
+  redir => x
+    exe "sil sign place buffer=" . nvim_get_current_buf()
+  redir end
+  let signlist = split(x, '\n')
+  return winwidth(0) - ((&number || &relativenumber) ? &numberwidth : 0) - &foldcolumn - (len(signlist) > 1 ? 2 : 0)
+endfunction
+
 " ==============================================================================
 " Autocommands
 " ==============================================================================
@@ -275,7 +329,7 @@ au mitchellwrosen FileType unison setlocal commentstring=--\ %s
 " Esc escapes terminal mode
 au mitchellwrosen TermOpen * tno <buffer> <Esc> <C-\><C-n>
 " forcibly exit a terminal buffer, because there's nothing to save
-au mitchellwrosen TermOpen * nn <silent> <buffer> <Space>d :bd!<CR>
+au mitchellwrosen TermOpen * nn <silent> <buffer> <Space>d :bw!<CR>
 
 " Briefly highlight yanks
 au mitchellwrosen TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=500}
@@ -383,8 +437,8 @@ nm t <Plug>Sneak_t
 nm t <Plug>Sneak_T
 nm z <Plug>Sneak_s
 nm Z <Plug>Sneak_S
-xm z <Plug>Sneak_s
-xm Z <Plug>Sneak_S
+vm z <Plug>Sneak_s
+vm Z <Plug>Sneak_S
 om z <Plug>Sneak_s
 om Z <Plug>Sneak_S
 
@@ -394,6 +448,7 @@ let g:which_key_hspace = 1
 cal which_key#register('<Space>', 'g:which_key_map_space')
 let g:which_key_map_space = {
       \ 'a': 'align',
+      \ 'b': 'git-blame',
       \ 'd': 'delete-buffer',
       \ 'f': 'find',
       \ 'h': 'history',
@@ -528,8 +583,11 @@ let g:smoothie_base_speed = 15
 let g:smoothie_no_default_mappings = 1
 let g:smoothie_update_interval = 10
 
+" very unfortunate: vm variants don't work here...
 nm J <Plug>(SmoothieForwards)
 nm K <Plug>(SmoothieBackwards)
+vn J <C-D>
+vn K <C-U>
 
 " [rhysd/git-messenger.vim]
 let g:git_messenger_always_into_popup = v:true
@@ -566,7 +624,7 @@ nm xW <Plug>(Exchange)E
 nm xx m`<Plug>(ExchangeLine)``
 " xc to clear the exchange
 nm xc <Plug>(ExchangeClear)
-xm x <Plug>(Exchange)
+vm x <Plug>(Exchange)
 
 " [tpope/vim-commentary]
 " Toggle comment
@@ -608,12 +666,12 @@ nm SS( mz<Plug>Yssurround)`z
 nm SS[ mz<Plug>Yssurround]`z
 nm SS{ mz<Plug>Yssurround}`z
 nm SSp mz<Plug>Yssurround)`z
-xm s' <Plug>VSurround'
-xm s" <Plug>VSurround"
-xm s( <Plug>VSurround)
-xm s[ <Plug>VSurround]
-xm s{ <Plug>VSurround}
-xm sp <Plug>VSurround)
+vm s' <Plug>VSurround'
+vm s" <Plug>VSurround"
+vm s( <Plug>VSurround)
+vm s[ <Plug>VSurround]
+vm s{ <Plug>VSurround}
+vm sp <Plug>VSurround)
 
 " [unblevable/quick-scope]
 " let g:qs_lazy_highlight = 1 " only kick in after updatetime ms

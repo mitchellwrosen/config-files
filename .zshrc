@@ -15,6 +15,7 @@ setopt HIST_BEEP
 setopt appendhistory autocd notify prompt_subst
 unsetopt beep
 bindkey -v
+bindkey '^R' history-incremental-search-backward
 
 # The following lines were added by compinstall
 zstyle :compinstall filename '/home/mitchell/.zshrc'
@@ -52,8 +53,6 @@ export PATH=~/.ghcup/bin:~/.local/bin:~/golang/bin:~/.npm/node_modules/.bin:$PAT
 export PROMPT='%(1j.%j .)%(?..%F{red}%?%f )%~ '
 export RPROMPT='${vcs_info_msg_0_}'
 
-export GOPATH=~/golang
-
 function cd {
   builtin cd "$@"
   ls
@@ -71,6 +70,10 @@ BASE16_SHELL="$HOME/.config/base16-shell/"
 # [zsh-autosuggestions]
 # pacman -S zsh-autosuggestions
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# fzf
+source /usr/share/fzf/key-bindings.zsh
+source /usr/share/fzf/completion.zsh
 
 # direnv
 eval "$(direnv hook zsh)"

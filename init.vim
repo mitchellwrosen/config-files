@@ -28,7 +28,6 @@ Plug 'ElmCast/elm-vim', { 'for': 'elm' }
 Plug 'LnL7/vim-nix', { 'for': 'nix' }
 Plug 'RRethy/vim-illuminate' " Highlight occurrences of the word under the cursor
 Plug 'Yggdroot/indentLine' " show markers every 2 columns of leading whitespace
-" Plug 'chriskempson/base16-vim'
 Plug 'godlygeek/tabular' " Align on words
 Plug 'itchyny/lightline.vim'
 Plug 'junegunn/fzf.vim' " Fuzzy search source code, files, etc
@@ -38,7 +37,7 @@ Plug 'mcchrish/nnn.vim' " File browser thingy, kinda sucks, what's better?
 Plug 'mengelbrecht/lightline-bufferline'
 Plug 'mhinz/vim-signify' " Sign column
 Plug 'mhinz/vim-startify' " Startup screen
-Plug 'morhetz/gruvbox'
+Plug 'morhetz/gruvbox' " best color scheme
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
 Plug 'psliwka/vim-smoothie' " Smooth paging up and down
@@ -48,6 +47,7 @@ Plug 'romainl/vim-cool' " Automatically unhighlight when cursor moves
 Plug 'romainl/vim-qf' " Vim quickfix improvements
 Plug 'sdiehl/vim-ormolu', { 'for': 'haskell' }
 Plug 'terryma/vim-multiple-cursors' " Multiple cursors for quick and dirty renaming
+Plug 'tmsvg/pear-tree' " auto-pair function that claims to not suck; we'll see
 Plug 'tommcdo/vim-exchange' " Swap the location of two selections
 Plug 'tpope/vim-characterize' " Improved 'ga'
 Plug 'tpope/vim-commentary' " Quick (un-)commenting
@@ -65,12 +65,6 @@ cal plug#end() " Automatically calls syntax on, filetype plugin indent on
 " ==============================================================================
 " Basic settings
 " ==============================================================================
-
-" Colorscheme requires base16-shell, which writes ~/.vimrc_background
-" if filereadable(expand("~/.vimrc_background"))
-"   let base16colorspace=256
-"   so ~/.vimrc_background
-" endif
 
 colo gruvbox
 
@@ -93,10 +87,10 @@ se noml                       " disable modelines
 se nosmd                      " don't show mode, since lightline handle that
 se nosol                      " don't jump cursor to start of line when moving
 se nu                         " show line number gutter
-se so=10                      " leave lines when scrolling
+se so=10                      " start scrolling before the cursor reaches the edge
 se sr                         " shift to multiple of shiftwidth
 se sw=2
-" se scl=yes                    " always draw signcolumn
+se scl=yes                    " always draw signcolumn
 se scs                        " don't ignore case if search contains uppercase char
 se si                         " smart autoindenting when starting a new line
 se smc=180                    " dont bother syntax-highlighting past this column
@@ -139,14 +133,13 @@ nn N Nzz
 vn n nzz
 vn N Nzz
 
+nn r; r:
+nn r: r;
+
 " Disable annoying command search 'q:' that I never use
 nn q: <Nop>
 
-" Make it easier to replay the last macro recorded
-nn Q @@
-
-nn r; r:
-nn r: r;
+nn Q @q
 
 " Make Y yank to the end of line, similar to how C and D behave
 nn Y y$
@@ -197,6 +190,9 @@ vn <silent> <Space>s m`<Esc>:silent '<,'>w !repld-send<CR>``
 ino ; :
 ino : ;
 
+" <C-v> to paste from * register
+ino <C-v> <C-r>*
+
 " Ctrl+space for omnicomplete
 im <C-Space> <C-x><C-o>
 
@@ -223,15 +219,17 @@ ino <C-u> <Nop>
 " Functions
 " ==============================================================================
 
-" Is the cursor on a blank line?
-function! <SID>CursorOnBlankLine()
-  return getline('.') == ''
-endfun
-
-" Is the cursor below a blank line?
-function! <SID>CursorBelowBlankLine()
-  return getline(line('.')-1) == ''
-endfun
+function! s:GetSelectedText() abort
+  let [l:lnum1, l:col1] = getpos("'<")[1:2]
+  let [l:lnum2, l:col2] = getpos("'>")[1:2]
+  if &selection ==# 'exclusive'
+    let l:col2 -= 1
+  endif
+  let l:lines = getline(l:lnum1, l:lnum2)
+  let l:lines[-1] = l:lines[-1][:l:col2 - 1]
+  let l:lines[0] = l:lines[0][l:col1 - 1:]
+  return l:lines
+endfunction
 
 " Remove trailing whitespace, then restore cursor position
 function! <SID>StripTrailingWhitespaces()
@@ -253,52 +251,59 @@ endfun
 "   endfor
 " endfunction
 
-let s:mitchell_term_bid = v:null
-let s:mitchell_term_wid = v:null
+let s:mitchell_term_bufid = v:null
+let g:mitchell_term_jobid = v:null
+let s:mitchell_term_winid = v:null
 
 let s:mitchell_term_opts = {}
 function! s:mitchell_term_opts.on_exit(jobid, data, event) abort
   " If the terminal process exits before the buffer, close the buffer, too
-  if bufexists(s:mitchell_term_bid)
-    execute 'bw!' s:mitchell_term_bid
+  if bufexists(s:mitchell_term_bufid)
+    execute 'bw!' s:mitchell_term_bufid
   endif
+  let g:mitchell_term_jobid = v:null
 endfunction
 
 function! MitchellTerm()
-  if nvim_get_current_buf() ==# s:mitchell_term_bid
-    echo 'In terminal'
+  " We're in the terminal, so toggling it would require knowing some other
+  " window to jump to. Too much work.
+  if nvim_get_current_buf() ==# s:mitchell_term_bufid
+    return
 
   " Terminal window exists (even though it might be showing some other buffer)
-  elseif s:mitchell_term_wid !=# v:null && winbufnr(s:mitchell_term_wid) !=# -1
-    call nvim_win_close(s:mitchell_term_wid, v:false)
+  elseif s:mitchell_term_winid !=# v:null && winbufnr(s:mitchell_term_winid) !=# -1
+    call nvim_win_close(s:mitchell_term_winid, v:false)
 
   else
-    let editableWidth = GetEditableWidth()
-    let opts = {
-          \ 'col': 120 + winwidth(0) - editableWidth,
-          \ 'height': line('w$') - line('w0') + 1,
-          \ 'relative': 'editor',
-          \ 'row': 1,
-          \ 'style': 'minimal',
-          \ 'width': editableWidth - 120,
-          \ }
+    " let editableWidth = s:GetEditableWidth()
+    let opts = {}
+    " let opts.col = 120 + winwidth(0) - editableWidth
+    let opts.col = winwidth(0) - 80
+    let opts.height = line('w$') - line('w0') + 1
+    let opts.relative = 'editor'
+    let opts.row = 1
+    let opts.style = 'minimal'
+    " let opts.width = editableWidth - 120
+    let opts.width = 80
 
     " Terminal window doesn't exist, but terminal buffer does
-    if bufexists(s:mitchell_term_bid)
-      let s:mitchell_term_wid = nvim_open_win(s:mitchell_term_bid, v:false, opts)
+    if bufexists(s:mitchell_term_bufid)
+      let s:mitchell_term_winid = nvim_open_win(s:mitchell_term_bufid, v:false, opts)
       "
     " Neither terminal window nor buffer exist
     else
-      let s:mitchell_term_bid = nvim_create_buf(v:false, v:true)
-      let s:mitchell_term_wid = nvim_open_win(s:mitchell_term_bid, v:true, opts)
-      call termopen(&shell, s:mitchell_term_opts)
-      star
+      let s:mitchell_term_bufid = nvim_create_buf(v:false, v:true)
+      let winid = nvim_get_current_win()
+      let s:mitchell_term_winid = nvim_open_win(s:mitchell_term_bufid, v:true, opts)
+      let g:mitchell_term_jobid = termopen(&shell, s:mitchell_term_opts)
+      call nvim_win_set_option(s:mitchell_term_winid, 'winbl', 20)
+      call win_gotoid(winid)
     endif
   endif
 endfunction
 
 " Compute the width of the editable part of the screen
-function! GetEditableWidth()
+function! s:GetEditableWidth()
   redir => x
     exe "sil sign place buffer=" . nvim_get_current_buf()
   redir end
@@ -306,7 +311,20 @@ function! GetEditableWidth()
   return winwidth(0) - ((&number || &relativenumber) ? &numberwidth : 0) - &foldcolumn - (len(signlist) > 1 ? 2 : 0)
 endfunction
 
-nn <silent> <Space>t :call MitchellTerm()<CR>
+function! s:MitchellTermSendSelection() abort
+  if g:mitchell_term_jobid !=# v:null
+    let lines = s:GetSelectedText()
+    return chansend(g:mitchell_term_jobid, lines + [""])
+  else
+    return 0
+  endif
+endfunction
+
+command! -range MitchellTermSendSelection call s:MitchellTermSendSelection()
+
+nn <silent> <Space>tt :call MitchellTerm()<CR>
+nn <silent> <Space>ts m`vip<Esc>:'<,'>MitchellTermSendSelection<CR>``
+vn <silent> <Space>ts :MitchellTermSendSelection<CR>
 
 " ==============================================================================
 " Autocommands
@@ -321,9 +339,6 @@ au mitchellwrosen BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") |
 
 " Strip trailing whitespace on save
 au mitchellwrosen BufWritePre * cal <SID>StripTrailingWhitespaces()
-
-" Golang likes tabs, so show them as spaces
-au mitchellwrosen FileType go setl lcs=tab:\ \ ,trail:·,nbsp:+
 
 " On <Enter>, go to error and close quickfix list
 au mitchellwrosen FileType qf nn <silent> <buffer> <CR> <CR>:ccl<CR>
@@ -431,14 +446,13 @@ au mitchellwrosen FileType haskell nn <buffer> <Space>fa :Rgu (<C-r><C-w>\b\s+::
 " [itchyny/lightline.vim]
 function! LightlineFilename()
   let filename = expand('%:t')
-  " !=# '' ? expand('%:t') : '[No Name]'
   let modified = &modified ? '+' : ''
   return filename . modified
 endfunction
 
 let g:lightline = {}
 let g:lightline.active = {}
-let g:lightline.active.left = [ [ 'mode', 'paste' ], [ 'branch', 'filename', ] ]
+let g:lightline.active.left = [ [ 'mode', 'paste' ], [ 'branch' ] ]
 let g:lightline.active.right = [ [ 'lineinfo' ], [ 'percent' ], [ 'filetype' ] ]
 let g:lightline.colorscheme = 'gruvbox'
 let g:lightline.component_expand = {}
@@ -448,11 +462,10 @@ let g:lightline.component_function.branch = 'FugitiveHead'
 let g:lightline.component_function.filename = 'LightlineFilename'
 let g:lightline.component_type = {}
 let g:lightline.component_type.buffers = 'tabsel'
-" let g:lightline.enable = {}
-" let g:lightline.enable.tabline = 1
 let g:lightline.mode_map = {
-      \ 'n': '𝓃ℴ𝓇𝓂𝒶ℓ',
+      \ 'C': '𝒸ℴ𝓂𝓂𝒶𝓃𝒹',
       \ 'i': '𝒾𝓃𝓈ℯ𝓇𝓉',
+      \ 'n': '𝓃ℴ𝓇𝓂𝒶ℓ',
       \ 'R': '𝓇ℯ𝓅ℓ𝒶𝒸ℯ',
       \ 'v': '𝓋𝒾𝓈𝓊𝒶ℓ',
       \ 'V': '𝓋𝒾𝓈𝓊𝒶ℓ–ℓ𝒾𝓃ℯ',
@@ -463,7 +476,7 @@ let g:lightline.tab.active = [ 'tabnum', 'filename', 'modified' ]
 let g:lightline.tab.inactive = [ 'tabnum', 'filename', 'modified' ]
 let g:lightline.tabline = {}
 let g:lightline.tabline.left = [ [ 'buffers' ] ]
-let g:lightline.tabline.right = [ [ 'close' ] ]
+let g:lightline.tabline.right = [ [ ] ]
 
 " [justinmk/vim-sneak]
 " "clever" sneak - pressing z without moving the cursor will move to the next match
@@ -658,6 +671,12 @@ autocmd mitchellwrosen FileType gitmessengerpopup call <SID>init_gitmessengerpop
 let g:Illuminate_delay = 0
 " don't highlight the word under the cursor
 let g:Illuminate_highlightUnderCursor = 0
+
+" [tmsvg/pear-tree]
+" look around to better balance parens rather than just always pairing
+let g:pear_tree_smart_openers = 1
+let g:pear_tree_smart_closers = 1
+let g:pear_tree_smart_backspace = 1
 
 " [tommcdo/vim-exchange]
 " Don't make any key mappings

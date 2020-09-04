@@ -26,7 +26,6 @@ Plug 'Yggdroot/indentLine'                                        " show markers
 Plug 'godlygeek/tabular'                                          " Align on words
 Plug 'itchyny/lightline.vim'                                      "
 Plug 'junegunn/fzf.vim'                                           " Fuzzy search source code, files, etc
-Plug 'justinmk/vim-sneak'                                         " two-letter f/t
 Plug 'liuchengxu/vim-which-key'                                   " thingy to tell me my own hotkeys (requires manual work)
 Plug 'mcchrish/nnn.vim'                                           " File browser thingy, kinda sucks, what's better?
 Plug 'mengelbrecht/lightline-bufferline'                          "
@@ -75,7 +74,6 @@ colo gruvbox
 
 set autowriteall
 set clipboard=unnamed,unnamedplus    " yank also copies to both clipboards
-set colorcolumn=121                  " highlight column
 set cursorline                       " higlight the current line
 set expandtab                        " convert tabs to spaces
 set grepprg=rg\ --vimgrep            " use rg to grep
@@ -100,7 +98,7 @@ set sidescrolloff=16                 " start scrolling before the cursor reaches
 " set signcolumn=yes                   " always draw signcolumn
 set smartcase                        " don't ignore case if search contains uppercase char
 set smartindent                      " smart autoindenting when starting a new line
-set synmaxcol=180                    " dont bother syntax-highlighting past this column                                                                             a
+set synmaxcol=180                    " dont bother syntax-highlighting past this column
 set showtabline=2                    " always show the tabline
 set softtabstop=2                    " tab key makes 2 spaces
 set termguicolors                    "
@@ -115,8 +113,8 @@ set wildmode=list:longest,full       " wild menu completion behavior
 " Key mappings
 " ==============================================================================
 
-" Swap : and ;. The other half is put in the vim-sneak plugin section.
 nnoremap ; :
+nnoremap : ;
 nnoremap r; r:
 nnoremap r: r;
 inoremap ; :
@@ -462,6 +460,9 @@ autocmd mitchellwrosen InsertLeave,TextChanged * call s:save()
 " Highlight merge conflict markers
 match ErrorMsg '^\(<\||\|=\|>\)\{7\}\([^=].\+\)\?$'
 
+" Highlight characters after 120th column
+match ErrorMsg '\%>120v.\+'
+
 " Echo the quickfix entry on the current line, if any
 " autocmd CursorMoved * call <SID>EchoQuickFixEntry()
 
@@ -586,24 +587,6 @@ let g:lightline.tab.inactive = [ 'tabnum', 'filename', 'modified' ]
 let g:lightline.tabline = {}
 let g:lightline.tabline.left = [ [ 'buffers' ] ]
 let g:lightline.tabline.right = [ [ ] ]
-
-" [justinmk/vim-sneak]
-" "clever" sneak - pressing z without moving the cursor will move to the next match
-let g:sneak#s_next = 1
-" Disable highlighting
-highlight! link Sneak None
-
-nmap : <Plug>Sneak_;
-nmap f <Plug>Sneak_f
-nmap F <Plug>Sneak_F
-nmap t <Plug>Sneak_t
-nmap t <Plug>Sneak_T
-nmap z <Plug>Sneak_s
-nmap Z <Plug>Sneak_S
-vmap z <Plug>Sneak_s
-vmap Z <Plug>Sneak_S
-omap z <Plug>Sneak_s
-omap Z <Plug>Sneak_S
 
 " [liuchengxu/vim-which-key]
 let g:which_key_use_floating_win = 1

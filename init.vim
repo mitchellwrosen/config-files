@@ -73,6 +73,7 @@ augroup END
 
 colo gruvbox
 
+set autowriteall
 set clipboard=unnamed,unnamedplus    " yank also copies to both clipboards
 set colorcolumn=121                  " highlight column
 set cursorline                       " higlight the current line
@@ -427,6 +428,9 @@ function! s:stripTrailingWhitespace() abort
 endfunction
 autocmd mitchellwrosen BufWritePre * call <SID>stripTrailingWhitespace()
 
+" kick in autoread on cursor hold or focus gained
+autocmd CursorHold,FocusGained ?* if getcmdwintype() == '' | checktime | endif
+
 " On <Enter>, go to error and close quickfix list
 autocmd mitchellwrosen FileType qf nnoremap <silent> <buffer> <CR> <CR>:ccl<CR>
 
@@ -454,6 +458,9 @@ function! s:save() abort
   endif
 endfunction
 autocmd mitchellwrosen InsertLeave,TextChanged * call s:save()
+
+" Highlight merge conflict markers
+match ErrorMsg '^\(<\||\|=\|>\)\{7\}\([^=].\+\)\?$'
 
 " Echo the quickfix entry on the current line, if any
 " autocmd CursorMoved * call <SID>EchoQuickFixEntry()

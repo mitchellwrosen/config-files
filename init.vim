@@ -13,54 +13,59 @@
 " * Alt-K doesn't seem to work
 " * Make 'sp' etc repeatable
 " * Write function to make ds search for nearest surround and delete it
-" * better function snippet (add args as I add types to type sig?)
-" * lens snippet
-" * prism snippet
 " * replace easy-align
 
 " ==============================================================================
 " Plugins
 " ==============================================================================
 
-cal plug#begin(stdpath('data') . '/plugged')
+call plug#begin(stdpath('data') . '/plugged')
 
-Plug 'ElmCast/elm-vim', { 'for': 'elm' }
-Plug 'LnL7/vim-nix', { 'for': 'nix' }
-Plug 'RRethy/vim-illuminate' " Highlight occurrences of the word under the cursor
-Plug 'Yggdroot/indentLine' " show markers every 2 columns of leading whitespace
-Plug 'godlygeek/tabular' " Align on words
-Plug 'itchyny/lightline.vim'
-Plug 'junegunn/fzf.vim' " Fuzzy search source code, files, etc
-Plug 'justinmk/vim-sneak' " two-letter f/t
-Plug 'liuchengxu/vim-which-key' " thingy to tell me my own hotkeys (requires manual work)
-Plug 'mcchrish/nnn.vim' " File browser thingy, kinda sucks, what's better?
-Plug 'mengelbrecht/lightline-bufferline'
-Plug 'mhinz/vim-signify' " Sign column
-Plug 'mhinz/vim-startify' " Startup screen
-Plug 'morhetz/gruvbox' " best color scheme
-Plug 'neoclide/coc.nvim', { 'branch': 'release' }
-Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
-Plug 'psliwka/vim-smoothie' " Smooth paging up and down
-Plug 'purescript-contrib/purescript-vim', { 'for': 'purescript' }
-Plug 'rhysd/git-messenger.vim'
-Plug 'romainl/vim-cool' " Automatically unhighlight when cursor moves
-Plug 'romainl/vim-qf' " Vim quickfix improvements
-Plug 'sdiehl/vim-ormolu', { 'for': 'haskell' }
-Plug 'terryma/vim-multiple-cursors' " Multiple cursors for quick and dirty renaming
-Plug 'tmsvg/pear-tree' " auto-pair function that claims to not suck; we'll see
-Plug 'tommcdo/vim-exchange' " Swap the location of two selections
-Plug 'tpope/vim-characterize' " Improved 'ga'
-Plug 'tpope/vim-commentary' " Quick (un-)commenting
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-repeat' " Make '.' repeat more things out of the box
-Plug 'tpope/vim-surround' " Some surround helpers
-Plug 'unblevable/quick-scope' " Highlight the first, second, etc. instances of characters on a line
-Plug 'vmchale/dhall-vim', { 'for': 'dhall' }
-Plug 'wellle/targets.vim'
-" https://github.com/voldikss/vim-floaterm/issues/163
-" Plug 'voldikss/vim-floaterm' " floating terminal, almost good but nah
+Plug 'RRethy/vim-illuminate'                                      " Highlight occurrences of the word under the cursor
+Plug 'Yggdroot/indentLine'                                        " show markers every 2 columns of leading whitespace
+Plug 'godlygeek/tabular'                                          " Align on words
+Plug 'itchyny/lightline.vim'                                      "
+Plug 'junegunn/fzf.vim'                                           " Fuzzy search source code, files, etc
+Plug 'justinmk/vim-sneak'                                         " two-letter f/t
+Plug 'liuchengxu/vim-which-key'                                   " thingy to tell me my own hotkeys (requires manual work)
+Plug 'mcchrish/nnn.vim'                                           " File browser thingy, kinda sucks, what's better?
+Plug 'mengelbrecht/lightline-bufferline'                          "
+Plug 'mhinz/vim-startify'                                         " Startup screen
+Plug 'morhetz/gruvbox'                                            " best color scheme
+Plug 'neoclide/coc.nvim', { 'branch': 'release' }                 "
+Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }            "
+Plug 'psliwka/vim-smoothie'                                       " Smooth paging up and down
+Plug 'rhysd/git-messenger.vim'                                    " git blame the line under the cursor
+Plug 'romainl/vim-cool'                                           " Automatically unhighlight when cursor moves
+Plug 'romainl/vim-qf'                                             " Vim quickfix improvements
+Plug 'sdiehl/vim-ormolu', { 'for': 'haskell' }                    "
+Plug 'terryma/vim-multiple-cursors'                               " Multiple cursors for quick and dirty renaming
+Plug 'tmsvg/pear-tree'                                            " auto-pair function that claims to not suck; we'll see
+Plug 'tommcdo/vim-exchange'                                       " Swap the location of two selections
+Plug 'tpope/vim-characterize'                                     " Improved 'ga'
+Plug 'tpope/vim-commentary'                                       " Quick (un-)commenting
+Plug 'tpope/vim-fugitive'                                         "
+Plug 'tpope/vim-repeat'                                           " Make '.' repeat more things out of the box
+Plug 'tpope/vim-surround'                                         " Some surround helpers
+Plug 'unblevable/quick-scope'                                     " Highlight the first, second, etc. instances of characters on a line
 
-cal plug#end() " Automatically calls syntax on, filetype plugin indent on
+" Plug 'ElmCast/elm-vim', { 'for': 'elm' }
+" Plug 'LnL7/vim-nix', { 'for': 'nix' }
+" Plug 'purescript-contrib/purescript-vim', { 'for': 'purescript' }
+" Plug 'vmchale/dhall-vim', { 'for': 'dhall' }
+
+" Cool stuff in here but it defines way too many bindings for me and it
+" doesn't seem easy to disable them all and customize the ones I do want
+" Plug 'wellle/targets.vim'
+
+" Bad performance
+" Plug 'mhinz/vim-signify'
+
+call plug#end() " Automatically calls syntax on, filetype plugin indent on
+
+augroup mitchellwrosen
+  autocmd!
+augroup END
 
 " ==============================================================================
 " Basic settings
@@ -68,158 +73,236 @@ cal plug#end() " Automatically calls syntax on, filetype plugin indent on
 
 colo gruvbox
 
-se bg=dark
-se cb=unnamed,unnamedplus     " yank also copies to both clipboards
-se cc=121                     " highlight column
-se cul                        " higlight the current line
-se et                         " convert tabs to spaces
-se gp=rg\ --vimgrep           " use rg to grep
-se hid                        " don't abandon out-of-sight buffers
-se ic                         " case-insensitive searching
-se icm=split                  " show live command substitutions
-se lz                         " don't draw during e.g. applying a macro
-se lbr                        " wrap lines in a more visually pleasing way
-se lcs=tab:>\ ,trail:·,nbsp:+ " trailing whitespace markers
-se list                       " show trailing whitespace, tabs, etc.
-se nofen                      " never fold
-se nojs                       " insert one space after ., ?, ! chars when joining
-se noml                       " disable modelines
-se nosmd                      " don't show mode, since lightline handle that
-se nosol                      " don't jump cursor to start of line when moving
-se nu                         " show line number gutter
-se so=10                      " start scrolling before the cursor reaches the edge
-se sr                         " shift to multiple of shiftwidth
-se sw=2
-se scl=yes                    " always draw signcolumn
-se scs                        " don't ignore case if search contains uppercase char
-se si                         " smart autoindenting when starting a new line
-se smc=180                    " dont bother syntax-highlighting past this column
-se stal=2                     " always show the tabline
-se sts=2                      " tab key makes 2 spaces
-se tgc
-se title                      " put filename in window title
-se tm=300                     " only wait this many ms for key sequence to complete
-se udf                        " persist undo history across buffer exits
-se ut=100                     " fire CursorHold after 100ms (default 4000ms)
-se wmnu                       " complete commands with a little menu
-se wim=list:longest,full      " wild menu completion behavior
+set clipboard=unnamed,unnamedplus    " yank also copies to both clipboards
+set colorcolumn=121                  " highlight column
+set cursorline                       " higlight the current line
+set expandtab                        " convert tabs to spaces
+set grepprg=rg\ --vimgrep            " use rg to grep
+set hidden                           " don't abandon out-of-sight buffers
+set ignorecase                       " case-insensitive searching
+set inccommand=split                 " show live command substitutions
+set lazyredraw                       " don't draw during e.g. applying a macro
+set linebreak                        " wrap lines in a more visually pleasing way
+set listchars=tab:>\ ,trail:·,nbsp:+ " trailing whitespace markers
+set list                             " show trailing whitespace, tabs, etc.
+set nofoldenable                     " never fold
+set nojoinspaces                     " insert one space after ., ?, ! chars when joining
+set nomodeline                       " disable modelines
+set noshowmode                       " don't show mode, since lightline handle that
+set nostartofline                    " don't jump cursor to start of line when moving
+set number                           " show line number gutter
+set report=0                         " always repeat the number of lines changed
+set scrolloff=10                     " start scrolling before the cursor reaches the edge
+set shiftround                       " shift to multiple of shiftwidth
+set shiftwidth=2                     "
+set sidescrolloff=16                 " start scrolling before the cursor reaches the edge
+" set signcolumn=yes                   " always draw signcolumn
+set smartcase                        " don't ignore case if search contains uppercase char
+set smartindent                      " smart autoindenting when starting a new line
+set synmaxcol=180                    " dont bother syntax-highlighting past this column                                                                             a
+set showtabline=2                    " always show the tabline
+set softtabstop=2                    " tab key makes 2 spaces
+set termguicolors                    "
+set title                            " put filename in window title
+set timeoutlen=300                   " only wait this many ms for key sequence to complete
+set undofile                         " persist undo history across buffer exits
+set updatetime=100                   " fire CursorHold after 100ms (default 4000ms)
+set wildmenu                         " complete commands with a little menu
+set wildmode=list:longest,full       " wild menu completion behavior
 
 " ==============================================================================
 " Key mappings
 " ==============================================================================
 
-no ; :
+" Swap : and ;. The other half is put in the vim-sneak plugin section.
+nnoremap ; :
+nnoremap r; r:
+nnoremap r: r;
+inoremap ; :
+inoremap : ;
+cnoremap : ;
+cnoremap ; :
 
-" <Tab> to switch to the previously edited buffer
-nn <Tab> <C-^>
+" make ' jump back to mark's exact position, not just line
+nnoremap ' `
 
-" d. to delete the current line
-nn d. ^D
-
-" Prevent the cursor from jumping past a wrapped line when moving up and down
-nn j gj
-nn k gk
-
-nn H ^
-nn L $
-ono H ^
-ono L $
-vn H ^
-vn L g_
-
-" Center after every search movement
-nn n nzz
-nn N Nzz
-vn n nzz
-vn N Nzz
-
-nn r; r:
-nn r: r;
-
-" Disable annoying command search 'q:' that I never use
-nn q: <Nop>
-
-nn Q @q
-
-" Make Y yank to the end of line, similar to how C and D behave
-nn Y y$
-" After visual mode yank, leave cursor at the end of the highlight
-vn Y y`]
-
-" U to redo. <C-r> comes from some plugin, maybe vim-repeat? (annoying)
-nn U <C-r>
-" Weaning myself of <C-R> to redo
-nn <C-r> <Nop>
+" very magic mode search
+nnoremap / /\v
+vnoremap / /\v
 
 " Don't highlight matches *and* jump at the same time; only highlight
-nn * *``
-vn * y/<C-r>"<CR>
-nn # #``
+nnoremap * *``
+nnoremap # #``
+
+" Wean myself off tab for now...
+nnoremap <Tab> <Nop>
+
+" Backspace to switch to the previously edited buffer
+nnoremap <BS> <C-^>
+
+" Prevent the cursor from jumping past a wrapped line when moving up and down
+nnoremap j gj
+nnoremap k gk
+
+" HJKL to move around the file. JK are put in the vim-smoothie plugin section.
+vnoremap J <C-D>
+vnoremap K <C-U>
+nnoremap H ^
+nnoremap L $
+onoremap H ^
+onoremap L $
+vnoremap H ^
+vnoremap L g_
+
+" Make Y yank to the end of line, similar to how C and D behave
+nnoremap Y y$
+" After visual mode yank, leave cursor at the end of the highlight
+" This gives me two ways to yank after making a selection: y and Y
+vnoremap Y y`]
+
+" Select last changed or yanked area
+nnoremap <expr> gV '`[' . strpart(getregtype(), 0, 1) . '`]'
+
+" U to redo. <C-r> comes from some plugin, maybe vim-repeat? (annoying)
+nnoremap U <C-r>
+" Weaning myself of <C-R> to redo
+nnoremap <C-r> <Nop>
+
+" Refactor word under cursor
+nnoremap c* /\<<C-r>=expand('<cWORD>')<CR>\>\C<CR>``cgn
+nnoremap c# ?\<<C-r>=expand('<cWORD>')<CR>\>\C<CR>``cgN
+
+" Center after every search movement
+nnoremap n nzz
+nnoremap N Nzz
+vnoremap n nzz
+vnoremap N Nzz
+
+" q to quit the current buffer, or quit vim if there's only 1 listed buffer
+nnoremap <expr> <silent> q len(getbufinfo({'buflisted': 1})) ==? 1 ? ":q\<CR>" : ":bd\<CR>"
+
+" Disable annoying command search 'q:' that I never use
+" nnoremap q: <Nop>
+
+" ,q to record a macro
+nnoremap ,q q
+
+" Q to apply macro recorded into q
+nnoremap Q @q
+
+" Make *, # work in visual mode, too
+function! s:visualSearch(cmdtype, ...)
+  let temp = @"
+  normal! gvy
+  if !a:0 || a:1 != 'raw'
+    let @" = escape(@", a:cmdtype.'\*')
+  endif
+  let @/ = substitute(@", '\n', '\\n', 'g')
+  let @/ = substitute(@/, '\[', '\\[', 'g')
+  let @/ = substitute(@/, '\~', '\\~', 'g')
+  let @/ = substitute(@/, '\.', '\\.', 'g')
+  let @" = temp
+endfunction
+vnoremap * :<C-u>call <SID>visualSearch('/')<CR>/<C-r>=@/<CR><CR>``
+vnoremap # :<C-u>call <SID>visualSearch('?')<CR>?<C-r>=@/<CR><CR>``
 
 " Follow >>/<< shifted text around with the cursor
-nm >> <Plug>MyNmapLl
-nm << <Plug>MyNmapHh
+nmap >> <Plug>MyNmapLl
+nmap << <Plug>MyNmapHh
 " Get it to repeat with '.'
-nn <silent> <Plug>MyNmapLl >>ll:cal repeat#set("\<Plug>MyNmapLl")<CR>
-nn <silent> <Plug>MyNmapHh <<hh:cal repeat#set("\<Plug>MyNmapHh")<CR>
+nnoremap <silent> <Plug>MyNmapLl >>ll:call repeat#set("\<Plug>MyNmapLl")<CR>
+nnoremap <silent> <Plug>MyNmapHh <<hh:call repeat#set("\<Plug>MyNmapHh")<CR>
 
 " ,j to join (since J moves down)
-nn ,j m`J``
+nnoremap ,j m`J``
+
+" inner/around line text objects
+vnoremap <silent> al $o0
+onoremap <silent> al :<C-u>normal val<CR>
+vnoremap <silent> il g_o^
+onoremap <silent> il :<C-u>normal vil<CR>
+
+" inner/around number text objects (with forward-seeking behavior)
+" 123 123.456 0b1010 0xff
+let s:number_regex = '0b[01]\+\|0x\x\+\|\d\+\(\.\d\+\)\='
+function! s:innerNumberTextObject()
+  if (!search(s:number_regex, 'ceW'))
+    return
+  endif
+  normal! v
+  call search(s:number_regex, 'bcW')
+endfunction
+function! s:aroundNumberTextObject()
+  if (!search(s:number_regex, 'ceW'))
+    return
+  endif
+  call search('\%' . (virtcol('.')+1) . 'v\s*', 'ceW')
+  normal! v
+  call search(s:number_regex, 'cb')
+  call search('\s*\%' . virtcol('.') . 'v', 'bW')
+endfunction
+vnoremap <silent> in :<C-u>call <SID>innerNumberTextObject()<cr>
+onoremap <silent> in :<C-u>call <SID>innerNumberTextObject()<cr>
+xnoremap <silent> an :<C-u>call <SID>aroundNumberTextObject()<cr>
+onoremap <silent> an :<C-u>call <SID>aroundNumberTextObject()<cr>
 
 " Ctrl+S to search-and-replace in the file
-nn <C-s> :%s//g<Left><Left>
-xn <C-s> :s//g<Left><Left>
+nnoremap <C-s> :%s//g<Left><Left>
+vnoremap <C-s> :s//g<Left><Left>
 
 " Move buffers with Ctrl+jk
-nn <silent> <C-j> :bn<CR>
-nn <silent> <C-k> :bp<CR>
+nnoremap <silent> <C-j> :bn<CR>
+nnoremap <silent> <C-k> :bp<CR>
 
-" Delete the current buffer with Space-d, or quit vim if it's the only buffer
-nn <expr> <silent> <Space>d len(getbufinfo({'buflisted': 1})) ==? 1 ? ":q\<CR>" : ":bd\<CR>"
-
-" Move vertical splits with Ctrl+hl (sorry, horizontal splits)
-" I never use vertical splits anyway so these could be repurposed.
-nn <C-h> <C-w>h
-nn <C-l> <C-w>l
+" Move vertical splits with Ctrl+hl
+" I never use vertical splits anyway so these should be repurposed.
+" nnoremap <C-h> <C-w>h
+" nnoremap <C-l> <C-w>l
 
 " github.com/mitchellwrosen/repld stuff
-nn <silent> <Space>s m`vip<Esc>:silent '<,'>w !repld-send --no-echo<CR>``
-nn <silent> <Space>S m`:silent w !repld-send<CR>``
-vn <silent> <Space>s m`<Esc>:silent '<,'>w !repld-send<CR>``
-
-ino ; :
-ino : ;
+nnoremap <silent> <Space>s m`vip<Esc>:silent '<,'>w !repld-send --no-echo<CR>``
+nnoremap <silent> <Space>S m`:silent w !repld-send<CR>``
+vnoremap <silent> <Space>s m`<Esc>:silent '<,'>w !repld-send<CR>``
 
 " <C-v> to paste from * register
-ino <C-v> <C-r>*
+inoremap <C-v> <C-r>*
 
 " Ctrl+space for omnicomplete
-im <C-Space> <C-x><C-o>
+imap <C-Space> <C-x><C-o>
+
+" Command mode movement
+cnoremap <C-h> <Left>
+cnoremap <C-j> <Down>
+cnoremap <C-k> <Up>
+cnoremap <C-l> <Right>
+
+" Hm... can't figure out how to "fall through" to normal tab (autocomplete)
+" behavior
+" function! s:commandModeTab() abort
+"   if getcmdtype() ==# '/' || getcmdtype() ==# '?'
+"     return "\<Enter>/\<C-r>/"
+"   else
+"     return "\<Tab>"
+"   endif
+" endfunction
+" function! s:commandModeShiftTab() abort
+"   if getcmdtype() ==# '/' || getcmdtype() ==# '?'
+"     return "\<Enter>?\<C-r>/"
+"   else
+"     return "\<S-Tab>"
+"   endif
+" endfunction
+" cnoremap <expr> <Tab> <SID>commandModeTab()
+" cnoremap <expr> <S-Tab> <SID>commandModeShiftTab()
 
 " When a popup menu is visible, move thru it with tab and select with enter
-" ino <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-ino <expr> <Tab> pumvisible() ? "\<C-n>" : coc#refresh()
-ino <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : coc#refresh()
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
-ino <C-u> <Nop>
+inoremap <C-u> <Nop>
 
-" ------------------------------------------------------------------------------
-" Terminal mode
-" ------------------------------------------------------------------------------
-
-" tno <A-[> <Esc>
-
-" ==============================================================================
-" Commands
-" ==============================================================================
-
-" command! Vimrc e "~/.config/nvim/init.vim"
-
-" ==============================================================================
-" Functions
-" ==============================================================================
-
-function! s:GetSelectedText() abort
+function! s:getSelectedText() abort
   let [l:lnum1, l:col1] = getpos("'<")[1:2]
   let [l:lnum2, l:col2] = getpos("'>")[1:2]
   if &selection ==# 'exclusive'
@@ -230,14 +313,6 @@ function! s:GetSelectedText() abort
   let l:lines[0] = l:lines[0][l:col1 - 1:]
   return l:lines
 endfunction
-
-" Remove trailing whitespace, then restore cursor position
-function! <SID>StripTrailingWhitespaces()
-  let l = line('.')
-  let c = col('.')
-  %s/\s\+$//e
-  cal cursor(l, c)
-endfun
 
 " function! <SID>EchoQuickFixEntry()
 "   let entries = getqflist()
@@ -252,7 +327,7 @@ endfun
 " endfunction
 
 let s:mitchell_term_bufid = v:null
-let g:mitchell_term_jobid = v:null
+let s:mitchell_term_jobid = v:null
 let s:mitchell_term_winid = v:null
 
 let s:mitchell_term_opts = {}
@@ -261,7 +336,7 @@ function! s:mitchell_term_opts.on_exit(jobid, data, event) abort
   if bufexists(s:mitchell_term_bufid)
     execute 'bw!' s:mitchell_term_bufid
   endif
-  let g:mitchell_term_jobid = v:null
+  let s:mitchell_term_jobid = v:null
 endfunction
 
 function! MitchellTerm()
@@ -295,7 +370,7 @@ function! MitchellTerm()
       let s:mitchell_term_bufid = nvim_create_buf(v:false, v:true)
       let winid = nvim_get_current_win()
       let s:mitchell_term_winid = nvim_open_win(s:mitchell_term_bufid, v:true, opts)
-      let g:mitchell_term_jobid = termopen(&shell, s:mitchell_term_opts)
+      let s:mitchell_term_jobid = termopen(&shell, s:mitchell_term_opts)
       call nvim_win_set_option(s:mitchell_term_winid, 'winbl', 20)
       call win_gotoid(winid)
     endif
@@ -312,9 +387,9 @@ function! s:GetEditableWidth()
 endfunction
 
 function! s:MitchellTermSendSelection() abort
-  if g:mitchell_term_jobid !=# v:null
-    let lines = s:GetSelectedText()
-    return chansend(g:mitchell_term_jobid, lines + [""])
+  if s:mitchell_term_jobid !=# v:null
+    let lines = s:getSelectedText()
+    return chansend(s:mitchell_term_jobid, lines + [""])
   else
     return 0
   endif
@@ -322,39 +397,66 @@ endfunction
 
 command! -range MitchellTermSendSelection call s:MitchellTermSendSelection()
 
-nn <silent> <Space>tt :call MitchellTerm()<CR>
-nn <silent> <Space>ts m`vip<Esc>:'<,'>MitchellTermSendSelection<CR>``
-vn <silent> <Space>ts :MitchellTermSendSelection<CR>
+nnoremap <silent> <Space>tt :call MitchellTerm()<CR>
+nnoremap <silent> <Space>ts m`vip<Esc>:'<,'>MitchellTermSendSelection<CR>``
+vnoremap <silent> <Space>ts :MitchellTermSendSelection<CR>
 
-" ==============================================================================
-" Autocommands
-" ==============================================================================
-
-aug mitchellwrosen
-  autocmd!
-aug END
+" Disallow edits to read-only files
+autocmd mitchellwrosen BufReadPost * let &l:modifiable = !&readonly
 
 " Jump to last cursor position on file open
-au mitchellwrosen BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "norm! g`\"" | endif
+function! s:jumpToLastPosition() abort
+  if empty(&buftype) && index(['diff', 'gitcommit'], &filetype, 0, v:true) == -1
+    if line("'\"") >= 1 && line("'\"") <= line('$')
+      execute 'normal! g`"'
+    endif
+  endif
+endfunction
+autocmd mitchellwrosen BufWinEnter ?* call s:jumpToLastPosition()
 
 " Strip trailing whitespace on save
-au mitchellwrosen BufWritePre * cal <SID>StripTrailingWhitespaces()
+function! s:stripTrailingWhitespace() abort
+  if &l:modifiable && !&l:binary
+    let l:view = winsaveview()
+      try
+        keeppatterns silent! 1,$s/\s\+$//e
+      finally
+        call winrestview(l:view)
+      endtry
+  endif
+endfunction
+autocmd mitchellwrosen BufWritePre * call <SID>stripTrailingWhitespace()
 
 " On <Enter>, go to error and close quickfix list
-au mitchellwrosen FileType qf nn <silent> <buffer> <CR> <CR>:ccl<CR>
+autocmd mitchellwrosen FileType qf nnoremap <silent> <buffer> <CR> <CR>:ccl<CR>
 
-au mitchellwrosen FileType unison setlocal commentstring=--\ %s
+autocmd mitchellwrosen FileType unison setlocal commentstring=--\ %s
 
 " Esc escapes terminal mode
-au mitchellwrosen TermOpen * tno <buffer> <Esc> <C-\><C-n>
+autocmd mitchellwrosen TermOpen * tnoremap <buffer> <Esc> <C-\><C-n>
+autocmd mitchellwrosen TermOpen * setlocal nonumber norelativenumber
 " forcibly exit a terminal buffer, because there's nothing to save
-au mitchellwrosen TermOpen * nn <silent> <buffer> <Space>d :bw!<CR>
+autocmd mitchellwrosen TermOpen * nnoremap <silent> <buffer> <Space>d :bw!<CR>
+" start a terminal in insert mode
+autocmd mitchellwrosen TermOpen * startinsert
 
 " Briefly highlight yanks
-au mitchellwrosen TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=500}
+autocmd mitchellwrosen TextYankPost * silent! lua vim.highlight.on_yank {higroup="Visual", timeout=600}
+
+" Save the buffer after changing it
+function! s:save() abort
+  if empty(&buftype) && !empty(bufname('')) && &filetype !=# 'gitcommit'
+    let yank0 = getpos("'[")
+    let yank1 = getpos("']")
+    silent! update
+    call setpos("'[", yank0)
+    call setpos("']", yank1)
+  endif
+endfunction
+autocmd mitchellwrosen InsertLeave,TextChanged * call s:save()
 
 " Echo the quickfix entry on the current line, if any
-" au CursorMoved * cal <SID>EchoQuickFixEntry()
+" autocmd CursorMoved * call <SID>EchoQuickFixEntry()
 
 " ==============================================================================
 " Plugin settings
@@ -366,7 +468,7 @@ let g:elm_format_autosave = 1 " Run elm-format on save
 
 " [godlygeek/tabular]
 " Space-a to align on the word under the cursor
-nn <silent> <Space>a m`:exe "Tabularize /" . expand("<cWORD>")<CR>``
+nnoremap <silent> <Space>a m`:exe "Tabularize /" . expand("<cWORD>")<CR>``
 
 " [junegunn/fzf.vim]
 " If the buffer is already open in another tab or window, jump to it rather
@@ -376,15 +478,15 @@ let g:fzf_layout = { 'window': { 'height': 0.9, 'width': 0.9 } }
 
 " [junegunn/fzf.vim]
 " Space-o ("open") to fuzzy file search, both git- and everything-variants
-nn <expr> <Space>o (len(system('git rev-parse')) ? ':Files' : ':GFiles')."\<CR>"
+nnoremap <expr> <Space>o (len(system('git rev-parse')) ? ':Files' : ':GFiles')."\<CR>"
 " Space-f ("find") the word under the cursor
-nn <Space>f :Rg <C-r><C-w><CR>
+nnoremap <Space>f :Rg <C-r><C-w><CR>
 " Would be nice to do this without yanking?
-vn <Space>f y:Rg <C-r>"<CR>
+vnoremap <Space>f y:Rg <C-r>"<CR>
 " Space-k (because it's a home-row key) to fuzzy-search buffers
-nn <Space>k :Buffers<CR>
+nnoremap <Space>k :Buffers<CR>
 " Space-h to see the git history of the current file
-nn <Space>h :BCommits<CR>
+nnoremap <Space>h :BCommits<CR>
 
 command! -bar BCommits call fzf#vim#buffer_commits(1)
 
@@ -430,18 +532,18 @@ command! -nargs=* Rgu
   \   fzf#vim#with_preview({'options': ['--border', '--info=inline', '--layout=reverse']}, 'down:60%'),
   \   0)
 
-au mitchellwrosen FileType fzf setl laststatus=0
-  \| au BufLeave <buffer> setl laststatus=2
+autocmd mitchellwrosen FileType fzf setl laststatus=0
+  \| autocmd BufLeave <buffer> setl laststatus=2
 " Escape to quit little annoying temporary buffers
-au mitchellwrosen FileType fzf nn <silent> <buffer> <Esc> :q<CR>
+autocmd mitchellwrosen FileType fzf nnoremap <silent> <buffer> <Esc> :q<CR>
 " Unmap Esc quitting terminal mode, so fzf handles it (result: one Esc closes fzf)
-au mitchellwrosen FileType fzf tunma <buffer> <Esc>
+autocmd mitchellwrosen FileType fzf tunma <buffer> <Esc>
 
 " <Space>ff to find-function (ag can match over multiple lines)
 " <Space>ft to find-type (ripgrep is faster)
-au mitchellwrosen FileType haskell nn <buffer> <Space>ff :Ag (<Bslash>b)<C-r><C-w><Bslash>b[ <Bslash>t<Bslash>n]+::<CR>
-au mitchellwrosen FileType haskell nn <buffer> <Space>ft :Rg (((data<Bar>newtype<Bar>type)\s+)<Bar>class .*)\b<C-r><C-w>\b<CR>
-au mitchellwrosen FileType haskell nn <buffer> <Space>fa :Rgu (<C-r><C-w>\b\s+::)<Bar>((data(\sfamily)?<Bar>newtype<Bar>type(\sfamily)?)\s+<C-r><C-w>\b)<Bar>(class\s+(\(.*\)\s+=>\s+)?<C-r><C-w>\b\s+where)<CR>
+autocmd mitchellwrosen FileType haskell nnoremap <buffer> <Space>ff :Ag (<Bslash>b)<C-r><C-w><Bslash>b[ <Bslash>t<Bslash>n]+::<CR>
+autocmd mitchellwrosen FileType haskell nnoremap <buffer> <Space>ft :Rg (((data<Bar>newtype<Bar>type)\s+)<Bar>class .*)\b<C-r><C-w>\b<CR>
+autocmd mitchellwrosen FileType haskell nnoremap <buffer> <Space>fa :Rgu (<C-r><C-w>\b\s+::)<Bar>((data(\sfamily)?<Bar>newtype<Bar>type(\sfamily)?)\s+<C-r><C-w>\b)<Bar>(class\s+(\(.*\)\s+=>\s+)?<C-r><C-w>\b\s+where)<CR>
 
 " [itchyny/lightline.vim]
 function! LightlineFilename()
@@ -463,7 +565,7 @@ let g:lightline.component_function.filename = 'LightlineFilename'
 let g:lightline.component_type = {}
 let g:lightline.component_type.buffers = 'tabsel'
 let g:lightline.mode_map = {
-      \ 'C': '𝒸ℴ𝓂𝓂𝒶𝓃𝒹',
+      \ 'c': '𝒸ℴ𝓂𝓂𝒶𝓃𝒹',
       \ 'i': '𝒾𝓃𝓈ℯ𝓇𝓉',
       \ 'n': '𝓃ℴ𝓇𝓂𝒶ℓ',
       \ 'R': '𝓇ℯ𝓅ℓ𝒶𝒸ℯ',
@@ -482,24 +584,24 @@ let g:lightline.tabline.right = [ [ ] ]
 " "clever" sneak - pressing z without moving the cursor will move to the next match
 let g:sneak#s_next = 1
 " Disable highlighting
-hi! link Sneak None
+highlight! link Sneak None
 
-nm : <Plug>Sneak_;
-nm f <Plug>Sneak_f
-nm F <Plug>Sneak_F
-nm t <Plug>Sneak_t
-nm t <Plug>Sneak_T
-nm z <Plug>Sneak_s
-nm Z <Plug>Sneak_S
-vm z <Plug>Sneak_s
-vm Z <Plug>Sneak_S
-om z <Plug>Sneak_s
-om Z <Plug>Sneak_S
+nmap : <Plug>Sneak_;
+nmap f <Plug>Sneak_f
+nmap F <Plug>Sneak_F
+nmap t <Plug>Sneak_t
+nmap t <Plug>Sneak_T
+nmap z <Plug>Sneak_s
+nmap Z <Plug>Sneak_S
+vmap z <Plug>Sneak_s
+vmap Z <Plug>Sneak_S
+omap z <Plug>Sneak_s
+omap Z <Plug>Sneak_S
 
 " [liuchengxu/vim-which-key]
 let g:which_key_use_floating_win = 1
 let g:which_key_hspace = 1
-cal which_key#register('<Space>', 'g:which_key_map_space')
+call which_key#register('<Space>', 'g:which_key_map_space')
 let g:which_key_map_space = {
       \ 'a': 'align',
       \ 'b': 'git-blame',
@@ -513,7 +615,7 @@ let g:which_key_map_space = {
       \ 'S': 'repld-send-buffer',
       \ 's': 'repld-send',
       \ }
-cal which_key#register('?', 'g:which_key_map_question')
+call which_key#register('?', 'g:which_key_map_question')
 " Why are some buffer things broken?
 let g:which_key_map_question = {
       \ 'b':
@@ -542,9 +644,9 @@ let g:which_key_map_question = {
       \ 'Q': ['call feedkeys("@q")', 'execute-macro-q'],
       \ }
 
-nn <silent> <Space> :WhichKey '<Space>'<CR>
-vn <silent> <Space> :WhichKeyVisual '<Space>'<CR>
-nn <silent> ? :WhichKey '?'<CR>
+nnoremap <silent> <Space> :WhichKey '<Space>'<CR>
+vnoremap <silent> <Space> :WhichKeyVisual '<Space>'<CR>
+nnoremap <silent> ? :WhichKey '?'<CR>
 
 " [mcchrish/nnn.vim]
 let g:nnn#set_default_mappings = 0
@@ -561,7 +663,6 @@ let g:gruvbox_improved_strings = 1 " thought this was supposed to extra-highligh
 " [multiple-cursors]
 let g:multi_cursor_use_default_mapping = 0
 let g:multi_cursor_start_word_key = '<C-n>'
-" let g:multi_cursor_select_all_word_key = '<A-n>'
 " let g:multi_cursor_start_key = 'g<C-n>'
 " let g:multi_cursor_select_all_key = 'g<A-n>'
 let g:multi_cursor_next_key = '<C-n>'
@@ -571,18 +672,18 @@ let g:multi_cursor_quit_key = '<Esc>'
 
 " [neoclide/coc.nvim]
 " <Left>/<Right> to jump around warnings/errors (annoying that it's only buffer-local)
-nm <silent> <Left> <Plug>(coc-diagnostic-prev)
-nm <silent> <Right> <Plug>(coc-diagnostic-next)
+nmap <silent> <Left> <Plug>(coc-diagnostic-prev)
+nmap <silent> <Right> <Plug>(coc-diagnostic-next)
 " gd to go to definition of thing under cursor
 " Also <Del> (trying it out since it's one key)
-nm <silent> gd <Plug>(coc-definition)
-nm <silent> <Del> <Plug>(coc-definition)
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> <Del> <Plug>(coc-definition)
 " <Enter> to show type of thing under cursor
-nn <silent> <Enter> :call <SID>HandleEnter()<CR>
+nnoremap <silent> <Enter> :call <SID>HandleEnter()<CR>
 " <Space>i to open quickfix
-nn <silent> <Space>i :CocFix<CR>
+nnoremap <silent> <Space>i :CocFix<CR>
 " Backspace to open all warnings/errors in a list
-nn <silent> <BS> :CocList diagnostics<CR>
+" nnoremap <silent> <BS> :CocList diagnostics<CR>
 
 function! s:HandleEnter()
   if coc#util#has_float()
@@ -603,17 +704,17 @@ let g:haskell_enable_typeroles = 1
 " [romainl/vim-qf]
 " Toggle the quickfix ("location") menu; move thru quickfix items with Alt+jk
 " Hmm... I never seem to use these... do they even work? Wtf is quickfix?
-nm <Space>l <Plug>(qf_qf_toggle)
-nm <A-j> <Plug>(qf_qf_next)
-nm <A-k> <Plug>(qf_qf_prev)
+nmap <Space>l <Plug>(qf_qf_toggle)
+nmap <A-j> <Plug>(qf_qf_next)
+nmap <A-k> <Plug>(qf_qf_prev)
 
 " [sdiehl/vim-ormolu]
 let g:ormolu_disable = 1
 
-au mitchellwrosen FileType haskell nn <buffer> <silent> <Space>p :call RunOrmolu()<CR>
+autocmd mitchellwrosen FileType haskell nnoremap <buffer> <silent> <Space>p :call RunOrmolu()<CR>
 
 " [mcchrish/nnn.vim]
-nn <silent> <Space>n :NnnPicker<CR>
+nnoremap <silent> <Space>n :NnnPicker<CR>
 
 " [mhinz/signify]
 let g:signify_sign_change = 'Δ'
@@ -633,22 +734,20 @@ let g:startify_lists = [{ 'type': 'files' }]
 let g:startify_relative_path = 1
 
 " make floaterm not leave an empty buffer in startify
-" au User Startified setlocal buflisted
+" autocmd User Startified setlocal buflisted
 
 " In startify screen, undo my j=gj, k=gk mappings, because they press 'g'
-au mitchellwrosen FileType startify nn <buffer> j j
-au mitchellwrosen FileType startify nn <buffer> k k
+autocmd mitchellwrosen FileType startify nnoremap <buffer> j j
+autocmd mitchellwrosen FileType startify nnoremap <buffer> k k
 
 " [psliwka/vim-smoothie]
 let g:smoothie_base_speed = 15
 let g:smoothie_no_default_mappings = 1
 let g:smoothie_update_interval = 10
 
-" very unfortunate: vm variants don't work here...
-nm J <Plug>(SmoothieForwards)
-nm K <Plug>(SmoothieBackwards)
-vn J <C-D>
-vn K <C-U>
+" very unfortunate: vmap variants don't work here...
+nmap J <Plug>(SmoothieForwards)
+nmap K <Plug>(SmoothieBackwards)
 
 " [rhysd/git-messenger.vim]
 let g:git_messenger_always_into_popup = v:true
@@ -656,13 +755,13 @@ let g:git_messenger_extra_blame_args = '-w'
 let g:git_messenger_no_default_mappings = v:true
 
 " blame the line under the cursor
-nm <Space>b <Plug>(git-messenger)
+nmap <Space>b <Plug>(git-messenger)
 
 function! <SID>init_gitmessengerpopup() abort
-  nm <buffer><Enter> q
-  nm <buffer><Esc> q
-  nm <buffer>h o
-  nm <buffer>l O
+  nmap <buffer><Enter> q
+  nmap <buffer><Esc> q
+  nmap <buffer>h o
+  nmap <buffer>l O
 endfunction
 autocmd mitchellwrosen FileType gitmessengerpopup call <SID>init_gitmessengerpopup()
 
@@ -683,20 +782,20 @@ let g:pear_tree_smart_backspace = 1
 let g:exchange_no_mappings = 1
 
 " x ("exchange") once to yank, x again to exchange with the first yank
-nm x <Plug>(Exchange)
+nmap x <Plug>(Exchange)
 " Manually make [exhange] replace 'w' with 'e', as vim does for e.g. 'c'
-nm xw <Plug>(Exchange)e
-nm xW <Plug>(Exchange)E
+nmap xw <Plug>(Exchange)e
+nmap xW <Plug>(Exchange)E
 " xx to exchange-yank the whole line (and return cursor to where it was)
-nm xx m`<Plug>(ExchangeLine)``
+nmap xx m`<Plug>(ExchangeLine)``
 " xc to clear the exchange
-nm xc <Plug>(ExchangeClear)
-vm x <Plug>(Exchange)
+nmap xc <Plug>(ExchangeClear)
+vmap x <Plug>(Exchange)
 
 " [tpope/vim-commentary]
 " Toggle comment
-nm <Space>m <Plug>CommentaryLine
-vm <Space>m <Plug>Commentary
+nmap <Space>m <Plug>CommentaryLine
+vmap <Space>m <Plug>Commentary
 
 " [tpope/vim-surround]
 " Don't let surround provide any magic mappings
@@ -706,39 +805,39 @@ let g:surround_no_mappings = 1
 " s to surround inner word and restore cursor position
 " S to surround inner WORD and restore cursor position
 " SS to surround current line restore cursor position
-nm ds' mz<Plug>Dsurround'`zh
-nm ds" mz<Plug>Dsurround"`zh
-nm ds( mz<Plug>Dsurround)`zh
-nm ds[ mz<Plug>Dsurround]`zh
-nm ds{ mz<Plug>Dsurround}`zh
-nm dsp mz<Plug>Dsurround)`zh
-nm ds<Space> mz<Plug>Dsurround <Space>`zh
-nm s' mz<Plug>Csurround w'`zl
-nm s" mz<Plug>Csurround w"`zl
-nm s( mz<Plug>Csurround w)`zl
-nm s[ mz<Plug>Csurround w]`zl
-nm s{ mz<Plug>Csurround w}`zl
-nm sp mz<Plug>Csurround w)`zl
-nm s<Space> mz<Plug>Csurround w <Space>`zl
-nm S' mz<Plug>Csurround W'`zl
-nm S" mz<Plug>Csurround W"`zl
-nm S( mz<Plug>Csurround W)`zl
-nm S[ mz<Plug>Csurround W]`zl
-nm S{ mz<Plug>Csurround W}`zl
-nm Sp mz<Plug>Csurround W)`zl
-nm S<Space> mz<Plug>Csurround W <Space>`zl
-nm SS' mz<Plug>Yssurround'`z
-nm SS" mz<Plug>Yssurround"`z
-nm SS( mz<Plug>Yssurround)`z
-nm SS[ mz<Plug>Yssurround]`z
-nm SS{ mz<Plug>Yssurround}`z
-nm SSp mz<Plug>Yssurround)`z
-vm s' <Plug>VSurround'
-vm s" <Plug>VSurround"
-vm s( <Plug>VSurround)
-vm s[ <Plug>VSurround]
-vm s{ <Plug>VSurround}
-vm sp <Plug>VSurround)
+nmap ds' mz<Plug>Dsurround'`zh
+nmap ds" mz<Plug>Dsurround"`zh
+nmap ds( mz<Plug>Dsurround)`zh
+nmap ds[ mz<Plug>Dsurround]`zh
+nmap ds{ mz<Plug>Dsurround}`zh
+nmap dsp mz<Plug>Dsurround)`zh
+nmap ds<Space> mz<Plug>Dsurround <Space>`zh
+nmap s' mz<Plug>Csurround w'`zl
+nmap s" mz<Plug>Csurround w"`zl
+nmap s( mz<Plug>Csurround w)`zl
+nmap s[ mz<Plug>Csurround w]`zl
+nmap s{ mz<Plug>Csurround w}`zl
+nmap sp mz<Plug>Csurround w)`zl
+nmap s<Space> mz<Plug>Csurround w <Space>`zl
+nmap S' mz<Plug>Csurround W'`zl
+nmap S" mz<Plug>Csurround W"`zl
+nmap S( mz<Plug>Csurround W)`zl
+nmap S[ mz<Plug>Csurround W]`zl
+nmap S{ mz<Plug>Csurround W}`zl
+nmap Sp mz<Plug>Csurround W)`zl
+nmap S<Space> mz<Plug>Csurround W <Space>`zl
+nmap SS' mz<Plug>Yssurround'`z
+nmap SS" mz<Plug>Yssurround"`z
+nmap SS( mz<Plug>Yssurround)`z
+nmap SS[ mz<Plug>Yssurround]`z
+nmap SS{ mz<Plug>Yssurround}`z
+nmap SSp mz<Plug>Yssurround)`z
+vmap s' <Plug>VSurround'
+vmap s" <Plug>VSurround"
+vmap s( <Plug>VSurround)
+vmap s[ <Plug>VSurround]
+vmap s{ <Plug>VSurround}
+vmap sp <Plug>VSurround)
 
 " [unblevable/quick-scope]
 " let g:qs_lazy_highlight = 1 " only kick in after updatetime ms
@@ -747,17 +846,17 @@ let g:qs_max_chars = 120
 " [voldikss/vim-floaterm]
 " let g:floaterm_autoclose = 2
 " let g:floaterm_title = ''
-" nn <Space>tl :FloatermNew --height=0.9 --position=right --width=0.5<CR>
-" nn <silent> <Space>tt :Tt --height=0.9 --position=right --width=0.5<CR>
+" nnoremap <Space>tl :FloatermNew --height=0.9 --position=right --width=0.5<CR>
+" nnoremap <silent> <Space>tt :Tt --height=0.9 --position=right --width=0.5<CR>
 
-" au mitchellwrosen FileType floaterm nn <buffer> <silent> <C-j> :FloatermNext<CR>
-" au mitchellwrosen FileType floaterm nn <buffer> <silent> <C-k> :FloatermPrev<CR>
+" autocmd mitchellwrosen FileType floaterm nnoremap <buffer> <silent> <C-j> :FloatermNext<CR>
+" autocmd mitchellwrosen FileType floaterm nnoremap <buffer> <silent> <C-k> :FloatermPrev<CR>
 
 " [wellle/targets.vim]
-nm cil9 cil)
-nm cil0 cil)
-nm cin9 cin)
-nm cin0 cin)
+" nmap cil9 cil)
+" nmap cil0 cil)
+" nmap cin9 cin)
+" nmap cin0 cin)
 
 " [Yggdroot/indentLine]
 let g:indentLine_color_term = 239
@@ -768,7 +867,7 @@ let g:indentLine_char = '┊'
 " ==============================================================================
 
 if exists('g:GtkGuiLoaded')
-  cal rpcnotify(1, 'Gui', 'Font', 'PragmataPro Mono Liga 18')
+  call rpcnotify(1, 'Gui', 'Font', 'PragmataPro Mono Liga 18')
 endif
 
 " ==============================================================================
@@ -787,269 +886,269 @@ endif
 "       ▼  Controls and Latin-1 Suppl.
 "  U+00A0    ¡ ¢ £ ¤ ¥ ¦ § ¨ © ª « ¬ ­ ® ¯
 
-ino <C-u>! ¡
-ino <C-u>cent ¢
-ino <C-u>pound £
-ino <C-u>currency ¤
-ino <C-u>yen ¥
-ino <C-u>brokenbar ¦
-ino <C-u>section §
-ino <C-u>diaeresis ¨
-ino <C-u>copyright ©
-ino <C-u>fordinal ª
-ino <C-u><<" «
-ino <C-u>not ¬
-ino <C-u>softhyphen ­
-ino <C-u>registered ®
-ino <C-u>macron ¯
+inoremap <C-u>! ¡
+inoremap <C-u>cent ¢
+inoremap <C-u>pound £
+inoremap <C-u>currency ¤
+inoremap <C-u>yen ¥
+inoremap <C-u>brokenbar ¦
+inoremap <C-u>section §
+inoremap <C-u>diaeresis ¨
+inoremap <C-u>copyright ©
+inoremap <C-u>fordinal ª
+inoremap <C-u><<" «
+inoremap <C-u>not ¬
+inoremap <C-u>softhyphen ­
+inoremap <C-u>registered ®
+inoremap <C-u>macron ¯
 
 "  U+00B0  ° ± ² ³ ´ µ ¶ · ¸ ¹ º » ¼ ½ ¾ ¿
 
-ino <C-u>degree °
-ino <C-u>plusminus ±
-ino <C-u>^2 ²
-ino <C-u>^3 ³
-ino <C-u>` ´
-ino <C-u>micro µ
-ino <C-u>pilcrow ¶
-ino <C-u>middledot ·
-ino <C-u>cedilla ¸
-ino <C-u>^1 ¹
-ino <C-u>mordinal º
-ino <C-u>>>" »
-ino <C-u>1/4 ¼
-ino <C-u>1/2 ½
-ino <C-u>3/4 ¾
-ino <C-u>? ¿
+inoremap <C-u>degree °
+inoremap <C-u>plusminus ±
+inoremap <C-u>^2 ²
+inoremap <C-u>^3 ³
+inoremap <C-u>` ´
+inoremap <C-u>micro µ
+inoremap <C-u>pilcrow ¶
+inoremap <C-u>middledot ·
+inoremap <C-u>cedilla ¸
+inoremap <C-u>^1 ¹
+inoremap <C-u>mordinal º
+inoremap <C-u>>>" »
+inoremap <C-u>1/4 ¼
+inoremap <C-u>1/2 ½
+inoremap <C-u>3/4 ¾
+inoremap <C-u>? ¿
 
 "  U+00C0  À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï
 
-" ino <C-u>graveA À
-" ino <C-u>acuteA Á
-" ino <C-u>circumflexA Â
-" ino <C-u>tildeA Ã
-" ino <C-u>diaeresisA Ä
-" ino <C-u>ringA Å
-" ino <C-u>AE Æ
-" ino <C-u>cedillaC Ç
-" ino <C-u>graveE È
-" ino <C-u>acuteE É
-" ino <C-u>circumflexE Ê
-" ino <C-u>diaeresisE Ë
-" ino <C-u>graveI Ì
-" ino <C-u>acuteI Í
-" ino <C-u>circumflexI Î
-" ino <C-u>diaeresisI Ï
+" inoremap <C-u>graveA À
+" inoremap <C-u>acuteA Á
+" inoremap <C-u>circumflexA Â
+" inoremap <C-u>tildeA Ã
+" inoremap <C-u>diaeresisA Ä
+" inoremap <C-u>ringA Å
+" inoremap <C-u>AE Æ
+" inoremap <C-u>cedillaC Ç
+" inoremap <C-u>graveE È
+" inoremap <C-u>acuteE É
+" inoremap <C-u>circumflexE Ê
+" inoremap <C-u>diaeresisE Ë
+" inoremap <C-u>graveI Ì
+" inoremap <C-u>acuteI Í
+" inoremap <C-u>circumflexI Î
+" inoremap <C-u>diaeresisI Ï
 
 "  U+00D0  Ð Ñ Ò Ó Ô Õ Ö × Ø Ù Ú Û Ü Ý Þ ß
 
-" ino <C-u>Eth Ð
-" ino <C-u>tildeN Ñ
-" ino <C-u>graveO Ò
-" ino <C-u>acuteO Ó
-" ino <C-u>circumflexO Ô
-" ino <C-u>tildeO Õ
-" ino <C-u>diaeresisO Ö
-ino <C-u>mult ×
-" ino <C-u>strokeO Ø
-" ino <C-u>graveU Ù
-" ino <C-u>acuteU Ú
-" ino <C-u>circumflexU Û
-" ino <C-u>diaeresisU Ü
-" ino <C-u>acuteY Ý
-" ino <C-u>Thorn Þ
-" ino <C-u>eszett ß
+" inoremap <C-u>Eth Ð
+" inoremap <C-u>tildeN Ñ
+" inoremap <C-u>graveO Ò
+" inoremap <C-u>acuteO Ó
+" inoremap <C-u>circumflexO Ô
+" inoremap <C-u>tildeO Õ
+" inoremap <C-u>diaeresisO Ö
+inoremap <C-u>mult ×
+" inoremap <C-u>strokeO Ø
+" inoremap <C-u>graveU Ù
+" inoremap <C-u>acuteU Ú
+" inoremap <C-u>circumflexU Û
+" inoremap <C-u>diaeresisU Ü
+" inoremap <C-u>acuteY Ý
+" inoremap <C-u>Thorn Þ
+" inoremap <C-u>eszett ß
 
 "  U+00E0  à á â ã ä å æ ç è é ê ë ì í î ï
 
-" ino <C-u>gravea à
-" ino <C-u>acutea á
-" ino <C-u>circumflexa â
-" ino <C-u>tildea ã
-" ino <C-u>diaeresisa ä
-" ino <C-u>ringa å
-ino <C-u>ae æ
-" ino <C-u>cedillac ç
-" ino <C-u>gravee è
-" ino <C-u>acutee é
-" ino <C-u>circumflexe ê
-" ino <C-u>diaeresise ë
-" ino <C-u>gravei ì
-" ino <C-u>acutei í
-" ino <C-u>circumflexi î
-" ino <C-u>diaeresisi ï
+" inoremap <C-u>gravea à
+" inoremap <C-u>acutea á
+" inoremap <C-u>circumflexa â
+" inoremap <C-u>tildea ã
+" inoremap <C-u>diaeresisa ä
+" inoremap <C-u>ringa å
+inoremap <C-u>ae æ
+" inoremap <C-u>cedillac ç
+" inoremap <C-u>gravee è
+" inoremap <C-u>acutee é
+" inoremap <C-u>circumflexe ê
+" inoremap <C-u>diaeresise ë
+" inoremap <C-u>gravei ì
+" inoremap <C-u>acutei í
+" inoremap <C-u>circumflexi î
+" inoremap <C-u>diaeresisi ï
 
 "  U+00F0  ð ñ ò ó ô õ ö ÷ ø ù ú û ü ý þ ÿ
 
-" ino <C-u>eth ð
-" ino <C-u>tilden ñ
-" ino <C-u>graveo ò
-" ino <C-u>acuteo ó
-" ino <C-u>circumflexo ô
-" ino <C-u>tildeo õ
-" ino <C-u>diaeresiso ö
-ino <C-u>div ÷
-" ino <C-u>strokeo ø
-" ino <C-u>graveu ù
-" ino <C-u>acuteu ú
-" ino <C-u>circumflexu û
-" ino <C-u>diaeresisu ü
-" ino <C-u>acutey ý
-" ino <C-u>thorn þ
-" ino <C-u>diaeresisy ÿ
+" inoremap <C-u>eth ð
+" inoremap <C-u>tilden ñ
+" inoremap <C-u>graveo ò
+" inoremap <C-u>acuteo ó
+" inoremap <C-u>circumflexo ô
+" inoremap <C-u>tildeo õ
+" inoremap <C-u>diaeresiso ö
+inoremap <C-u>div ÷
+" inoremap <C-u>strokeo ø
+" inoremap <C-u>graveu ù
+" inoremap <C-u>acuteu ú
+" inoremap <C-u>circumflexu û
+" inoremap <C-u>diaeresisu ü
+" inoremap <C-u>acutey ý
+" inoremap <C-u>thorn þ
+" inoremap <C-u>diaeresisy ÿ
 
 "       ▼  Latin Extended-A
 "  U+0100  Ā ā Ă ă Ą ą Ć ć Ĉ ĉ Ċ ċ Č č Ď ď
 
-" ino <C-u>macronA Ā
-" ino <C-u>macrona ā
-" ino <C-u>breveA Ă
-" ino <C-u>brevea ă
-" ino <C-u>ogonekA Ą
-" ino <C-u>ogoneka ą
-" ino <C-u>acuteC Ć
-" ino <C-u>acutec ć
-" ino <C-u>circumflexC Ĉ
-" ino <C-u>circumflexc ĉ
-" ino <C-u>dotC Ċ
-" ino <C-u>dotc ċ
-" ino <C-u>caronC Č
-" ino <C-u>caronc č
-" ino <C-u>caronD Ď
-" ino <C-u>carond ď
+" inoremap <C-u>macronA Ā
+" inoremap <C-u>macrona ā
+" inoremap <C-u>breveA Ă
+" inoremap <C-u>brevea ă
+" inoremap <C-u>ogonekA Ą
+" inoremap <C-u>ogoneka ą
+" inoremap <C-u>acuteC Ć
+" inoremap <C-u>acutec ć
+" inoremap <C-u>circumflexC Ĉ
+" inoremap <C-u>circumflexc ĉ
+" inoremap <C-u>dotC Ċ
+" inoremap <C-u>dotc ċ
+" inoremap <C-u>caronC Č
+" inoremap <C-u>caronc č
+" inoremap <C-u>caronD Ď
+" inoremap <C-u>carond ď
 
 "  U+0110  Đ đ Ē ē Ĕ ĕ Ė ė Ę ę Ě ě Ĝ ĝ Ğ ğ
 
-" ino <C-u>strokeD Đ
-" ino <C-u>stroked đ
-" ino <C-u>macronE Ē
-" ino <C-u>macrone ē
-" ino <C-u>breveE Ĕ
-" ino <C-u>brevee ĕ
-" ino <C-u>dotE Ė
-" ino <C-u>dote ė
-" ino <C-u>ogonekE Ę
-" ino <C-u>ogoneke ę
-" ino <C-u>caronE Ě
-" ino <C-u>carone ě
-" ino <C-u>circumflexG Ĝ
-" ino <C-u>circumflexg ĝ
-" ino <C-u>breveG Ğ
-" ino <C-u>breveg ğ
+" inoremap <C-u>strokeD Đ
+" inoremap <C-u>stroked đ
+" inoremap <C-u>macronE Ē
+" inoremap <C-u>macrone ē
+" inoremap <C-u>breveE Ĕ
+" inoremap <C-u>brevee ĕ
+" inoremap <C-u>dotE Ė
+" inoremap <C-u>dote ė
+" inoremap <C-u>ogonekE Ę
+" inoremap <C-u>ogoneke ę
+" inoremap <C-u>caronE Ě
+" inoremap <C-u>carone ě
+" inoremap <C-u>circumflexG Ĝ
+" inoremap <C-u>circumflexg ĝ
+" inoremap <C-u>breveG Ğ
+" inoremap <C-u>breveg ğ
 
 "  U+0120  Ġ ġ Ģ ģ Ĥ ĥ Ħ ħ Ĩ ĩ Ī ī Ĭ ĭ Į į
 
-" ino <C-u>dotG Ġ
-" ino <C-u>dotg ġ
-" ino <C-u>cedillaG Ģ
-" ino <C-u>cedillag ģ
-" ino <C-u>circumflexH Ĥ
-" ino <C-u>circumflexh ĥ
-" ino <C-u>strokeH Ħ
-" ino <C-u>strokeh ħ
-" ino <C-u>tildeI Ĩ
-" ino <C-u>tildei ĩ
-" ino <C-u>macronI Ī
-" ino <C-u>macroni ī
-" ino <C-u>breveI Ĭ
-" ino <C-u>brevei ĭ
-" ino <C-u>ogonekI Į
-" ino <C-u>ogoneki į
+" inoremap <C-u>dotG Ġ
+" inoremap <C-u>dotg ġ
+" inoremap <C-u>cedillaG Ģ
+" inoremap <C-u>cedillag ģ
+" inoremap <C-u>circumflexH Ĥ
+" inoremap <C-u>circumflexh ĥ
+" inoremap <C-u>strokeH Ħ
+" inoremap <C-u>strokeh ħ
+" inoremap <C-u>tildeI Ĩ
+" inoremap <C-u>tildei ĩ
+" inoremap <C-u>macronI Ī
+" inoremap <C-u>macroni ī
+" inoremap <C-u>breveI Ĭ
+" inoremap <C-u>brevei ĭ
+" inoremap <C-u>ogonekI Į
+" inoremap <C-u>ogoneki į
 
 "  U+0130  İ ı Ĳ ĳ Ĵ ĵ Ķ ķ ĸ Ĺ ĺ Ļ ļ Ľ ľ Ŀ
 
-" ino <C-u>dotI İ
-" ino <C-u>dotlessi ı
-" ino <C-u>IJ Ĳ
-" ino <C-u>ij ĳ
-" ino <C-u>circumflexJ Ĵ
-" ino <C-u>circumflexj ĵ
-" ino <C-u>cedillaK Ķ
-" ino <C-u>cedillak ķ
-" ino <C-u>kra ĸ
-" ino <C-u>acuteL Ĺ
-" ino <C-u>acutel ĺ
-" ino <C-u>cedillaL Ļ
-" ino <C-u>cedillal ļ
-" ino <C-u>caronL Ľ
-" ino <C-u>caronl ľ
-" ino <C-u>middledotL Ŀ
+" inoremap <C-u>dotI İ
+" inoremap <C-u>dotlessi ı
+" inoremap <C-u>IJ Ĳ
+" inoremap <C-u>ij ĳ
+" inoremap <C-u>circumflexJ Ĵ
+" inoremap <C-u>circumflexj ĵ
+" inoremap <C-u>cedillaK Ķ
+" inoremap <C-u>cedillak ķ
+" inoremap <C-u>kra ĸ
+" inoremap <C-u>acuteL Ĺ
+" inoremap <C-u>acutel ĺ
+" inoremap <C-u>cedillaL Ļ
+" inoremap <C-u>cedillal ļ
+" inoremap <C-u>caronL Ľ
+" inoremap <C-u>caronl ľ
+" inoremap <C-u>middledotL Ŀ
 
 "  U+0140  ŀ Ł ł Ń ń Ņ ņ Ň ň ŉ Ŋ ŋ Ō ō Ŏ ŏ
 
-" ino <C-u>middledotl ŀ
-" ino <C-u>strokeL Ł
-" ino <C-u>strokel ł
-" ino <C-u>acuteN Ń
-" ino <C-u>acuten ń
-" ino <C-u>cedillaN Ņ
-" ino <C-u>cedillan ņ
-" ino <C-u>caronN Ň
-" ino <C-u>caronn ň
-" ino <C-u>apostrophen ŉ
-" ino <C-u>Eng Ŋ
-" ino <C-u>eng ŋ
-" ino <C-u>macronO Ō
-" ino <C-u>macrono ō
-" ino <C-u>breveO Ŏ
-" ino <C-u>breveo ŏ
+" inoremap <C-u>middledotl ŀ
+" inoremap <C-u>strokeL Ł
+" inoremap <C-u>strokel ł
+" inoremap <C-u>acuteN Ń
+" inoremap <C-u>acuten ń
+" inoremap <C-u>cedillaN Ņ
+" inoremap <C-u>cedillan ņ
+" inoremap <C-u>caronN Ň
+" inoremap <C-u>caronn ň
+" inoremap <C-u>apostrophen ŉ
+" inoremap <C-u>Eng Ŋ
+" inoremap <C-u>eng ŋ
+" inoremap <C-u>macronO Ō
+" inoremap <C-u>macrono ō
+" inoremap <C-u>breveO Ŏ
+" inoremap <C-u>breveo ŏ
 
 "  U+0150  Ő ő Œ œ Ŕ ŕ Ŗ ŗ Ř ř Ś ś Ŝ ŝ Ş ş
 
-" ino <C-u>dacuteO Ő
-" ino <C-u>dacuteo ő
-" ino <C-u>OE Œ
-" ino <C-u>oe œ
-" ino <C-u>acuteR Ŕ
-" ino <C-u>acuter ŕ
-" ino <C-u>cedillaR Ŗ
-" ino <C-u>cedillar ŗ
-" ino <C-u>caronR Ř
-" ino <C-u>caronr ř
-" ino <C-u>acuteS Ś
-" ino <C-u>acutes ś
-" ino <C-u>circumflexS Ŝ
-" ino <C-u>circumflexs ŝ
-" ino <C-u>cedillaS Ş
-" ino <C-u>cedillas ş
+" inoremap <C-u>dacuteO Ő
+" inoremap <C-u>dacuteo ő
+" inoremap <C-u>OE Œ
+" inoremap <C-u>oe œ
+" inoremap <C-u>acuteR Ŕ
+" inoremap <C-u>acuter ŕ
+" inoremap <C-u>cedillaR Ŗ
+" inoremap <C-u>cedillar ŗ
+" inoremap <C-u>caronR Ř
+" inoremap <C-u>caronr ř
+" inoremap <C-u>acuteS Ś
+" inoremap <C-u>acutes ś
+" inoremap <C-u>circumflexS Ŝ
+" inoremap <C-u>circumflexs ŝ
+" inoremap <C-u>cedillaS Ş
+" inoremap <C-u>cedillas ş
 
 "  U+0160  Š š Ţ ţ Ť ť Ŧ ŧ Ũ ũ Ū ū Ŭ ŭ Ů ů
 
-" ino <C-u>caronS Š
-" ino <C-u>carons š
-" ino <C-u>cedillaT Ţ
-" ino <C-u>cedillat ţ
-" ino <C-u>caronT Ť
-" ino <C-u>caront ť
-" ino <C-u>strokeT Ŧ
-" ino <C-u>stroket ŧ
-" ino <C-u>tildeU Ũ
-" ino <C-u>tildeu ũ
-" ino <C-u>macronU Ū
-" ino <C-u>macronu ū
-" ino <C-u>breveU Ŭ
-" ino <C-u>breveu ŭ
-" ino <C-u>ringU Ů
-" ino <C-u>ringu ů
+" inoremap <C-u>caronS Š
+" inoremap <C-u>carons š
+" inoremap <C-u>cedillaT Ţ
+" inoremap <C-u>cedillat ţ
+" inoremap <C-u>caronT Ť
+" inoremap <C-u>caront ť
+" inoremap <C-u>strokeT Ŧ
+" inoremap <C-u>stroket ŧ
+" inoremap <C-u>tildeU Ũ
+" inoremap <C-u>tildeu ũ
+" inoremap <C-u>macronU Ū
+" inoremap <C-u>macronu ū
+" inoremap <C-u>breveU Ŭ
+" inoremap <C-u>breveu ŭ
+" inoremap <C-u>ringU Ů
+" inoremap <C-u>ringu ů
 
 "  U+0170  Ű ű Ų ų Ŵ ŵ Ŷ ŷ Ÿ Ź ź Ż ż Ž ž ſ
 
-" ino <C-u>dacuteU Ű
-" ino <C-u>dacuteu ű
-" ino <C-u>ogonekU Ų
-" ino <C-u>ogoneku ų
-" ino <C-u>circumflexW Ŵ
-" ino <C-u>circumflexw ŵ
-" ino <C-u>circumflexY Ŷ
-" ino <C-u>circumflexy ŷ
-" ino <C-u>diaeresisY Ÿ
-" ino <C-u>acuteZ Ź
-" ino <C-u>acutez ź
-" ino <C-u>dotZ Ż
-" ino <C-u>dotz ż
-" ino <C-u>caronZ Ž
-" ino <C-u>caronz ž
-" ino <C-u>shorts ſ
+" inoremap <C-u>dacuteU Ű
+" inoremap <C-u>dacuteu ű
+" inoremap <C-u>ogonekU Ų
+" inoremap <C-u>ogoneku ų
+" inoremap <C-u>circumflexW Ŵ
+" inoremap <C-u>circumflexw ŵ
+" inoremap <C-u>circumflexY Ŷ
+" inoremap <C-u>circumflexy ŷ
+" inoremap <C-u>diaeresisY Ÿ
+" inoremap <C-u>acuteZ Ź
+" inoremap <C-u>acutez ź
+" inoremap <C-u>dotZ Ż
+" inoremap <C-u>dotz ż
+" inoremap <C-u>caronZ Ž
+" inoremap <C-u>caronz ž
+" inoremap <C-u>shorts ſ
 
 "       ▼  Latin Extended-B
 "  U+0180  ƀ Ɓ Ƃ ƃ Ƅ ƅ Ɔ Ƈ ƈ Ɖ Ɗ Ƌ ƌ ƍ Ǝ Ə
@@ -1086,49 +1185,49 @@ ino <C-u>div ÷
 
 "  U+0390  ΐ Α Β Γ Δ Ε Ζ Η Θ Ι Κ Λ Μ Ν Ξ Ο
 
-ino <C-u>Gamma Γ
-ino <C-u>Delta Δ
-ino <C-u>Theta Θ
-ino <C-u>Lambda Λ
-ino <C-u>Xi Ξ
+inoremap <C-u>Gamma Γ
+inoremap <C-u>Delta Δ
+inoremap <C-u>Theta Θ
+inoremap <C-u>Lambda Λ
+inoremap <C-u>Xi Ξ
 
 "  U+03A0  Π Ρ   Σ Τ Υ Φ Χ Ψ Ω Ϊ Ϋ ά έ ή ί
 
-ino <C-u>Pi Π
-ino <C-u>Sigma Σ
-ino <C-u>Upsilon Υ
-ino <C-u>Phi Φ
-ino <C-u>Psi Ψ
-ino <C-u>Omega Ω
+inoremap <C-u>Pi Π
+inoremap <C-u>Sigma Σ
+inoremap <C-u>Upsilon Υ
+inoremap <C-u>Phi Φ
+inoremap <C-u>Psi Ψ
+inoremap <C-u>Omega Ω
 
 "  U+03B0  ΰ α β γ δ ε ζ η θ ι κ λ μ ν ξ ο
 
-ino <C-u>alpha α
-ino <C-u>beta β
-ino <C-u>gamma γ
-ino <C-u>delta δ
-ino <C-u>epsilon ε
-ino <C-u>zeta ζ
-ino <C-u>eta η
-ino <C-u>theta θ
-ino <C-u>iota ι
-ino <C-u>kappa κ
-ino <C-u>lambda λ
-ino <C-u>mu μ
-ino <C-u>nu ν
-ino <C-u>xi ξ
+inoremap <C-u>alpha α
+inoremap <C-u>beta β
+inoremap <C-u>gamma γ
+inoremap <C-u>delta δ
+inoremap <C-u>epsilon ε
+inoremap <C-u>zeta ζ
+inoremap <C-u>eta η
+inoremap <C-u>theta θ
+inoremap <C-u>iota ι
+inoremap <C-u>kappa κ
+inoremap <C-u>lambda λ
+inoremap <C-u>mu μ
+inoremap <C-u>nu ν
+inoremap <C-u>xi ξ
 
 "  U+03C0  π ρ ς σ τ υ φ χ ψ ω ϊ ϋ ό ύ ώ
 
-ino <C-u>pi π
-ino <C-u>rho ρ
-ino <C-u>sigma σ
-ino <C-u>tau τ
-ino <C-u>upsilon υ
-ino <C-u>phi φ
-ino <C-u>chi χ
-ino <C-u>psi ψ
-ino <C-u>omega ω
+inoremap <C-u>pi π
+inoremap <C-u>rho ρ
+inoremap <C-u>sigma σ
+inoremap <C-u>tau τ
+inoremap <C-u>upsilon υ
+inoremap <C-u>phi φ
+inoremap <C-u>chi χ
+inoremap <C-u>psi ψ
+inoremap <C-u>omega ω
 
 "  U+03D0  ϐ ϑ   ϕ ϖ               Ϝ ϝ
 "  U+03F0  ϰ ϱ   ϵ
@@ -1139,63 +1238,63 @@ ino <C-u>omega ω
 "  U+1D10  ᴐ ᴑ ᴒ ᴓ ᴔ ᴕ ᴖ ᴗ ᴘ ᴙ ᴚ ᴛ ᴜ ᴝ ᴞ ᴟ
 "  U+1D20  ᴠ ᴡ ᴢ ᴣ ᴤ ᴥ ᴦ ᴧ ᴨ ᴩ ᴪ ᴫ ᴬ ᴭ ᴮ ᴯ
 
-ino <C-u>^A ᴬ
-ino <C-u>^B ᴮ
+inoremap <C-u>^A ᴬ
+inoremap <C-u>^B ᴮ
 
 "  U+1D30  ᴰ ᴱ ᴲ ᴳ ᴴ ᴵ ᴶ ᴷ ᴸ ᴹ ᴺ ᴻ ᴼ ᴽ ᴾ ᴿ
 
-ino <C-u>^D ᴰ
-ino <C-u>^E ᴱ
-ino <C-u>^G ᴳ
-ino <C-u>^H ᴴ
-ino <C-u>^I ᴵ
-ino <C-u>^J ᴶ
-ino <C-u>^K ᴷ
-ino <C-u>^L ᴸ
-ino <C-u>^M ᴹ
-ino <C-u>^N ᴺ
-ino <C-u>^O ᴼ
-ino <C-u>^P ᴾ
-ino <C-u>^R ᴿ
+inoremap <C-u>^D ᴰ
+inoremap <C-u>^E ᴱ
+inoremap <C-u>^G ᴳ
+inoremap <C-u>^H ᴴ
+inoremap <C-u>^I ᴵ
+inoremap <C-u>^J ᴶ
+inoremap <C-u>^K ᴷ
+inoremap <C-u>^L ᴸ
+inoremap <C-u>^M ᴹ
+inoremap <C-u>^N ᴺ
+inoremap <C-u>^O ᴼ
+inoremap <C-u>^P ᴾ
+inoremap <C-u>^R ᴿ
 
 "  U+1D40  ᵀ ᵁ ᵂ ᵃ ᵄ ᵅ ᵆ ᵇ ᵈ ᵉ ᵊ ᵋ ᵌ ᵍ ᵎ ᵏ
 
-ino <C-u>^T ᵀ
-ino <C-u>^U ᵁ
-ino <C-u>^W ᵂ
-ino <C-u>^a ᵃ
-ino <C-u>^alpha ᵅ
-ino <C-u>^b ᵇ
-ino <C-u>^d ᵈ
-ino <C-u>^e ᵉ
-ino <C-u>^g ᵍ
-ino <C-u>^k ᵏ
+inoremap <C-u>^T ᵀ
+inoremap <C-u>^U ᵁ
+inoremap <C-u>^W ᵂ
+inoremap <C-u>^a ᵃ
+inoremap <C-u>^alpha ᵅ
+inoremap <C-u>^b ᵇ
+inoremap <C-u>^d ᵈ
+inoremap <C-u>^e ᵉ
+inoremap <C-u>^g ᵍ
+inoremap <C-u>^k ᵏ
 
 "  U+1D50  ᵐ ᵑ ᵒ ᵓ ᵔ ᵕ ᵖ ᵗ ᵘ ᵙ ᵚ ᵛ ᵜ ᵝ ᵞ ᵟ
 
-ino <C-u>^m ᵐ
-ino <C-u>^o ᵒ
-ino <C-u>^p ᵖ
-ino <C-u>^t ᵗ
-ino <C-u>^u ᵘ
-ino <C-u>^v ᵛ
-ino <C-u>^beta ᵝ
-ino <C-u>^gamma ᵞ
-ino <C-u>^delta ᵟ
+inoremap <C-u>^m ᵐ
+inoremap <C-u>^o ᵒ
+inoremap <C-u>^p ᵖ
+inoremap <C-u>^t ᵗ
+inoremap <C-u>^u ᵘ
+inoremap <C-u>^v ᵛ
+inoremap <C-u>^beta ᵝ
+inoremap <C-u>^gamma ᵞ
+inoremap <C-u>^delta ᵟ
 
 "  U+1D60  ᵠ ᵡ ᵢ ᵣ ᵤ ᵥ ᵦ ᵧ ᵨ ᵩ ᵪ ᵫ ᵬ ᵭ ᵮ ᵯ
 
-ino <C-u>^phi ᵠ
-ino <C-u>^chi ᵡ
-ino <C-u>_i ᵢ
-ino <C-u>_r ᵣ
-ino <C-u>_u ᵤ
-ino <C-u>_v ᵥ
-ino <C-u>_beta ᵦ
-ino <C-u>_gamma ᵧ
-ino <C-u>_rho ᵨ
-ino <C-u>_phi ᵩ
-ino <C-u>_chi ᵪ
+inoremap <C-u>^phi ᵠ
+inoremap <C-u>^chi ᵡ
+inoremap <C-u>_i ᵢ
+inoremap <C-u>_r ᵣ
+inoremap <C-u>_u ᵤ
+inoremap <C-u>_v ᵥ
+inoremap <C-u>_beta ᵦ
+inoremap <C-u>_gamma ᵧ
+inoremap <C-u>_rho ᵨ
+inoremap <C-u>_phi ᵩ
+inoremap <C-u>_chi ᵪ
 
 "  U+1D70  ᵰ ᵱ ᵲ ᵳ ᵴ ᵵ ᵶ ᵷ ᵸ ᵹ ᵺ ᵻ ᵼ ᵽ ᵾ ᵿ
 
@@ -1206,14 +1305,14 @@ ino <C-u>_chi ᵪ
 
 "  U+2030  ‰ ‱ ′ ″ ‴ ‵ ‶ ‷ ‸ ‹ › ※ ‼ ‽ ‾ ‿
 
-ino <C-u>!! ‼
+inoremap <C-u>!! ‼
 
 "  U+2040  ⁀ ⁁ ⁂ ⁃ ⁄ ⁅ ⁆ ⁇ ⁈ ⁉ ⁊ ⁋ ⁌ ⁍ ⁎ ⁏
 
-ino <C-u>?? ⁇
-ino <C-u>?! ⁈
-ino <C-u>!? ⁉
-ino <C-u>_* ⁎
+inoremap <C-u>?? ⁇
+inoremap <C-u>?! ⁈
+inoremap <C-u>!? ⁉
+inoremap <C-u>_* ⁎
 
 "  U+2050  ⁐ ⁑ ⁒ ⁓ ⁔ ⁕ ⁖ ⁗ ⁘ ⁙ ⁚ ⁛ ⁜ ⁝ ⁞
 "  U+2060
@@ -1221,53 +1320,53 @@ ino <C-u>_* ⁎
 "       ▼  Superscripts and Subscripts
 "  U+2070  ⁰ ⁱ   ⁴ ⁵ ⁶ ⁷ ⁸ ⁹ ⁺ ⁻ ⁼ ⁽ ⁾ ⁿ
 
-ino <C-u>^0 ⁰
-ino <C-u>^i ⁱ
-ino <C-u>^4 ⁴
-ino <C-u>^5 ⁵
-ino <C-u>^6 ⁶
-ino <C-u>^7 ⁷
-ino <C-u>^8 ⁸
-ino <C-u>^9 ⁹
-ino <C-u>^+ ⁺
-ino <C-u>^- ⁻
-ino <C-u>^= ⁼
-ino <C-u>^( ⁽
-ino <C-u>^) ⁾
-ino <C-u>^n ⁿ
+inoremap <C-u>^0 ⁰
+inoremap <C-u>^i ⁱ
+inoremap <C-u>^4 ⁴
+inoremap <C-u>^5 ⁵
+inoremap <C-u>^6 ⁶
+inoremap <C-u>^7 ⁷
+inoremap <C-u>^8 ⁸
+inoremap <C-u>^9 ⁹
+inoremap <C-u>^+ ⁺
+inoremap <C-u>^- ⁻
+inoremap <C-u>^= ⁼
+inoremap <C-u>^( ⁽
+inoremap <C-u>^) ⁾
+inoremap <C-u>^n ⁿ
 
 "  U+2080  ₀ ₁ ₂ ₃ ₄ ₅ ₆ ₇ ₈ ₉ ₊ ₋ ₌ ₍ ₎
 
-ino <C-u>_0 ₀
-ino <C-u>_1 ₁
-ino <C-u>_2 ₂
-ino <C-u>_3 ₃
-ino <C-u>_4 ₄
-ino <C-u>_5 ₅
-ino <C-u>_6 ₆
-ino <C-u>_7 ₇
-ino <C-u>_8 ₈
-ino <C-u>_9 ₉
-ino <C-u>_+ ₊
-ino <C-u>_- ₋
-ino <C-u>_= ₌
-ino <C-u>_( ₍
-ino <C-u>_) ₎
+inoremap <C-u>_0 ₀
+inoremap <C-u>_1 ₁
+inoremap <C-u>_2 ₂
+inoremap <C-u>_3 ₃
+inoremap <C-u>_4 ₄
+inoremap <C-u>_5 ₅
+inoremap <C-u>_6 ₆
+inoremap <C-u>_7 ₇
+inoremap <C-u>_8 ₈
+inoremap <C-u>_9 ₉
+inoremap <C-u>_+ ₊
+inoremap <C-u>_- ₋
+inoremap <C-u>_= ₌
+inoremap <C-u>_( ₍
+inoremap <C-u>_) ₎
 
 "  U+2090  ₐ ₑ ₒ ₓ ₔ ₕ ₖ ₗ ₘ ₙ ₚ ₛ ₜ
 
-ino <C-u>_a ₐ
-ino <C-u>_e ₑ
-ino <C-u>_o ₒ
-ino <C-u>_x ₓ
-ino <C-u>_h ₕ
-ino <C-u>_k ₖ
-ino <C-u>_l ₗ
-ino <C-u>_m ₘ
-ino <C-u>_n ₙ
-ino <C-u>_p ₚ
-ino <C-u>_s ₛ
-ino <C-u>_t ₜ
+inoremap <C-u>_a ₐ
+inoremap <C-u>_e ₑ
+inoremap <C-u>_o ₒ
+inoremap <C-u>_x ₓ
+inoremap <C-u>_h ₕ
+inoremap <C-u>_k ₖ
+inoremap <C-u>_l ₗ
+inoremap <C-u>_m ₘ
+inoremap <C-u>_n ₙ
+inoremap <C-u>_p ₚ
+inoremap <C-u>_s ₛ
+inoremap <C-u>_t ₜ
 
 "       ▼  Currency Symbols
 "  U+20A0            ₪ ₫ €
@@ -1276,87 +1375,87 @@ ino <C-u>_t ₜ
 "       ▼  Letterlike Symbols
 "  U+2100  ℀ ℁ ℂ ℃ ℄ ℅ ℆ ℇ ℈ ℉ ℊ ℋ ℌ ℍ ℎ ℏ
 
-ino <C-U>euler ℇ
+inoremap <C-U>euler ℇ
 
 "  U+2110  ℐ ℑ ℒ ℓ ℔ ℕ № ℗ ℘ ℙ ℚ ℛ ℜ ℝ ℞ ℟
 
 "  U+2120  ℠ ℡ ™ ℣ ℤ ℥ Ω ℧ ℨ ℩ K Å ℬ ℭ ℮ ℯ
 
-ino <C-U>tm ™
+inoremap <C-U>tm ™
 
 "  U+2130  ℰ ℱ Ⅎ ℳ ℴ ℵ ℶ ℷ ℸ ℹ ℺ ℻ ℼ ℽ ℾ ℿ
 
-ino <C-U>info ℹ
-ino <C-U>[pi ℼ
-ino <C-U>[gamma ℽ
-ino <C-U>[Gamma ℾ
-ino <C-U>[Pi ℿ
+inoremap <C-U>info ℹ
+inoremap <C-U>[pi ℼ
+inoremap <C-U>[gamma ℽ
+inoremap <C-U>[Gamma ℾ
+inoremap <C-U>[Pi ℿ
 
 "  U+2140  ⅀ ⅁ ⅂ ⅃ ⅄ ⅅ ⅆ ⅇ ⅈ ⅉ ⅊ ⅋ ⅌ ⅍ ⅎ ⅏
 
-ino <C-U>[nsumm ⅀
-ino <C-U>[/D ⅅ
-ino <C-U>[/d ⅆ
-ino <C-U>[/e ⅇ
-ino <C-U>[/i ⅈ
-ino <C-U>[/j ⅉ
+inoremap <C-U>[nsumm ⅀
+inoremap <C-U>[/D ⅅ
+inoremap <C-U>[/d ⅆ
+inoremap <C-U>[/e ⅇ
+inoremap <C-U>[/i ⅈ
+inoremap <C-U>[/j ⅉ
 
 "       ▼  Number Forms
 "  U+2150  ⅐ ⅑ ⅒ ⅓ ⅔ ⅕ ⅖ ⅗ ⅘ ⅙ ⅚ ⅛ ⅜ ⅝ ⅞ ⅟
 
-ino <C-U>1/7 ⅐
-ino <C-U>1/9 ⅑
-ino <C-U>1/10 ⅒
-ino <C-U>1/3 ⅓
-ino <C-U>2/3 ⅔
-ino <C-U>1/5 ⅕
-ino <C-U>2/5 ⅖
-ino <C-U>3/5 ⅗
-ino <C-U>4/5 ⅘
-ino <C-U>1/6 ⅙
-ino <C-U>5/6 ⅚
-ino <C-U>1/8 ⅛
-ino <C-U>3/8 ⅜
-ino <C-U>5/8 ⅝
-ino <C-U>7/8 ⅞
+inoremap <C-U>1/7 ⅐
+inoremap <C-U>1/9 ⅑
+inoremap <C-U>1/10 ⅒
+inoremap <C-U>1/3 ⅓
+inoremap <C-U>2/3 ⅔
+inoremap <C-U>1/5 ⅕
+inoremap <C-U>2/5 ⅖
+inoremap <C-U>3/5 ⅗
+inoremap <C-U>4/5 ⅘
+inoremap <C-U>1/6 ⅙
+inoremap <C-U>5/6 ⅚
+inoremap <C-U>1/8 ⅛
+inoremap <C-U>3/8 ⅜
+inoremap <C-U>5/8 ⅝
+inoremap <C-U>7/8 ⅞
 
 "  U+2160  Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ Ⅶ Ⅷ Ⅸ Ⅹ Ⅺ Ⅻ Ⅼ Ⅽ Ⅾ Ⅿ
 
-ino <C-U>romanI Ⅰ
-ino <C-U>romanII Ⅱ
-ino <C-U>romanIII Ⅲ
-ino <C-U>romanIV Ⅳ
-ino <C-U>romanV Ⅴ
-ino <C-U>romanVI Ⅵ
-ino <C-U>romanVII Ⅶ
-ino <C-U>romanVIII Ⅷ
-ino <C-U>romanIX Ⅸ
-ino <C-U>romanX Ⅹ
-ino <C-U>romanXI Ⅺ
-ino <C-U>romanXII Ⅻ
-ino <C-U>romanL Ⅼ
-ino <C-U>romanC Ⅽ
-ino <C-U>romanD Ⅾ
-ino <C-U>romanM Ⅿ
+inoremap <C-U>romanI Ⅰ
+inoremap <C-U>romanII Ⅱ
+inoremap <C-U>romanIII Ⅲ
+inoremap <C-U>romanIV Ⅳ
+inoremap <C-U>romanV Ⅴ
+inoremap <C-U>romanVI Ⅵ
+inoremap <C-U>romanVII Ⅶ
+inoremap <C-U>romanVIII Ⅷ
+inoremap <C-U>romanIX Ⅸ
+inoremap <C-U>romanX Ⅹ
+inoremap <C-U>romanXI Ⅺ
+inoremap <C-U>romanXII Ⅻ
+inoremap <C-U>romanL Ⅼ
+inoremap <C-U>romanC Ⅽ
+inoremap <C-U>romanD Ⅾ
+inoremap <C-U>romanM Ⅿ
 
 "  U+2170  ⅰ ⅱ ⅲ ⅳ ⅴ ⅵ ⅶ ⅷ ⅸ ⅹ ⅺ ⅻ ⅼ ⅽ ⅾ ⅿ
 
-ino <C-U>romani ⅰ
-ino <C-U>romanii ⅱ
-ino <C-U>romaniii ⅲ
-ino <C-U>romaniv ⅳ
-ino <C-U>romanv ⅴ
-ino <C-U>romanvi ⅵ
-ino <C-U>romanvii ⅶ
-ino <C-U>romanviii ⅷ
-ino <C-U>romanix ⅸ
-ino <C-U>romanx ⅹ
-ino <C-U>romanxi ⅺ
-ino <C-U>romanxii ⅻ
-ino <C-U>romanl ⅼ
-ino <C-U>romanc ⅽ
-ino <C-U>romand ⅾ
-ino <C-U>romanm ⅿ
+inoremap <C-U>romani ⅰ
+inoremap <C-U>romanii ⅱ
+inoremap <C-U>romaniii ⅲ
+inoremap <C-U>romaniv ⅳ
+inoremap <C-U>romanv ⅴ
+inoremap <C-U>romanvi ⅵ
+inoremap <C-U>romanvii ⅶ
+inoremap <C-U>romanviii ⅷ
+inoremap <C-U>romanix ⅸ
+inoremap <C-U>romanx ⅹ
+inoremap <C-U>romanxi ⅺ
+inoremap <C-U>romanxii ⅻ
+inoremap <C-U>romanl ⅼ
+inoremap <C-U>romanc ⅽ
+inoremap <C-U>romand ⅾ
+inoremap <C-U>romanm ⅿ
 
 "  U+2180  ↀ ↁ ↂ Ↄ ↄ ↅ ↆ ↇ ↈ ↉ ↊ ↋
 
@@ -1364,38 +1463,38 @@ ino <C-U>romanm ⅿ
 "       ▼  Arrows
 "  U+2190  ← ↑ → ↓ ↔ ↕ ↖ ↗ ↘ ↙ ↚ ↛ ↜ ↝ ↞ ↟
 
-ino <C-U><- ←
-ino <C-U>-^ ↑
-ino <C-U>-> →
-ino <C-U>-v ↓
-ino <C-U><~ ↜
-ino <C-U>~> ↝
-ino <C-U><<- ↞
-ino <C-U>-^^ ↟
+inoremap <C-U><- ←
+inoremap <C-U>-^ ↑
+inoremap <C-U>-> →
+inoremap <C-U>-v ↓
+inoremap <C-U><~ ↜
+inoremap <C-U>~> ↝
+inoremap <C-U><<- ↞
+inoremap <C-U>-^^ ↟
 
 "  U+21A0  ↠ ↡ ↢ ↣ ↤ ↥ ↦ ↧ ↨ ↩ ↪ ↫ ↬ ↭ ↮ ↯
 
-ino <C-U>->> ↠
-ino <C-U>-vv ↡
-ino <C-U><-( ↢
-ino <C-U>)-> ↣
-ino <C-U><-<Bar> ↤
-ino <C-U><Bar>-^ ↥
-ino <C-U><Bar>-> ↦
-ino <C-U><Bar>-v ↧
-ino <C-U></ ↩
-ino <C-U>\> ↪
+inoremap <C-U>->> ↠
+inoremap <C-U>-vv ↡
+inoremap <C-U><-( ↢
+inoremap <C-U>)-> ↣
+inoremap <C-U><-<Bar> ↤
+inoremap <C-U><Bar>-^ ↥
+inoremap <C-U><Bar>-> ↦
+inoremap <C-U><Bar>-v ↧
+inoremap <C-U></ ↩
+inoremap <C-U>\> ↪
 
 "  U+21B0  ↰ ↱ ↲ ↳ ↴ ↵ ↶ ↷ ↸ ↹ ↺ ↻ ↼ ↽ ↾ ↿
 "  U+21C0  ⇀ ⇁ ⇂ ⇃ ⇄ ⇅ ⇆ ⇇ ⇈ ⇉ ⇊ ⇋ ⇌ ⇍ ⇎ ⇏
 
 "  U+21D0  ⇐ ⇑ ⇒ ⇓ ⇔ ⇕ ⇖ ⇗ ⇘ ⇙ ⇚ ⇛ ⇜ ⇝ ⇞ ⇟
-ino <C-U><= ⇐
-ino <C-U>=^ ⇑
-ino <C-U>=> ⇒
-ino <C-U>=v ⇓
-ino <C-U><=> ⇔
-ino <C-U>^=v ⇕
+inoremap <C-U><= ⇐
+inoremap <C-U>=^ ⇑
+inoremap <C-U>=> ⇒
+inoremap <C-U>=v ⇓
+inoremap <C-U><=> ⇔
+inoremap <C-U>^=v ⇕
 
 "  U+21E0  ⇠ ⇡ ⇢ ⇣ ⇤ ⇥ ⇦ ⇧ ⇨ ⇩ ⇪ ⇫ ⇬ ⇭ ⇮ ⇯
 "  U+21F0  ⇰ ⇱ ⇲ ⇳ ⇴ ⇵ ⇶ ⇷ ⇸ ⇹ ⇺ ⇻ ⇼ ⇽ ⇾ ⇿
@@ -1403,172 +1502,172 @@ ino <C-U>^=v ⇕
 "       ▼  Mathematical Operators
 "  U+2200  ∀ ∁ ∂ ∃ ∄ ∅ ∆ ∇ ∈ ∉ ∊ ∋ ∌ ∍ ∎ ∏
 
-ino <C-u>forall ∀
-ino <C-u>complement ∁
-ino <C-u>pdiff ∂
-ino <C-u>exists ∃
-ino <C-u>nexists ∄
-ino <C-u>empty ∅
-ino <C-u>incr ∆
-ino <C-u>nabla ∇
-ino <C-u>elem ∈
-ino <C-u>nelem ∉
-ino <C-u>selem ∊
-ino <C-u>contains ∋
-ino <C-u>ncontains ∌
-ino <C-u>scontains ∍
-ino <C-u>endofproof ∎
-ino <C-u>nproduct ∏
+inoremap <C-u>forall ∀
+inoremap <C-u>complement ∁
+inoremap <C-u>pdiff ∂
+inoremap <C-u>exists ∃
+inoremap <C-u>nexists ∄
+inoremap <C-u>empty ∅
+inoremap <C-u>incr ∆
+inoremap <C-u>nabla ∇
+inoremap <C-u>elem ∈
+inoremap <C-u>nelem ∉
+inoremap <C-u>selem ∊
+inoremap <C-u>contains ∋
+inoremap <C-u>ncontains ∌
+inoremap <C-u>scontains ∍
+inoremap <C-u>endofproof ∎
+inoremap <C-u>nproduct ∏
 
 "  U+2210  ∐ ∑ − ∓ ∔ ∕ ∖ ∗ ∘ ∙ √ ∛ ∜ ∝ ∞ ∟
 
-ino <C-u>ncoproduct ∐
-ino <C-u>nsum ∑
-ino <C-u>minus −
-ino <C-u>minusplus ∓
-ino <C-u>dotplus ∔
-ino <C-u>divslash ∕
-ino <C-u>setminus ∖
-ino <C-u>asterisk ∗
-ino <C-u>ring ∘
-ino <C-u>bullet ∙
-ino <C-u>root2 √
-ino <C-u>root3 ∛
-ino <C-u>root4 ∜
-ino <C-u>proportional ∝
-ino <C-u>infinity ∞
-ino <C-u>rangle ∟
+inoremap <C-u>ncoproduct ∐
+inoremap <C-u>nsum ∑
+inoremap <C-u>minus −
+inoremap <C-u>minusplus ∓
+inoremap <C-u>dotplus ∔
+inoremap <C-u>divslash ∕
+inoremap <C-u>setminus ∖
+inoremap <C-u>asterisk ∗
+inoremap <C-u>ring ∘
+inoremap <C-u>bullet ∙
+inoremap <C-u>root2 √
+inoremap <C-u>root3 ∛
+inoremap <C-u>root4 ∜
+inoremap <C-u>proportional ∝
+inoremap <C-u>infinity ∞
+inoremap <C-u>rangle ∟
 
 "  U+2220  ∠ ∡ ∢ ∣ ∤ ∥ ∦ ∧ ∨ ∩ ∪ ∫ ∬ ∭ ∮ ∯
 
-ino <C-u>angle ∠
-ino <C-u>mangle ∡
-ino <C-u>sangle ∢
-ino <C-u>divides ∣
-ino <C-u>ndivides ∤
-ino <C-u>parallel ∥
-ino <C-u>nparallel ∦
-ino <C-u>and ∧
-ino <C-u>or ∨
-ino <C-u>intersection ∩
-ino <C-u>union ∪
-ino <C-u>integral ∫
-ino <C-u>integral2 ∬
-ino <C-u>integral3 ∭
+inoremap <C-u>angle ∠
+inoremap <C-u>mangle ∡
+inoremap <C-u>sangle ∢
+inoremap <C-u>divides ∣
+inoremap <C-u>ndivides ∤
+inoremap <C-u>parallel ∥
+inoremap <C-u>nparallel ∦
+inoremap <C-u>and ∧
+inoremap <C-u>or ∨
+inoremap <C-u>intersection ∩
+inoremap <C-u>union ∪
+inoremap <C-u>integral ∫
+inoremap <C-u>integral2 ∬
+inoremap <C-u>integral3 ∭
 
 "  U+2230  ∰ ∱ ∲ ∳ ∴ ∵ ∶ ∷ ∸ ∹ ∺ ∻ ∼ ∽ ∾ ∿
 
-ino <C-u>therefore ∴
-ino <C-u>because ∵
-ino <C-u>ratio ∶
-ino <C-u>proportion ∷
-ino <C-u>:: ∷
-ino <C-u>dotminus ∸
-ino <C-u>excess ∹
-ino <C-u>gproportion ∺
-ino <C-u>homothetic ∻
-ino <C-u>~ ∼
-ino <C-U>rtilde ∽
-ino <C-U>sine ∿
+inoremap <C-u>therefore ∴
+inoremap <C-u>because ∵
+inoremap <C-u>ratio ∶
+inoremap <C-u>proportion ∷
+inoremap <C-u>:: ∷
+inoremap <C-u>dotminus ∸
+inoremap <C-u>excess ∹
+inoremap <C-u>gproportion ∺
+inoremap <C-u>homothetic ∻
+inoremap <C-u>~ ∼
+inoremap <C-U>rtilde ∽
+inoremap <C-U>sine ∿
 
 "  U+2240  ≀ ≁ ≂ ≃ ≄ ≅ ≆ ≇ ≈ ≉ ≊ ≋ ≌ ≍ ≎ ≏
 
-ino <C-U>wreath ≀
-ino <C-U>/~ ≁
-ino <C-U>-~ ≂
-ino <C-U>~- ≃
-ino <C-U>/~- ≄
-ino <C-U>~= ≅
-ino <C-U>~/= ≆
-ino <C-U>/~= ≇
-ino <C-U>~~ ≈
-ino <C-U>/~~ ≉
-ino <C-U>~~- ≊
-ino <C-U>~~~ ≋
+inoremap <C-U>wreath ≀
+inoremap <C-U>/~ ≁
+inoremap <C-U>-~ ≂
+inoremap <C-U>~- ≃
+inoremap <C-U>/~- ≄
+inoremap <C-U>~= ≅
+inoremap <C-U>~/= ≆
+inoremap <C-U>/~= ≇
+inoremap <C-U>~~ ≈
+inoremap <C-U>/~~ ≉
+inoremap <C-U>~~- ≊
+inoremap <C-U>~~~ ≋
 
 "  U+2250  ≐ ≑ ≒ ≓ ≔ ≕ ≖ ≗ ≘ ≙ ≚ ≛ ≜ ≝ ≞ ≟
 
-ino <C-U>:= ≔
-ino <C-U>=: ≕
-ino <C-U>def= ≝
-ino <C-U>?= ≟
+inoremap <C-U>:= ≔
+inoremap <C-U>=: ≕
+inoremap <C-U>def= ≝
+inoremap <C-U>?= ≟
 
 "  U+2260  ≠ ≡ ≢ ≣ ≤ ≥ ≦ ≧ ≨ ≩ ≪ ≫ ≬ ≭ ≮ ≯
 
-ino <C-U>/= ≠
-ino <C-U>=3 ≡
-ino <C-U>/=3 ≢
-ino <C-U>=4 ≣
-ino <C-U>=< ≤
-ino <C-U>>= ≥
-ino <C-U><< ≪
-ino <C-U>>> ≫
-ino <C-U>/< ≮
-ino <C-U>/> ≯
+inoremap <C-U>/= ≠
+inoremap <C-U>=3 ≡
+inoremap <C-U>/=3 ≢
+inoremap <C-U>=4 ≣
+inoremap <C-U>=< ≤
+inoremap <C-U>>= ≥
+inoremap <C-U><< ≪
+inoremap <C-U>>> ≫
+inoremap <C-U>/< ≮
+inoremap <C-U>/> ≯
 
 "  U+2270  ≰ ≱ ≲ ≳ ≴ ≵ ≶ ≷ ≸ ≹ ≺ ≻ ≼ ≽ ≾ ≿
 
-ino <C-U>/=< ≰
-ino <C-U>/>= ≱
+inoremap <C-U>/=< ≰
+inoremap <C-U>/>= ≱
 
 "  U+2280  ⊀ ⊁ ⊂ ⊃ ⊄ ⊅ ⊆ ⊇ ⊈ ⊉ ⊊ ⊋ ⊌ ⊍ ⊎ ⊏
 
-ino <C-U>psubset ⊂
-ino <C-U>psuperset ⊃
-ino <C-U>/psubset ⊄
-ino <C-U>/psuperset ⊅
-ino <C-U>subset ⊆
-ino <C-U>superset ⊇
-ino <C-U>/subset ⊈
-ino <C-U>/superset ⊉
-ino <C-U>multiset ⊌
-ino <C-U>multisetmult ⊍
-ino <C-U>multisetunion ⊎
+inoremap <C-U>psubset ⊂
+inoremap <C-U>psuperset ⊃
+inoremap <C-U>/psubset ⊄
+inoremap <C-U>/psuperset ⊅
+inoremap <C-U>subset ⊆
+inoremap <C-U>superset ⊇
+inoremap <C-U>/subset ⊈
+inoremap <C-U>/superset ⊉
+inoremap <C-U>multiset ⊌
+inoremap <C-U>multisetmult ⊍
+inoremap <C-U>multisetunion ⊎
 
 "  U+2290  ⊐ ⊑ ⊒ ⊓ ⊔ ⊕ ⊖ ⊗ ⊘ ⊙ ⊚ ⊛ ⊜ ⊝ ⊞ ⊟
 
-ino <C-U>o+ ⊕
-ino <C-U>o- ⊖
-ino <C-U>ox ⊗
-ino <C-U>o/ ⊘
-ino <C-U>o. ⊙
-ino <C-U>oo ⊚
-ino <C-U>o* ⊛
-ino <C-U>o= ⊜
-ino <C-U>s+ ⊞
-ino <C-U>s- ⊟
+inoremap <C-U>o+ ⊕
+inoremap <C-U>o- ⊖
+inoremap <C-U>ox ⊗
+inoremap <C-U>o/ ⊘
+inoremap <C-U>o. ⊙
+inoremap <C-U>oo ⊚
+inoremap <C-U>o* ⊛
+inoremap <C-U>o= ⊜
+inoremap <C-U>s+ ⊞
+inoremap <C-U>s- ⊟
 
 "  U+22A0  ⊠ ⊡ ⊢ ⊣ ⊤ ⊥ ⊦ ⊧ ⊨ ⊩ ⊪ ⊫ ⊬ ⊭ ⊮ ⊯
 
-ino <C-U>sx ⊠
-ino <C-U>s. ⊡
-ino <C-U>top ⊤
-ino <C-U>bottom ⊥
+inoremap <C-U>sx ⊠
+inoremap <C-U>s. ⊡
+inoremap <C-U>top ⊤
+inoremap <C-U>bottom ⊥
 
 "  U+22B0  ⊰ ⊱ ⊲ ⊳ ⊴ ⊵ ⊶ ⊷ ⊸ ⊹ ⊺ ⊻ ⊼ ⊽ ⊾ ⊿
 
-ino <C-U>-o ⊸
-ino <C-U>xor ⊻
-ino <C-U>nand ⊼
-ino <C-U>nor ⊽
+inoremap <C-U>-o ⊸
+inoremap <C-U>xor ⊻
+inoremap <C-U>nand ⊼
+inoremap <C-U>nor ⊽
 
 "  U+22C0  ⋀ ⋁ ⋂ ⋃ ⋄ ⋅ ⋆ ⋇ ⋈ ⋉ ⋊ ⋋ ⋌ ⋍ ⋎ ⋏
 
-ino <C-U>n-and ⋀
-ino <C-U>n-or ⋁
-ino <C-U>n-intersect ⋂
-ino <C-U>n-union ⋃
-ino <C-U>diamond ⋄
-ino <C-U>dot ⋅
-ino <C-U>star ⋆
-ino <C-U>bowtie ⋈
-ino <C-U>cor ⋎
-ino <C-U>cand ⋏
+inoremap <C-U>n-and ⋀
+inoremap <C-U>n-or ⋁
+inoremap <C-U>n-intersect ⋂
+inoremap <C-U>n-union ⋃
+inoremap <C-U>diamond ⋄
+inoremap <C-U>dot ⋅
+inoremap <C-U>star ⋆
+inoremap <C-U>bowtie ⋈
+inoremap <C-U>cor ⋎
+inoremap <C-U>cand ⋏
 
 "  U+22D0  ⋐ ⋑ ⋒ ⋓ ⋔ ⋕ ⋖ ⋗ ⋘ ⋙ ⋚ ⋛ ⋜ ⋝ ⋞ ⋟
 
-ino <C-U><<< ⋘
-ino <C-U>>>> ⋙
+inoremap <C-U><<< ⋘
+inoremap <C-U>>>> ⋙
 
 "  U+22E0  ⋠ ⋡ ⋢ ⋣ ⋤ ⋥ ⋦ ⋧ ⋨ ⋩ ⋪ ⋫ ⋬ ⋭ ⋮ ⋯
 "  U+22F0  ⋰ ⋱ ⋲ ⋳ ⋴ ⋵ ⋶ ⋷ ⋸ ⋹ ⋺ ⋻ ⋼ ⋽ ⋾ ⋿
@@ -1603,12 +1702,12 @@ ino <C-U>>>> ⋙
 "  U+27D0  ⟐ ⟑ ⟒ ⟓ ⟔ ⟕ ⟖ ⟗ ⟘ ⟙ ⟚ ⟛ ⟜ ⟝ ⟞ ⟟
 "  U+27E0  ⟠ ⟡ ⟢ ⟣ ⟤ ⟥ ⟦ ⟧ ⟨ ⟩ ⟪ ⟫ ⟬ ⟭ ⟮ ⟯
 
-ino <C-U>[[ ⟦
-ino <C-U>]] ⟧
-ino <C-U>[< ⟨
-ino <C-U>>] ⟩
-ino <C-U>[<< ⟪
-ino <C-U>>>] ⟫
+inoremap <C-U>[[ ⟦
+inoremap <C-U>]] ⟧
+inoremap <C-U>[< ⟨
+inoremap <C-U>>] ⟩
+inoremap <C-U>[<< ⟪
+inoremap <C-U>>>] ⟫
 
 "       ▼  Suppl. Arrows-A
 "  U+27F0  ⟰ ⟱ ⟲ ⟳ ⟴ ⟵ ⟶ ⟷ ⟸ ⟹ ⟺ ⟻ ⟼ ⟽ ⟾ ⟿
@@ -1633,12 +1732,12 @@ ino <C-U>>>] ⟫
 "  U+29E0  ⧠ ⧡ ⧢ ⧣ ⧤ ⧥ ⧦ ⧧ ⧨ ⧩ ⧪ ⧫ ⧬ ⧭ ⧮ ⧯
 "  U+29F0  ⧰ ⧱ ⧲ ⧳ ⧴ ⧵ ⧶ ⧷ ⧸ ⧹ ⧺ ⧻ ⧼ ⧽ ⧾ ⧿
 
-ino <C-U>spot ⦁
-ino <C-U>: ⦂
-ino <C-U>{{ ⦃
-ino <C-U>}} ⦄
-ino <C-U>(( ⦅
-ino <C-U>)) ⦆
+inoremap <C-U>spot ⦁
+inoremap <C-U>: ⦂
+inoremap <C-U>{{ ⦃
+inoremap <C-U>}} ⦄
+inoremap <C-U>(( ⦅
+inoremap <C-U>)) ⦆
 
 "       ▼  Supplemental Math Operators
 "  U+2A00  ⨀ ⨁ ⨂ ⨃ ⨄ ⨅ ⨆ ⨇ ⨈ ⨉ ⨊ ⨋ ⨌ ⨍ ⨎ ⨏
@@ -1658,9 +1757,9 @@ ino <C-U>)) ⦆
 "  U+2AE0  ⫠ ⫡ ⫢ ⫣ ⫤ ⫥ ⫦ ⫧ ⫨ ⫩ ⫪ ⫫ ⫬ ⫭ ⫮ ⫯
 "  U+2AF0  ⫰ ⫱ ⫲ ⫳ ⫴ ⫵ ⫶ ⫷ ⫸ ⫹ ⫺ ⫻ ⫼ ⫽ ⫾ ⫿
 
-ino <C-u>; ⨾
-ino <C-U><Bar><Bar><Bar> ⫴
-ino <C-U>/// ⫻
+inoremap <C-u>; ⨾
+inoremap <C-U><Bar><Bar><Bar> ⫴
+inoremap <C-U>/// ⫻
 
 "       ▼  Misc. Symbols and Arrows
 "  U+2B00  ⬀ ⬁ ⬂ ⬃ ⬄ ⬅ ⬆ ⬇ ⬈ ⬉ ⬊ ⬋ ⬌ ⬍ ⬎ ⬏
@@ -1689,528 +1788,528 @@ ino <C-U>/// ⫻
 " 𝐀 𝐁 𝐂 𝐃 𝐄 𝐅 𝐆 𝐇 𝐈 𝐉 𝐊 𝐋 𝐌 𝐍 𝐎 𝐏 𝐐 𝐑 𝐒 𝐓 𝐔 𝐕 𝐖 𝐗 𝐘 𝐙
 " 𝐚 𝐛 𝐜 𝐝 𝐞 𝐟 𝐠 𝐡 𝐢 𝐣 𝐤 𝐥 𝐦 𝐧 𝐨 𝐩 𝐪 𝐫 𝐬 𝐭 𝐮 𝐯 𝐰 𝐱 𝐲 𝐳
 
-ino <C-U>bA 𝐀
-ino <C-U>bB 𝐁
-ino <C-U>bC 𝐂
-ino <C-U>bD 𝐃
-ino <C-U>bE 𝐄
-ino <C-U>bF 𝐅
-ino <C-U>bG 𝐆
-ino <C-U>bH 𝐇
-ino <C-U>bI 𝐈
-ino <C-U>bJ 𝐉
-ino <C-U>bK 𝐊
-ino <C-U>bL 𝐋
-ino <C-U>bM 𝐌
-ino <C-U>bN 𝐍
-ino <C-U>bO 𝐎
-ino <C-U>bP 𝐏
-ino <C-U>bQ 𝐐
-ino <C-U>bR 𝐑
-ino <C-U>bS 𝐒
-ino <C-U>bT 𝐓
-ino <C-U>bU 𝐔
-ino <C-U>bV 𝐕
-ino <C-U>bW 𝐖
-ino <C-U>bX 𝐗
-ino <C-U>bY 𝐘
-ino <C-U>bZ 𝐙
-ino <C-U>ba 𝐚
-ino <C-U>bb 𝐛
-ino <C-U>bc 𝐜
-ino <C-U>bd 𝐝
-ino <C-U>be 𝐞
-ino <C-U>bf 𝐟
-ino <C-U>bg 𝐠
-ino <C-U>bh 𝐡
-ino <C-U>bi 𝐢
-ino <C-U>bj 𝐣
-ino <C-U>bk 𝐤
-ino <C-U>bl 𝐥
-ino <C-U>bm 𝐦
-ino <C-U>bn 𝐧
-ino <C-U>bo 𝐨
-ino <C-U>bp 𝐩
-ino <C-U>bq 𝐪
-ino <C-U>br 𝐫
-ino <C-U>bs 𝐬
-ino <C-U>bt 𝐭
-ino <C-U>bu 𝐮
-ino <C-U>bv 𝐯
-ino <C-U>bw 𝐰
-ino <C-U>bx 𝐱
-ino <C-U>by 𝐲
-ino <C-U>bz 𝐳
+inoremap <C-U>bA 𝐀
+inoremap <C-U>bB 𝐁
+inoremap <C-U>bC 𝐂
+inoremap <C-U>bD 𝐃
+inoremap <C-U>bE 𝐄
+inoremap <C-U>bF 𝐅
+inoremap <C-U>bG 𝐆
+inoremap <C-U>bH 𝐇
+inoremap <C-U>bI 𝐈
+inoremap <C-U>bJ 𝐉
+inoremap <C-U>bK 𝐊
+inoremap <C-U>bL 𝐋
+inoremap <C-U>bM 𝐌
+inoremap <C-U>bN 𝐍
+inoremap <C-U>bO 𝐎
+inoremap <C-U>bP 𝐏
+inoremap <C-U>bQ 𝐐
+inoremap <C-U>bR 𝐑
+inoremap <C-U>bS 𝐒
+inoremap <C-U>bT 𝐓
+inoremap <C-U>bU 𝐔
+inoremap <C-U>bV 𝐕
+inoremap <C-U>bW 𝐖
+inoremap <C-U>bX 𝐗
+inoremap <C-U>bY 𝐘
+inoremap <C-U>bZ 𝐙
+inoremap <C-U>ba 𝐚
+inoremap <C-U>bb 𝐛
+inoremap <C-U>bc 𝐜
+inoremap <C-U>bd 𝐝
+inoremap <C-U>be 𝐞
+inoremap <C-U>bf 𝐟
+inoremap <C-U>bg 𝐠
+inoremap <C-U>bh 𝐡
+inoremap <C-U>bi 𝐢
+inoremap <C-U>bj 𝐣
+inoremap <C-U>bk 𝐤
+inoremap <C-U>bl 𝐥
+inoremap <C-U>bm 𝐦
+inoremap <C-U>bn 𝐧
+inoremap <C-U>bo 𝐨
+inoremap <C-U>bp 𝐩
+inoremap <C-U>bq 𝐪
+inoremap <C-U>br 𝐫
+inoremap <C-U>bs 𝐬
+inoremap <C-U>bt 𝐭
+inoremap <C-U>bu 𝐮
+inoremap <C-U>bv 𝐯
+inoremap <C-U>bw 𝐰
+inoremap <C-U>bx 𝐱
+inoremap <C-U>by 𝐲
+inoremap <C-U>bz 𝐳
 
 " 𝐴 𝐵 𝐶 𝐷 𝐸 𝐹 𝐺 𝐻 𝐼 𝐽 𝐾 𝐿 𝑀 𝑁 𝑂 𝑃 𝑄 𝑅 𝑆 𝑇 𝑈 𝑉 𝑊 𝑋 𝑌 𝑍
 " 𝑎 𝑏 𝑐 𝑑 𝑒 𝑓 𝑔   𝑖 𝑗 𝑘 𝑙 𝑚 𝑛 𝑜 𝑝 𝑞 𝑟 𝑠 𝑡 𝑢 𝑣 𝑤 𝑥 𝑦 𝑧
 
-ino <C-U>iA 𝐴
-ino <C-U>iB 𝐵
-ino <C-U>iC 𝐶
-ino <C-U>iD 𝐷
-ino <C-U>iE 𝐸
-ino <C-U>iF 𝐹
-ino <C-U>iG 𝐺
-ino <C-U>iH 𝐻
-ino <C-U>iI 𝐼
-ino <C-U>iJ 𝐽
-ino <C-U>iK 𝐾
-ino <C-U>iL 𝐿
-ino <C-U>iM 𝑀
-ino <C-U>iN 𝑁
-ino <C-U>iO 𝑂
-ino <C-U>iP 𝑃
-ino <C-U>iQ 𝑄
-ino <C-U>iR 𝑅
-ino <C-U>iS 𝑆
-ino <C-U>iT 𝑇
-ino <C-U>iU 𝑈
-ino <C-U>iV 𝑉
-ino <C-U>iW 𝑊
-ino <C-U>iX 𝑋
-ino <C-U>iY 𝑌
-ino <C-U>iZ 𝑍
-ino <C-U>ia 𝑎
-ino <C-U>ib 𝑏
-ino <C-U>ic 𝑐
-ino <C-U>id 𝑑
-ino <C-U>ie 𝑒
-ino <C-U>if 𝑓
-ino <C-U>ig 𝑔
-ino <C-U>ih ℎ
-ino <C-U>ii 𝑖
-ino <C-U>ij 𝑗
-ino <C-U>ik 𝑘
-ino <C-U>il 𝑙
-ino <C-U>im 𝑚
-ino <C-U>in 𝑛
-ino <C-U>io 𝑜
-ino <C-U>ip 𝑝
-ino <C-U>iq 𝑞
-ino <C-U>ir 𝑟
-ino <C-U>is 𝑠
-ino <C-U>it 𝑡
-ino <C-U>iu 𝑢
-ino <C-U>iv 𝑣
-ino <C-U>iw 𝑤
-ino <C-U>ix 𝑥
-ino <C-U>iy 𝑦
-ino <C-U>iz 𝑧
+inoremap <C-U>iA 𝐴
+inoremap <C-U>iB 𝐵
+inoremap <C-U>iC 𝐶
+inoremap <C-U>iD 𝐷
+inoremap <C-U>iE 𝐸
+inoremap <C-U>iF 𝐹
+inoremap <C-U>iG 𝐺
+inoremap <C-U>iH 𝐻
+inoremap <C-U>iI 𝐼
+inoremap <C-U>iJ 𝐽
+inoremap <C-U>iK 𝐾
+inoremap <C-U>iL 𝐿
+inoremap <C-U>iM 𝑀
+inoremap <C-U>iN 𝑁
+inoremap <C-U>iO 𝑂
+inoremap <C-U>iP 𝑃
+inoremap <C-U>iQ 𝑄
+inoremap <C-U>iR 𝑅
+inoremap <C-U>iS 𝑆
+inoremap <C-U>iT 𝑇
+inoremap <C-U>iU 𝑈
+inoremap <C-U>iV 𝑉
+inoremap <C-U>iW 𝑊
+inoremap <C-U>iX 𝑋
+inoremap <C-U>iY 𝑌
+inoremap <C-U>iZ 𝑍
+inoremap <C-U>ia 𝑎
+inoremap <C-U>ib 𝑏
+inoremap <C-U>ic 𝑐
+inoremap <C-U>id 𝑑
+inoremap <C-U>ie 𝑒
+inoremap <C-U>if 𝑓
+inoremap <C-U>ig 𝑔
+inoremap <C-U>ih ℎ
+inoremap <C-U>ii 𝑖
+inoremap <C-U>ij 𝑗
+inoremap <C-U>ik 𝑘
+inoremap <C-U>il 𝑙
+inoremap <C-U>im 𝑚
+inoremap <C-U>in 𝑛
+inoremap <C-U>io 𝑜
+inoremap <C-U>ip 𝑝
+inoremap <C-U>iq 𝑞
+inoremap <C-U>ir 𝑟
+inoremap <C-U>is 𝑠
+inoremap <C-U>it 𝑡
+inoremap <C-U>iu 𝑢
+inoremap <C-U>iv 𝑣
+inoremap <C-U>iw 𝑤
+inoremap <C-U>ix 𝑥
+inoremap <C-U>iy 𝑦
+inoremap <C-U>iz 𝑧
 
 " 𝑨 𝑩 𝑪 𝑫 𝑬 𝑭 𝑮 𝑯 𝑰 𝑱 𝑲 𝑳 𝑴 𝑵 𝑶 𝑷 𝑸 𝑹 𝑺 𝑻 𝑼 𝑽 𝑾 𝑿 𝒀 𝒁
 " 𝒂 𝒃 𝒄 𝒅 𝒆 𝒇 𝒈 𝒉 𝒊 𝒋 𝒌 𝒍 𝒎 𝒏 𝒐 𝒑 𝒒 𝒓 𝒔 𝒕 𝒖 𝒗 𝒘 𝒙 𝒚 𝒛
 
-ino <C-U>biA 𝑨
-ino <C-U>biB 𝑩
-ino <C-U>biC 𝑪
-ino <C-U>biD 𝑫
-ino <C-U>biE 𝑬
-ino <C-U>biF 𝑭
-ino <C-U>biG 𝑮
-ino <C-U>biH 𝑯
-ino <C-U>biI 𝑰
-ino <C-U>biJ 𝑱
-ino <C-U>biK 𝑲
-ino <C-U>biL 𝑳
-ino <C-U>biM 𝑴
-ino <C-U>biN 𝑵
-ino <C-U>biO 𝑶
-ino <C-U>biP 𝑷
-ino <C-U>biQ 𝑸
-ino <C-U>biR 𝑹
-ino <C-U>biS 𝑺
-ino <C-U>biT 𝑻
-ino <C-U>biU 𝑼
-ino <C-U>biV 𝑽
-ino <C-U>biW 𝑾
-ino <C-U>biX 𝑿
-ino <C-U>biY 𝒀
-ino <C-U>biZ 𝒁
-ino <C-U>bia 𝒂
-ino <C-U>bib 𝒃
-ino <C-U>bic 𝒄
-ino <C-U>bid 𝒅
-ino <C-U>bie 𝒆
-ino <C-U>bif 𝒇
-ino <C-U>big 𝒈
-ino <C-U>bih 𝒉
-ino <C-U>bii 𝒊
-ino <C-U>bij 𝒋
-ino <C-U>bik 𝒌
-ino <C-U>bil 𝒍
-ino <C-U>bim 𝒎
-ino <C-U>bin 𝒏
-ino <C-U>bio 𝒐
-ino <C-U>bip 𝒑
-ino <C-U>biq 𝒒
-ino <C-U>bir 𝒓
-ino <C-U>bis 𝒔
-ino <C-U>bit 𝒕
-ino <C-U>biu 𝒖
-ino <C-U>biv 𝒗
-ino <C-U>biw 𝒘
-ino <C-U>bix 𝒙
-ino <C-U>biy 𝒚
-ino <C-U>biz 𝒛
+inoremap <C-U>biA 𝑨
+inoremap <C-U>biB 𝑩
+inoremap <C-U>biC 𝑪
+inoremap <C-U>biD 𝑫
+inoremap <C-U>biE 𝑬
+inoremap <C-U>biF 𝑭
+inoremap <C-U>biG 𝑮
+inoremap <C-U>biH 𝑯
+inoremap <C-U>biI 𝑰
+inoremap <C-U>biJ 𝑱
+inoremap <C-U>biK 𝑲
+inoremap <C-U>biL 𝑳
+inoremap <C-U>biM 𝑴
+inoremap <C-U>biN 𝑵
+inoremap <C-U>biO 𝑶
+inoremap <C-U>biP 𝑷
+inoremap <C-U>biQ 𝑸
+inoremap <C-U>biR 𝑹
+inoremap <C-U>biS 𝑺
+inoremap <C-U>biT 𝑻
+inoremap <C-U>biU 𝑼
+inoremap <C-U>biV 𝑽
+inoremap <C-U>biW 𝑾
+inoremap <C-U>biX 𝑿
+inoremap <C-U>biY 𝒀
+inoremap <C-U>biZ 𝒁
+inoremap <C-U>bia 𝒂
+inoremap <C-U>bib 𝒃
+inoremap <C-U>bic 𝒄
+inoremap <C-U>bid 𝒅
+inoremap <C-U>bie 𝒆
+inoremap <C-U>bif 𝒇
+inoremap <C-U>big 𝒈
+inoremap <C-U>bih 𝒉
+inoremap <C-U>bii 𝒊
+inoremap <C-U>bij 𝒋
+inoremap <C-U>bik 𝒌
+inoremap <C-U>bil 𝒍
+inoremap <C-U>bim 𝒎
+inoremap <C-U>bin 𝒏
+inoremap <C-U>bio 𝒐
+inoremap <C-U>bip 𝒑
+inoremap <C-U>biq 𝒒
+inoremap <C-U>bir 𝒓
+inoremap <C-U>bis 𝒔
+inoremap <C-U>bit 𝒕
+inoremap <C-U>biu 𝒖
+inoremap <C-U>biv 𝒗
+inoremap <C-U>biw 𝒘
+inoremap <C-U>bix 𝒙
+inoremap <C-U>biy 𝒚
+inoremap <C-U>biz 𝒛
 
 " 𝒜   𝒞 𝒟     𝒢     𝒥 𝒦     𝒩 𝒪 𝒫 𝒬   𝒮 𝒯 𝒰 𝒱 𝒲 𝒳 𝒴 𝒵
 " 𝒶 𝒷 𝒸 𝒹   𝒻   𝒽 𝒾 𝒿 𝓀   𝓂 𝓃   𝓅 𝓆 𝓇 𝓈 𝓉 𝓊 𝓋 𝓌 𝓍 𝓎 𝓏
 
-ino <C-U>sA 𝒜
-ino <C-U>sB ℬ
-ino <C-U>sC 𝒞
-ino <C-U>sD 𝒟
-ino <C-U>sE ℰ
-ino <C-U>sF ℱ
-ino <C-U>sG 𝒢
-ino <C-U>sH ℋ
-ino <C-U>sI ℐ
-ino <C-U>sJ 𝒥
-ino <C-U>sK 𝒦
-ino <C-U>sL ℒ
-ino <C-U>sM ℳ
-ino <C-U>sN 𝒩
-ino <C-U>sO 𝒪
-ino <C-U>sP 𝒫
-ino <C-U>sQ 𝒬
-ino <C-U>sR ℛ
-ino <C-U>sS 𝒮
-ino <C-U>sT 𝒯
-ino <C-U>sU 𝒰
-ino <C-U>sV 𝒱
-ino <C-U>sW 𝒲
-ino <C-U>sX 𝒳
-ino <C-U>sY 𝒴
-ino <C-U>sZ 𝒵
-ino <C-U>sa 𝒶
-ino <C-U>sb 𝒷
-ino <C-U>sc 𝒸
-ino <C-U>sd 𝒹
-ino <C-U>se ℯ
-ino <C-U>sf 𝒻
-ino <C-U>sg ℊ
-ino <C-U>sh 𝒽
-ino <C-U>si 𝒾
-ino <C-U>sj 𝒿
-ino <C-U>sk 𝓀
-ino <C-U>sl ℓ
-ino <C-U>sm 𝓂
-ino <C-U>sn 𝓃
-ino <C-U>so ℴ
-ino <C-U>sp 𝓅
-ino <C-U>sq 𝓆
-ino <C-U>sr 𝓇
-ino <C-U>ss 𝓈
-ino <C-U>st 𝓉
-ino <C-U>su 𝓊
-ino <C-U>sv 𝓋
-ino <C-U>sw 𝓌
-ino <C-U>sx 𝓍
-ino <C-U>sy 𝓎
-ino <C-U>sz 𝓏
+inoremap <C-U>sA 𝒜
+inoremap <C-U>sB ℬ
+inoremap <C-U>sC 𝒞
+inoremap <C-U>sD 𝒟
+inoremap <C-U>sE ℰ
+inoremap <C-U>sF ℱ
+inoremap <C-U>sG 𝒢
+inoremap <C-U>sH ℋ
+inoremap <C-U>sI ℐ
+inoremap <C-U>sJ 𝒥
+inoremap <C-U>sK 𝒦
+inoremap <C-U>sL ℒ
+inoremap <C-U>sM ℳ
+inoremap <C-U>sN 𝒩
+inoremap <C-U>sO 𝒪
+inoremap <C-U>sP 𝒫
+inoremap <C-U>sQ 𝒬
+inoremap <C-U>sR ℛ
+inoremap <C-U>sS 𝒮
+inoremap <C-U>sT 𝒯
+inoremap <C-U>sU 𝒰
+inoremap <C-U>sV 𝒱
+inoremap <C-U>sW 𝒲
+inoremap <C-U>sX 𝒳
+inoremap <C-U>sY 𝒴
+inoremap <C-U>sZ 𝒵
+inoremap <C-U>sa 𝒶
+inoremap <C-U>sb 𝒷
+inoremap <C-U>sc 𝒸
+inoremap <C-U>sd 𝒹
+inoremap <C-U>se ℯ
+inoremap <C-U>sf 𝒻
+inoremap <C-U>sg ℊ
+inoremap <C-U>sh 𝒽
+inoremap <C-U>si 𝒾
+inoremap <C-U>sj 𝒿
+inoremap <C-U>sk 𝓀
+inoremap <C-U>sl ℓ
+inoremap <C-U>sm 𝓂
+inoremap <C-U>sn 𝓃
+inoremap <C-U>so ℴ
+inoremap <C-U>sp 𝓅
+inoremap <C-U>sq 𝓆
+inoremap <C-U>sr 𝓇
+inoremap <C-U>ss 𝓈
+inoremap <C-U>st 𝓉
+inoremap <C-U>su 𝓊
+inoremap <C-U>sv 𝓋
+inoremap <C-U>sw 𝓌
+inoremap <C-U>sx 𝓍
+inoremap <C-U>sy 𝓎
+inoremap <C-U>sz 𝓏
 
 " 𝓐 𝓑 𝓒 𝓓 𝓔 𝓕 𝓖 𝓗 𝓘 𝓙 𝓚 𝓛 𝓜 𝓝 𝓞 𝓟 𝓠 𝓡 𝓢 𝓣 𝓤 𝓥 𝓦 𝓧 𝓨 𝓩
 " 𝓪 𝓫 𝓬 𝓭 𝓮 𝓯 𝓰 𝓱 𝓲 𝓳 𝓴 𝓵 𝓶 𝓷 𝓸 𝓹 𝓺 𝓻 𝓼 𝓽 𝓾 𝓿 𝔀 𝔁 𝔂 𝔃
 
-ino <C-U>sbA 𝓐
-ino <C-U>sbB 𝓑
-ino <C-U>sbC 𝓒
-ino <C-U>sbD 𝓓
-ino <C-U>sbE 𝓔
-ino <C-U>sbF 𝓕
-ino <C-U>sbG 𝓖
-ino <C-U>sbH 𝓗
-ino <C-U>sbI 𝓘
-ino <C-U>sbJ 𝓙
-ino <C-U>sbK 𝓚
-ino <C-U>sbL 𝓛
-ino <C-U>sbM 𝓜
-ino <C-U>sbN 𝓝
-ino <C-U>sbO 𝓞
-ino <C-U>sbP 𝓟
-ino <C-U>sbQ 𝓠
-ino <C-U>sbR 𝓡
-ino <C-U>sbS 𝓢
-ino <C-U>sbT 𝓣
-ino <C-U>sbU 𝓤
-ino <C-U>sbV 𝓥
-ino <C-U>sbW 𝓦
-ino <C-U>sbX 𝓧
-ino <C-U>sbY 𝓨
-ino <C-U>sbZ 𝓩
-ino <C-U>sba 𝓪
-ino <C-U>sbb 𝓫
-ino <C-U>sbc 𝓬
-ino <C-U>sbd 𝓭
-ino <C-U>sbe 𝓮
-ino <C-U>sbf 𝓯
-ino <C-U>sbg 𝓰
-ino <C-U>sbh 𝓱
-ino <C-U>sbi 𝓲
-ino <C-U>sbj 𝓳
-ino <C-U>sbk 𝓴
-ino <C-U>sbl 𝓵
-ino <C-U>sbm 𝓶
-ino <C-U>sbn 𝓷
-ino <C-U>sbo 𝓸
-ino <C-U>sbp 𝓹
-ino <C-U>sbq 𝓺
-ino <C-U>sbr 𝓻
-ino <C-U>sbs 𝓼
-ino <C-U>sbt 𝓽
-ino <C-U>sbu 𝓾
-ino <C-U>sbv 𝓿
-ino <C-U>sbw 𝔀
-ino <C-U>sbx 𝔁
-ino <C-U>sby 𝔂
-ino <C-U>sbz 𝔃
+inoremap <C-U>sbA 𝓐
+inoremap <C-U>sbB 𝓑
+inoremap <C-U>sbC 𝓒
+inoremap <C-U>sbD 𝓓
+inoremap <C-U>sbE 𝓔
+inoremap <C-U>sbF 𝓕
+inoremap <C-U>sbG 𝓖
+inoremap <C-U>sbH 𝓗
+inoremap <C-U>sbI 𝓘
+inoremap <C-U>sbJ 𝓙
+inoremap <C-U>sbK 𝓚
+inoremap <C-U>sbL 𝓛
+inoremap <C-U>sbM 𝓜
+inoremap <C-U>sbN 𝓝
+inoremap <C-U>sbO 𝓞
+inoremap <C-U>sbP 𝓟
+inoremap <C-U>sbQ 𝓠
+inoremap <C-U>sbR 𝓡
+inoremap <C-U>sbS 𝓢
+inoremap <C-U>sbT 𝓣
+inoremap <C-U>sbU 𝓤
+inoremap <C-U>sbV 𝓥
+inoremap <C-U>sbW 𝓦
+inoremap <C-U>sbX 𝓧
+inoremap <C-U>sbY 𝓨
+inoremap <C-U>sbZ 𝓩
+inoremap <C-U>sba 𝓪
+inoremap <C-U>sbb 𝓫
+inoremap <C-U>sbc 𝓬
+inoremap <C-U>sbd 𝓭
+inoremap <C-U>sbe 𝓮
+inoremap <C-U>sbf 𝓯
+inoremap <C-U>sbg 𝓰
+inoremap <C-U>sbh 𝓱
+inoremap <C-U>sbi 𝓲
+inoremap <C-U>sbj 𝓳
+inoremap <C-U>sbk 𝓴
+inoremap <C-U>sbl 𝓵
+inoremap <C-U>sbm 𝓶
+inoremap <C-U>sbn 𝓷
+inoremap <C-U>sbo 𝓸
+inoremap <C-U>sbp 𝓹
+inoremap <C-U>sbq 𝓺
+inoremap <C-U>sbr 𝓻
+inoremap <C-U>sbs 𝓼
+inoremap <C-U>sbt 𝓽
+inoremap <C-U>sbu 𝓾
+inoremap <C-U>sbv 𝓿
+inoremap <C-U>sbw 𝔀
+inoremap <C-U>sbx 𝔁
+inoremap <C-U>sby 𝔂
+inoremap <C-U>sbz 𝔃
 
 " 𝔸 𝔹   𝔻 𝔼 𝔽 𝔾   𝕀 𝕁 𝕂 𝕃 𝕄   𝕆       𝕊 𝕋 𝕌 𝕍 𝕎 𝕏 𝕐
 " 𝕒 𝕓 𝕔 𝕕 𝕖 𝕗 𝕘 𝕙 𝕚 𝕛 𝕜 𝕝 𝕞 𝕟 𝕠 𝕡 𝕢 𝕣 𝕤 𝕥 𝕦 𝕧 𝕨 𝕩 𝕪 𝕫
 
-ino <C-U>[A 𝔸
-ino <C-U>[B 𝔹
-ino <C-U>[C ℂ
-ino <C-U>[D 𝔻
-ino <C-U>[E 𝔼
-ino <C-U>[F 𝔽
-ino <C-U>[G 𝔾
-ino <C-U>[H ℍ
-ino <C-U>[H ℍ
-ino <C-U>[I 𝕀
-ino <C-U>[J 𝕁
-ino <C-U>[K 𝕂
-ino <C-U>[L 𝕃
-ino <C-U>[M 𝕄
-ino <C-U>[N ℕ
-ino <C-U>[O 𝕆
-ino <C-U>[P ℙ
-ino <C-U>[Q ℚ
-ino <C-U>[R ℝ
-ino <C-U>[S 𝕊
-ino <C-U>[T 𝕋
-ino <C-U>[U 𝕌
-ino <C-U>[V 𝕍
-ino <C-U>[W 𝕎
-ino <C-U>[X 𝕏
-ino <C-U>[Y 𝕐
-ino <C-U>[Z ℤ
-ino <C-U>[a 𝕒
-ino <C-U>[b 𝕓
-ino <C-U>[c 𝕔
-ino <C-U>[d 𝕕
-ino <C-U>[e 𝕖
-ino <C-U>[f 𝕗
-ino <C-U>[g 𝕘
-ino <C-U>[h 𝕙
-ino <C-U>[i 𝕚
-ino <C-U>[j 𝕛
-ino <C-U>[k 𝕜
-ino <C-U>[l 𝕝
-ino <C-U>[m 𝕞
-ino <C-U>[n 𝕟
-ino <C-U>[o 𝕠
-ino <C-U>[p 𝕡
-ino <C-U>[q 𝕢
-ino <C-U>[r 𝕣
-ino <C-U>[s 𝕤
-ino <C-U>[t 𝕥
-ino <C-U>[u 𝕦
-ino <C-U>[v 𝕧
-ino <C-U>[w 𝕨
-ino <C-U>[x 𝕩
-ino <C-U>[y 𝕪
-ino <C-U>[z 𝕫
+inoremap <C-U>[A 𝔸
+inoremap <C-U>[B 𝔹
+inoremap <C-U>[C ℂ
+inoremap <C-U>[D 𝔻
+inoremap <C-U>[E 𝔼
+inoremap <C-U>[F 𝔽
+inoremap <C-U>[G 𝔾
+inoremap <C-U>[H ℍ
+inoremap <C-U>[H ℍ
+inoremap <C-U>[I 𝕀
+inoremap <C-U>[J 𝕁
+inoremap <C-U>[K 𝕂
+inoremap <C-U>[L 𝕃
+inoremap <C-U>[M 𝕄
+inoremap <C-U>[N ℕ
+inoremap <C-U>[O 𝕆
+inoremap <C-U>[P ℙ
+inoremap <C-U>[Q ℚ
+inoremap <C-U>[R ℝ
+inoremap <C-U>[S 𝕊
+inoremap <C-U>[T 𝕋
+inoremap <C-U>[U 𝕌
+inoremap <C-U>[V 𝕍
+inoremap <C-U>[W 𝕎
+inoremap <C-U>[X 𝕏
+inoremap <C-U>[Y 𝕐
+inoremap <C-U>[Z ℤ
+inoremap <C-U>[a 𝕒
+inoremap <C-U>[b 𝕓
+inoremap <C-U>[c 𝕔
+inoremap <C-U>[d 𝕕
+inoremap <C-U>[e 𝕖
+inoremap <C-U>[f 𝕗
+inoremap <C-U>[g 𝕘
+inoremap <C-U>[h 𝕙
+inoremap <C-U>[i 𝕚
+inoremap <C-U>[j 𝕛
+inoremap <C-U>[k 𝕜
+inoremap <C-U>[l 𝕝
+inoremap <C-U>[m 𝕞
+inoremap <C-U>[n 𝕟
+inoremap <C-U>[o 𝕠
+inoremap <C-U>[p 𝕡
+inoremap <C-U>[q 𝕢
+inoremap <C-U>[r 𝕣
+inoremap <C-U>[s 𝕤
+inoremap <C-U>[t 𝕥
+inoremap <C-U>[u 𝕦
+inoremap <C-U>[v 𝕧
+inoremap <C-U>[w 𝕨
+inoremap <C-U>[x 𝕩
+inoremap <C-U>[y 𝕪
+inoremap <C-U>[z 𝕫
 
 " 𝚨 𝚩 𝚪 𝚫 𝚬 𝚭 𝚮 𝚯 𝚰 𝚱 𝚲 𝚳 𝚴 𝚵 𝚶 𝚷 𝚸 𝚹 𝚺 𝚻 𝚼 𝚽 𝚾 𝚿 𝛀 𝛁
 " 𝛂 𝛃 𝛄 𝛅 𝛆 𝛇 𝛈 𝛉 𝛊 𝛋 𝛌 𝛍 𝛎 𝛏 𝛐 𝛑 𝛒 𝛓 𝛔 𝛕 𝛖 𝛗 𝛘 𝛙 𝛚 𝛛 𝛜 𝛝 𝛞 𝛟 𝛠 𝛡
 
-ino <C-U>bAlpha 𝚨
-ino <C-U>bBeta 𝚩
-ino <C-U>bGamma 𝚪
-ino <C-U>bDelta 𝚫
-ino <C-U>bEpsilon 𝚬
-ino <C-U>bZeta 𝚭
-ino <C-U>bEta 𝚮
-ino <C-U>bTheta 𝚯
-ino <C-U>bIota 𝚰
-ino <C-U>bKappa 𝚱
-ino <C-U>bLambda 𝚲
-ino <C-U>bMu 𝚳
-ino <C-U>bNu 𝚴
-ino <C-U>bXi 𝚵
-ino <C-U>bOmnicron 𝚶
-ino <C-U>bPi 𝚷
-ino <C-U>bRho 𝚸
-ino <C-U>bSigma 𝚺
-ino <C-U>bTau 𝚻
-ino <C-U>bUpsilon 𝚼
-ino <C-U>bPhi 𝚽
-ino <C-U>bChi 𝚾
-ino <C-U>bPsi 𝚿
-ino <C-U>bOmega 𝛀
-ino <C-U>bNabla 𝛁
-ino <C-U>balpha 𝛂
-ino <C-U>bbeta 𝛃
-ino <C-U>bgamma 𝛄
-ino <C-U>bdelta 𝛅
-ino <C-U>bepsilon 𝛆
-ino <C-U>bzeta 𝛇
-" ino <C-U>beta 𝛈
-ino <C-U>btheta 𝛉
-ino <C-U>biota 𝛊
-ino <C-U>bkappa 𝛋
-ino <C-U>blambda 𝛌
-ino <C-U>bmu 𝛍
-ino <C-U>bnu 𝛎
-ino <C-U>bxi 𝛏
-ino <C-U>bomnicron 𝛐
-ino <C-U>bpi 𝛑
-ino <C-U>brho 𝛒
-ino <C-U>bfsigma 𝛓
-ino <C-U>bsigma 𝛔
-ino <C-U>btau 𝛕
-ino <C-U>bupsilon 𝛖
-ino <C-U>bphi 𝛗
-ino <C-U>bchi 𝛘
-ino <C-U>bpsi 𝛙
-ino <C-U>bomega 𝛚
-ino <C-U>bpdiff 𝛛
+inoremap <C-U>bAlpha 𝚨
+inoremap <C-U>bBeta 𝚩
+inoremap <C-U>bGamma 𝚪
+inoremap <C-U>bDelta 𝚫
+inoremap <C-U>bEpsilon 𝚬
+inoremap <C-U>bZeta 𝚭
+inoremap <C-U>bEta 𝚮
+inoremap <C-U>bTheta 𝚯
+inoremap <C-U>bIota 𝚰
+inoremap <C-U>bKappa 𝚱
+inoremap <C-U>bLambda 𝚲
+inoremap <C-U>bMu 𝚳
+inoremap <C-U>bNu 𝚴
+inoremap <C-U>bXi 𝚵
+inoremap <C-U>bOmnicron 𝚶
+inoremap <C-U>bPi 𝚷
+inoremap <C-U>bRho 𝚸
+inoremap <C-U>bSigma 𝚺
+inoremap <C-U>bTau 𝚻
+inoremap <C-U>bUpsilon 𝚼
+inoremap <C-U>bPhi 𝚽
+inoremap <C-U>bChi 𝚾
+inoremap <C-U>bPsi 𝚿
+inoremap <C-U>bOmega 𝛀
+inoremap <C-U>bNabla 𝛁
+inoremap <C-U>balpha 𝛂
+inoremap <C-U>bbeta 𝛃
+inoremap <C-U>bgamma 𝛄
+inoremap <C-U>bdelta 𝛅
+inoremap <C-U>bepsilon 𝛆
+inoremap <C-U>bzeta 𝛇
+" inoremap <C-U>beta 𝛈
+inoremap <C-U>btheta 𝛉
+inoremap <C-U>biota 𝛊
+inoremap <C-U>bkappa 𝛋
+inoremap <C-U>blambda 𝛌
+inoremap <C-U>bmu 𝛍
+inoremap <C-U>bnu 𝛎
+inoremap <C-U>bxi 𝛏
+inoremap <C-U>bomnicron 𝛐
+inoremap <C-U>bpi 𝛑
+inoremap <C-U>brho 𝛒
+inoremap <C-U>bfsigma 𝛓
+inoremap <C-U>bsigma 𝛔
+inoremap <C-U>btau 𝛕
+inoremap <C-U>bupsilon 𝛖
+inoremap <C-U>bphi 𝛗
+inoremap <C-U>bchi 𝛘
+inoremap <C-U>bpsi 𝛙
+inoremap <C-U>bomega 𝛚
+inoremap <C-U>bpdiff 𝛛
 
 " 𝛢 𝛣 𝛤 𝛥 𝛦 𝛧 𝛨 𝛩 𝛪 𝛫 𝛬 𝛭 𝛮 𝛯 𝛰 𝛱 𝛲 𝛳 𝛴 𝛵 𝛶 𝛷 𝛸 𝛹 𝛺 𝛻
 " 𝛼 𝛽 𝛾 𝛿 𝜀 𝜁 𝜂 𝜃 𝜄 𝜅 𝜆 𝜇 𝜈 𝜉 𝜊 𝜋 𝜌 𝜍 𝜎 𝜏 𝜐 𝜑 𝜒 𝜓 𝜔 𝜕 𝜖 𝜗 𝜘 𝜙 𝜚 𝜛
 
-ino <C-U>iAlpha 𝛢
-ino <C-U>iBeta 𝛣
-ino <C-U>iGamma 𝛤
-ino <C-U>iDelta 𝛥
-ino <C-U>iEpsilon 𝛦
-ino <C-U>iZeta 𝛧
-ino <C-U>iEta 𝛨
-ino <C-U>iTheta 𝛩
-ino <C-U>iIota 𝛪
-ino <C-U>iKappa 𝛫
-ino <C-U>iLambda 𝛬
-ino <C-U>iMu 𝛭
-ino <C-U>iNu 𝛮
-ino <C-U>iXi 𝛯
-ino <C-U>iOmnicron 𝛰
-ino <C-U>iPi 𝛱
-ino <C-U>iRho 𝛲
-ino <C-U>iSigma 𝛴
-ino <C-U>iTau 𝛵
-ino <C-U>iUpsilon 𝛶
-ino <C-U>iPhi 𝛷
-ino <C-U>iChi 𝛸
-ino <C-U>iPsi 𝛹
-ino <C-U>iOmega 𝛺
-ino <C-U>iNabla 𝛻
-ino <C-U>ialpha 𝛼
-ino <C-U>ibeta 𝛽
-ino <C-U>igamma 𝛾
-ino <C-U>idelta 𝛿
-ino <C-U>iepsilon 𝜀
-ino <C-U>izeta 𝜁
-ino <C-U>ieta 𝜂
-ino <C-U>itheta 𝜃
-ino <C-U>iiota 𝜄
-ino <C-U>ikappa 𝜅
-ino <C-U>ilambda 𝜆
-ino <C-U>imu 𝜇
-ino <C-U>inu 𝜈
-ino <C-U>ixi 𝜉
-ino <C-U>iomnicron 𝜊
-ino <C-U>ipi 𝜋
-ino <C-U>irho 𝜌
-ino <C-U>ifsigma 𝜍
-ino <C-U>isigma 𝜎
-ino <C-U>itau 𝜏
-ino <C-U>iupsilon 𝜐
-ino <C-U>iphi 𝜑
-ino <C-U>ichi 𝜒
-ino <C-U>ipsi 𝜓
-ino <C-U>iomega 𝜔
-ino <C-U>ipdiff 𝜕
+inoremap <C-U>iAlpha 𝛢
+inoremap <C-U>iBeta 𝛣
+inoremap <C-U>iGamma 𝛤
+inoremap <C-U>iDelta 𝛥
+inoremap <C-U>iEpsilon 𝛦
+inoremap <C-U>iZeta 𝛧
+inoremap <C-U>iEta 𝛨
+inoremap <C-U>iTheta 𝛩
+inoremap <C-U>iIota 𝛪
+inoremap <C-U>iKappa 𝛫
+inoremap <C-U>iLambda 𝛬
+inoremap <C-U>iMu 𝛭
+inoremap <C-U>iNu 𝛮
+inoremap <C-U>iXi 𝛯
+inoremap <C-U>iOmnicron 𝛰
+inoremap <C-U>iPi 𝛱
+inoremap <C-U>iRho 𝛲
+inoremap <C-U>iSigma 𝛴
+inoremap <C-U>iTau 𝛵
+inoremap <C-U>iUpsilon 𝛶
+inoremap <C-U>iPhi 𝛷
+inoremap <C-U>iChi 𝛸
+inoremap <C-U>iPsi 𝛹
+inoremap <C-U>iOmega 𝛺
+inoremap <C-U>iNabla 𝛻
+inoremap <C-U>ialpha 𝛼
+inoremap <C-U>ibeta 𝛽
+inoremap <C-U>igamma 𝛾
+inoremap <C-U>idelta 𝛿
+inoremap <C-U>iepsilon 𝜀
+inoremap <C-U>izeta 𝜁
+inoremap <C-U>ieta 𝜂
+inoremap <C-U>itheta 𝜃
+inoremap <C-U>iiota 𝜄
+inoremap <C-U>ikappa 𝜅
+inoremap <C-U>ilambda 𝜆
+inoremap <C-U>imu 𝜇
+inoremap <C-U>inu 𝜈
+inoremap <C-U>ixi 𝜉
+inoremap <C-U>iomnicron 𝜊
+inoremap <C-U>ipi 𝜋
+inoremap <C-U>irho 𝜌
+inoremap <C-U>ifsigma 𝜍
+inoremap <C-U>isigma 𝜎
+inoremap <C-U>itau 𝜏
+inoremap <C-U>iupsilon 𝜐
+inoremap <C-U>iphi 𝜑
+inoremap <C-U>ichi 𝜒
+inoremap <C-U>ipsi 𝜓
+inoremap <C-U>iomega 𝜔
+inoremap <C-U>ipdiff 𝜕
 
 " 𝜜 𝜝 𝜞 𝜟 𝜠 𝜡 𝜢 𝜣 𝜤 𝜥 𝜦 𝜧 𝜨 𝜩 𝜪 𝜫 𝜬 𝜭 𝜮 𝜯 𝜰 𝜱 𝜲 𝜳 𝜴 𝜵
 " 𝜶 𝜷 𝜸 𝜹 𝜺 𝜻 𝜼 𝜽 𝜾 𝜿 𝝀 𝝁 𝝂 𝝃 𝝄 𝝅 𝝆 𝝇 𝝈 𝝉 𝝊 𝝋 𝝌 𝝍 𝝎 𝝏 𝝐 𝝑 𝝒 𝝓 𝝔 𝝕
 
-ino <C-U>biAlpha 𝜜
-ino <C-U>biBeta 𝜝
-ino <C-U>biGamma 𝜞
-ino <C-U>biDelta 𝜟
-ino <C-U>biEpsilon 𝜠
-ino <C-U>biZeta 𝜡
-ino <C-U>biEta 𝜢
-ino <C-U>biTheta 𝜣
-ino <C-U>biIota 𝜤
-ino <C-U>biKappa 𝜥
-ino <C-U>biLambda 𝜦
-ino <C-U>biMu 𝜧
-ino <C-U>biNu 𝜨
-ino <C-U>biXi 𝜩
-ino <C-U>biOmnicron 𝜪
-ino <C-U>biPi 𝜫
-ino <C-U>biRho 𝜬
-ino <C-U>biSigma 𝜮
-ino <C-U>biTau 𝜯
-ino <C-U>biUpsilon 𝜰
-ino <C-U>biPhi 𝜱
-ino <C-U>biChi 𝜲
-ino <C-U>biPsi 𝜳
-ino <C-U>biOmega 𝜴
-ino <C-U>biNabla 𝜵
-ino <C-U>bialpha 𝜶
-ino <C-U>bibeta 𝜷
-ino <C-U>bigamma 𝜸
-ino <C-U>bidelta 𝜹
-ino <C-U>biepsilon 𝜺
-ino <C-U>bizeta 𝜻
-ino <C-U>bieta 𝜼
-ino <C-U>bitheta 𝜽
-ino <C-U>biiota 𝜾
-ino <C-U>bikappa 𝜿
-ino <C-U>bilambda 𝝀
-ino <C-U>bimu 𝝁
-ino <C-U>binu 𝝂
-ino <C-U>bixi 𝝃
-ino <C-U>biomnicron 𝝄
-ino <C-U>bipi 𝝅
-ino <C-U>birho 𝝆
-ino <C-U>bifsigma 𝝇
-ino <C-U>bisigma 𝝈
-ino <C-U>bitau 𝝉
-ino <C-U>biupsilon 𝝊
-ino <C-U>biphi 𝝋
-ino <C-U>bichi 𝝌
-ino <C-U>bipsi 𝝍
-ino <C-U>biomega 𝝎
-ino <C-U>bipdiff 𝝏
+inoremap <C-U>biAlpha 𝜜
+inoremap <C-U>biBeta 𝜝
+inoremap <C-U>biGamma 𝜞
+inoremap <C-U>biDelta 𝜟
+inoremap <C-U>biEpsilon 𝜠
+inoremap <C-U>biZeta 𝜡
+inoremap <C-U>biEta 𝜢
+inoremap <C-U>biTheta 𝜣
+inoremap <C-U>biIota 𝜤
+inoremap <C-U>biKappa 𝜥
+inoremap <C-U>biLambda 𝜦
+inoremap <C-U>biMu 𝜧
+inoremap <C-U>biNu 𝜨
+inoremap <C-U>biXi 𝜩
+inoremap <C-U>biOmnicron 𝜪
+inoremap <C-U>biPi 𝜫
+inoremap <C-U>biRho 𝜬
+inoremap <C-U>biSigma 𝜮
+inoremap <C-U>biTau 𝜯
+inoremap <C-U>biUpsilon 𝜰
+inoremap <C-U>biPhi 𝜱
+inoremap <C-U>biChi 𝜲
+inoremap <C-U>biPsi 𝜳
+inoremap <C-U>biOmega 𝜴
+inoremap <C-U>biNabla 𝜵
+inoremap <C-U>bialpha 𝜶
+inoremap <C-U>bibeta 𝜷
+inoremap <C-U>bigamma 𝜸
+inoremap <C-U>bidelta 𝜹
+inoremap <C-U>biepsilon 𝜺
+inoremap <C-U>bizeta 𝜻
+inoremap <C-U>bieta 𝜼
+inoremap <C-U>bitheta 𝜽
+inoremap <C-U>biiota 𝜾
+inoremap <C-U>bikappa 𝜿
+inoremap <C-U>bilambda 𝝀
+inoremap <C-U>bimu 𝝁
+inoremap <C-U>binu 𝝂
+inoremap <C-U>bixi 𝝃
+inoremap <C-U>biomnicron 𝝄
+inoremap <C-U>bipi 𝝅
+inoremap <C-U>birho 𝝆
+inoremap <C-U>bifsigma 𝝇
+inoremap <C-U>bisigma 𝝈
+inoremap <C-U>bitau 𝝉
+inoremap <C-U>biupsilon 𝝊
+inoremap <C-U>biphi 𝝋
+inoremap <C-U>bichi 𝝌
+inoremap <C-U>bipsi 𝝍
+inoremap <C-U>biomega 𝝎
+inoremap <C-U>bipdiff 𝝏
 
 " 𝟎 𝟏 𝟐 𝟑 𝟒 𝟓 𝟔 𝟕 𝟖 𝟗
 " 𝟘 𝟙 𝟚 𝟛 𝟜 𝟝 𝟞 𝟟 𝟠 𝟡
 
-ino <C-U>b0 𝟎
-ino <C-U>b1 𝟏
-ino <C-U>b2 𝟐
-ino <C-U>b3 𝟑
-ino <C-U>b4 𝟒
-ino <C-U>b5 𝟓
-ino <C-U>b6 𝟔
-ino <C-U>b7 𝟕
-ino <C-U>b8 𝟖
-ino <C-U>b9 𝟗
-ino <C-U>[0 𝟘
-ino <C-U>[1 𝟙
-ino <C-U>[2 𝟚
-ino <C-U>[3 𝟛
-ino <C-U>[4 𝟜
-ino <C-U>[5 𝟝
-ino <C-U>[6 𝟞
-ino <C-U>[7 𝟟
-ino <C-U>[8 𝟠
-ino <C-U>[9 𝟡
+inoremap <C-U>b0 𝟎
+inoremap <C-U>b1 𝟏
+inoremap <C-U>b2 𝟐
+inoremap <C-U>b3 𝟑
+inoremap <C-U>b4 𝟒
+inoremap <C-U>b5 𝟓
+inoremap <C-U>b6 𝟔
+inoremap <C-U>b7 𝟕
+inoremap <C-U>b8 𝟖
+inoremap <C-U>b9 𝟗
+inoremap <C-U>[0 𝟘
+inoremap <C-U>[1 𝟙
+inoremap <C-U>[2 𝟚
+inoremap <C-U>[3 𝟛
+inoremap <C-U>[4 𝟜
+inoremap <C-U>[5 𝟝
+inoremap <C-U>[6 𝟞
+inoremap <C-U>[7 𝟟
+inoremap <C-U>[8 𝟠
+inoremap <C-U>[9 𝟡
 
 "       ▼  Suppl. Arrows-C
 " U+1F800  🠀 🠁 🠂 🠃 🠄 🠅 🠆 🠇 🠈 🠉 🠊 🠋

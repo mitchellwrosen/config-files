@@ -50,6 +50,8 @@
    added = bold green
    changed = bold yellow
    untracked = bold red
+[commit]
+   verbose = true
 [core]
    whitespace = trailing-space,space-before-tab
    editor = nvim

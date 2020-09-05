@@ -77,7 +77,7 @@ set scrolloff=10                     " start scrolling before the cursor reaches
 set shiftround                       " shift to multiple of shiftwidth
 set shiftwidth=2                     "
 set sidescrolloff=16                 " start scrolling before the cursor reaches the edge
-" set signcolumn=yes                   " always draw signcolumn
+set signcolumn=yes                   " always draw signcolumn because it's jarring when it appears otherwise
 set smartcase                        " don't ignore case if search contains uppercase char
 set smartindent                      " smart autoindenting when starting a new line
 set synmaxcol=180                    " dont bother syntax-highlighting past this column
@@ -85,7 +85,7 @@ set showtabline=2                    " always show the tabline
 set softtabstop=2                    " tab key makes 2 spaces
 set termguicolors                    "
 set title                            " put filename in window title
-set timeoutlen=300                   " only wait this many ms for key sequence to complete
+set timeoutlen=200                   " only wait this many ms for key sequence to complete
 set undofile                         " persist undo history across buffer exits
 set updatetime=100                   " fire CursorHold after 100ms (default 4000ms)
 set wildmenu                         " complete commands with a little menu
@@ -95,8 +95,8 @@ set wildmode=list:longest,full       " wild menu completion behavior
 " Key mappings
 " ==============================================================================
 
-nnoremap ; :
-nnoremap : ;
+noremap ; :
+noremap : ;
 nnoremap r; r:
 nnoremap r: r;
 inoremap ; :
@@ -286,15 +286,14 @@ inoremap <C-u> <Nop>
 lua <<EOF
 local nvim_lsp = require'nvim_lsp'
 local configs = require'nvim_lsp/configs'
-if not nvim_lsp.ghcide then
-  configs.ghcide = {
-    default_config = {
-      cmd = { 'ghcide', '--lsp' };
-      filetypes = { 'haskell' };
-      settings = {};
-    };
-  }
-end
+configs.ghcide = {
+  default_config = {
+    cmd = { 'ghcide-wrapper', '--lsp' };
+    filetypes = { 'haskell' };
+    root_dir = nvim_lsp.util.root_pattern(".git", "cabal.project", "stack.yaml");
+    settings = {};
+  };
+};
 nvim_lsp.ghcide.setup{}
 EOF
 
@@ -411,6 +410,19 @@ function! s:jumpToLastPosition() abort
 endfunction
 autocmd mitchellwrosen BufWinEnter ?* call s:jumpToLastPosition()
 
+" Strip trailing whitespace on save
+function! s:stripTrailingWhitespace() abort
+  if &l:modifiable && !&l:binary
+    let l:view = winsaveview()
+      try
+        keeppatterns silent! 1,$s/\s\+$//e
+      finally
+        call winrestview(l:view)
+      endtry
+  endif
+endfunction
+autocmd mitchellwrosen BufWritePre * call s:stripTrailingWhitespace()
+
 " kick in autoread on cursor hold or focus gained
 autocmd CursorHold,FocusGained ?* if getcmdwintype() == '' | checktime | endif
 
@@ -433,15 +445,6 @@ autocmd mitchellwrosen TextYankPost * silent! lua vim.highlight.on_yank {higroup
 " Save the buffer after changing it
 function! s:save() abort
   if empty(&buftype) && !empty(bufname('')) && &filetype !=# 'gitcommit'
-    " Strip trailing whitespace
-    if &l:modifiable && !&l:binary
-      let l:view = winsaveview()
-        try
-          keeppatterns silent! 1,$s/\s\+$//e
-        finally
-          call winrestview(l:view)
-        endtry
-    endif
     let yank0 = getpos("'[")
     let yank1 = getpos("']")
     silent! update
@@ -534,13 +537,14 @@ command! -nargs=* Rgu
   \   fzf#vim#with_preview({'options': ['--border', '--info=inline', '--layout=reverse']}, 'down:60%'),
   \   0)
 
-autocmd mitchellwrosen FileType fzf setl laststatus=0
-  \| autocmd BufLeave <buffer> setl laststatus=2
+autocmd mitchellwrosen FileType fzf setlocal laststatus=0
+  \| autocmd BufLeave <buffer> setlocal laststatus=2
 " Escape to quit little annoying temporary buffers
 autocmd mitchellwrosen FileType fzf nnoremap <silent> <buffer> <Esc> :q<CR>
 " Unmap Esc quitting terminal mode, so fzf handles it (result: one Esc closes fzf)
-autocmd mitchellwrosen FileType fzf tunma <buffer> <Esc>
+autocmd mitchellwrosen FileType fzf tunmap <buffer> <Esc>
 
+autocmd mitchellwrosen FileType haskell setlocal omnifunc=v:lua.vim.lsp.omnifunc
 " <Space>ff to find-function (ag can match over multiple lines)
 " <Space>ft to find-type (ripgrep is faster)
 autocmd mitchellwrosen FileType haskell nnoremap <buffer> <Space>ff :Ag (<Bslash>b)<C-r><C-w><Bslash>b[ <Bslash>t<Bslash>n]+::<CR>
@@ -677,6 +681,23 @@ let g:multi_cursor_quit_key = '<Esc>'
 "   endif
 " endfunction
 
+" [neovim/nvim-lspconfig]
+
+nnoremap <silent> <Space>lcl :lua vim.lsp.buf.clear_references()<CR>
+nnoremap <silent> <Space>lco :lua vim.lsp.buf.code_action()<CR>
+nnoremap <silent> <Space>ldec :lua vim.lsp.buf.declaration()<CR>
+nnoremap <silent> <Space>ldef :lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> <Space>ldo :lua vim.lsp.buf.document_symbol()<CR>
+nnoremap <silent> <Space>lh :lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> <Space>lim :lua vim.lsp.buf.implementation()<CR>
+nnoremap <silent> <Space>lin :lua vim.lsp.buf.incoming_calls()<CR>
+nnoremap <silent> <Space>lo :lua vim.lsp.buf.outgoing_calls()<CR>
+nnoremap <silent> <Space>lref :lua vim.lsp.buf.references()<CR>
+nnoremap <silent> <Space>lren :lua vim.lsp.buf.rename()<CR>
+nnoremap <silent> <Space>ls :lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> <Space>lt :lua vim.lsp.buf.type_definition()<CR>
+nnoremap <silent> <Space>lw :lua vim.lsp.buf.workspace_symbol()<CR>
+
 " [neovimhaskell/haskell-vim]
 let g:haskell_indent_disable = 1
 let g:haskell_enable_backpack = 1
@@ -688,9 +709,9 @@ let g:haskell_enable_typeroles = 1
 " [romainl/vim-qf]
 " Toggle the quickfix ("location") menu; move thru quickfix items with Alt+jk
 " Hmm... I never seem to use these... do they even work? Wtf is quickfix?
-nmap <Space>l <Plug>(qf_qf_toggle)
-nmap <A-j> <Plug>(qf_qf_next)
-nmap <A-k> <Plug>(qf_qf_prev)
+" nmap <Space>l <Plug>(qf_qf_toggle)
+" nmap <A-j> <Plug>(qf_qf_next)
+" nmap <A-k> <Plug>(qf_qf_prev)
 
 " [sdiehl/vim-ormolu]
 let g:ormolu_disable = 1

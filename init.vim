@@ -1,52 +1,34 @@
-" Big default verb/action changes:
-"
-" * J = page down
-" * K = page up
-" * s = surround word
-" * S = surround WORD
-" * SS = surround line
-" * U = redo
-" * x = exchange
-"
 " TODO
-" * shada?
-" * Alt-K doesn't seem to work
-" * Make 'sp' etc repeatable
-" * Write function to make ds search for nearest surround and delete it
-" * replace easy-align
-
-" ==============================================================================
-" Plugins
-" ==============================================================================
+" figure out why vim-cool + fzf is broken in neovim
 
 call plug#begin(stdpath('data') . '/plugged')
 
-Plug 'RRethy/vim-illuminate'                                      " Highlight occurrences of the word under the cursor
-Plug 'Yggdroot/indentLine'                                        " show markers every 2 columns of leading whitespace
-Plug 'godlygeek/tabular'                                          " Align on words
-Plug 'itchyny/lightline.vim'                                      "
-Plug 'junegunn/fzf.vim'                                           " Fuzzy search source code, files, etc
-Plug 'liuchengxu/vim-which-key'                                   " thingy to tell me my own hotkeys (requires manual work)
-Plug 'mcchrish/nnn.vim'                                           " File browser thingy, kinda sucks, what's better?
-Plug 'mengelbrecht/lightline-bufferline'                          "
-Plug 'mhinz/vim-startify'                                         " Startup screen
-Plug 'morhetz/gruvbox'                                            " best color scheme
-Plug 'neoclide/coc.nvim', { 'branch': 'release' }                 "
-Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }            "
-Plug 'psliwka/vim-smoothie'                                       " Smooth paging up and down
-Plug 'rhysd/git-messenger.vim'                                    " git blame the line under the cursor
-Plug 'romainl/vim-cool'                                           " Automatically unhighlight when cursor moves
-Plug 'romainl/vim-qf'                                             " Vim quickfix improvements
-Plug 'sdiehl/vim-ormolu', { 'for': 'haskell' }                    "
-Plug 'terryma/vim-multiple-cursors'                               " Multiple cursors for quick and dirty renaming
-Plug 'tmsvg/pear-tree'                                            " auto-pair function that claims to not suck; we'll see
-Plug 'tommcdo/vim-exchange'                                       " Swap the location of two selections
-Plug 'tpope/vim-characterize'                                     " Improved 'ga'
-Plug 'tpope/vim-commentary'                                       " Quick (un-)commenting
-Plug 'tpope/vim-fugitive'                                         "
-Plug 'tpope/vim-repeat'                                           " Make '.' repeat more things out of the box
-Plug 'tpope/vim-surround'                                         " Some surround helpers
-Plug 'unblevable/quick-scope'                                     " Highlight the first, second, etc. instances of characters on a line
+Plug 'RRethy/vim-illuminate'                           " Highlight occurrences of the word under the cursor
+Plug 'Yggdroot/indentLine'                             " show markers every 2 columns of leading whitespace
+Plug 'godlygeek/tabular'                               " Align on words
+Plug 'itchyny/lightline.vim'                           "
+Plug 'junegunn/fzf.vim'                                " Fuzzy search source code, files, etc
+Plug 'liuchengxu/vim-which-key'                        " thingy to tell me my own hotkeys (requires manual work)
+Plug 'mcchrish/nnn.vim'                                " File browser thingy, kinda sucks, what's better?
+Plug 'mengelbrecht/lightline-bufferline'               "
+Plug 'mhinz/vim-startify'                              " Startup screen
+Plug 'morhetz/gruvbox'                                 " best color scheme
+" Plug 'neoclide/coc.nvim', { 'branch': 'release' }                   "
+Plug 'neovim/nvim-lsp'
+Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' } "
+Plug 'psliwka/vim-smoothie'                            " Smooth paging up and down
+Plug 'rhysd/git-messenger.vim'                         " git blame the line under the cursor
+Plug 'romainl/vim-cool'                                " Automatically unhighlight when cursor moves
+Plug 'romainl/vim-qf'                                  " Vim quickfix improvements
+Plug 'sdiehl/vim-ormolu', { 'for': 'haskell' }         "
+Plug 'terryma/vim-multiple-cursors'                    " Multiple cursors for quick and dirty renaming
+Plug 'tommcdo/vim-exchange'                            " Swap the location of two selections
+Plug 'tpope/vim-characterize'                          " Improved 'ga'
+Plug 'tpope/vim-commentary'                            " Quick (un-)commenting
+Plug 'tpope/vim-fugitive'                              "
+Plug 'tpope/vim-repeat'                                " Make '.' repeat more things out of the box
+Plug 'tpope/vim-surround'                              " Some surround helpers
+Plug 'unblevable/quick-scope'                          " Highlight characters for f, F, t, T
 
 " Plug 'ElmCast/elm-vim', { 'for': 'elm' }
 " Plug 'LnL7/vim-nix', { 'for': 'nix' }
@@ -246,8 +228,8 @@ xnoremap <silent> an :<C-u>call <SID>aroundNumberTextObject()<cr>
 onoremap <silent> an :<C-u>call <SID>aroundNumberTextObject()<cr>
 
 " Ctrl+S to search-and-replace in the file
-nnoremap <C-s> :%s//g<Left><Left>
-vnoremap <C-s> :s//g<Left><Left>
+nnoremap <C-s> :%s/\v//cg<Left><Left><Left><Left>
+vnoremap <C-s> :s/\v//cg<Left><Left><Left><Left>
 
 " Move buffers with Ctrl+jk
 nnoremap <silent> <C-j> :bn<CR>
@@ -295,11 +277,26 @@ cnoremap <C-l> <Right>
 " cnoremap <expr> <S-Tab> <SID>commandModeShiftTab()
 
 " When a popup menu is visible, move thru it with tab and select with enter
-" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : coc#refresh()
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : coc#refresh()
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
 inoremap <C-u> <Nop>
+
+lua <<EOF
+local nvim_lsp = require'nvim_lsp'
+local configs = require'nvim_lsp/configs'
+if not nvim_lsp.ghcide then
+  configs.ghcide = {
+    default_config = {
+      cmd = { 'ghcide', '--lsp' };
+      filetypes = { 'haskell' };
+      settings = {};
+    };
+  }
+end
+nvim_lsp.ghcide.setup{}
+EOF
 
 function! s:getSelectedText() abort
   let [l:lnum1, l:col1] = getpos("'<")[1:2]
@@ -363,13 +360,14 @@ function! MitchellTerm()
     " Terminal window doesn't exist, but terminal buffer does
     if bufexists(s:mitchell_term_bufid)
       let s:mitchell_term_winid = nvim_open_win(s:mitchell_term_bufid, v:false, opts)
-      "
+
     " Neither terminal window nor buffer exist
     else
       let s:mitchell_term_bufid = nvim_create_buf(v:false, v:true)
       let winid = nvim_get_current_win()
       let s:mitchell_term_winid = nvim_open_win(s:mitchell_term_bufid, v:true, opts)
       let s:mitchell_term_jobid = termopen(&shell, s:mitchell_term_opts)
+      stopinsert " because of my autocmd that starts insert when a term is opened
       call nvim_win_set_option(s:mitchell_term_winid, 'winbl', 20)
       call win_gotoid(winid)
     endif
@@ -413,19 +411,6 @@ function! s:jumpToLastPosition() abort
 endfunction
 autocmd mitchellwrosen BufWinEnter ?* call s:jumpToLastPosition()
 
-" Strip trailing whitespace on save
-function! s:stripTrailingWhitespace() abort
-  if &l:modifiable && !&l:binary
-    let l:view = winsaveview()
-      try
-        keeppatterns silent! 1,$s/\s\+$//e
-      finally
-        call winrestview(l:view)
-      endtry
-  endif
-endfunction
-autocmd mitchellwrosen BufWritePre * call <SID>stripTrailingWhitespace()
-
 " kick in autoread on cursor hold or focus gained
 autocmd CursorHold,FocusGained ?* if getcmdwintype() == '' | checktime | endif
 
@@ -448,6 +433,15 @@ autocmd mitchellwrosen TextYankPost * silent! lua vim.highlight.on_yank {higroup
 " Save the buffer after changing it
 function! s:save() abort
   if empty(&buftype) && !empty(bufname('')) && &filetype !=# 'gitcommit'
+    " Strip trailing whitespace
+    if &l:modifiable && !&l:binary
+      let l:view = winsaveview()
+        try
+          keeppatterns silent! 1,$s/\s\+$//e
+        finally
+          call winrestview(l:view)
+        endtry
+    endif
     let yank0 = getpos("'[")
     let yank1 = getpos("']")
     silent! update
@@ -662,26 +656,26 @@ let g:multi_cursor_quit_key = '<Esc>'
 
 " [neoclide/coc.nvim]
 " <Left>/<Right> to jump around warnings/errors (annoying that it's only buffer-local)
-nmap <silent> <Left> <Plug>(coc-diagnostic-prev)
-nmap <silent> <Right> <Plug>(coc-diagnostic-next)
+" nmap <silent> <Left> <Plug>(coc-diagnostic-prev)
+" nmap <silent> <Right> <Plug>(coc-diagnostic-next)
 " gd to go to definition of thing under cursor
 " Also <Del> (trying it out since it's one key)
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> <Del> <Plug>(coc-definition)
+" nmap <silent> gd <Plug>(coc-definition)
+" nmap <silent> <Del> <Plug>(coc-definition)
 " <Enter> to show type of thing under cursor
-nnoremap <silent> <Enter> :call <SID>HandleEnter()<CR>
+" nnoremap <silent> <Enter> :call <SID>HandleEnter()<CR>
 " <Space>i to open quickfix
-nnoremap <silent> <Space>i :CocFix<CR>
+" nnoremap <silent> <Space>i :CocFix<CR>
 " Backspace to open all warnings/errors in a list
 " nnoremap <silent> <BS> :CocList diagnostics<CR>
 
-function! s:HandleEnter()
-  if coc#util#has_float()
-    call coc#util#float_hide()
-  else
-    call CocAction('doHover')
-  endif
-endfunction
+" function! s:HandleEnter()
+"   if coc#util#has_float()
+"     call coc#util#float_hide()
+"   else
+"     call CocAction('doHover')
+"   endif
+" endfunction
 
 " [neovimhaskell/haskell-vim]
 let g:haskell_indent_disable = 1
@@ -760,12 +754,6 @@ autocmd mitchellwrosen FileType gitmessengerpopup call <SID>init_gitmessengerpop
 let g:Illuminate_delay = 0
 " don't highlight the word under the cursor
 let g:Illuminate_highlightUnderCursor = 0
-
-" [tmsvg/pear-tree]
-" look around to better balance parens rather than just always pairing
-let g:pear_tree_smart_openers = 1
-let g:pear_tree_smart_closers = 1
-let g:pear_tree_smart_backspace = 1
 
 " [tommcdo/vim-exchange]
 " Don't make any key mappings

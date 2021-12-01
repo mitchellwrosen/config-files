@@ -46,10 +46,10 @@
   verbose = true
 [core]
   editor = nvim
-  pager = delta
+  ; pager = delta
   whitespace = trailing-space,space-before-tab
-[delta]
-  minus-style = syntax auto
+; [delta]
+;   minus-style = syntax auto
 [diff]
   colorMoved = default
   renames = copies
@@ -57,8 +57,8 @@
   tool = vimdiff
 [difftool]
   prompt = false
-[interactive]
-  diffFilter = delta --color-only
+; [interactive]
+;   diffFilter = delta --color-only
 [merge]
   conflictstyle = diff3
   ff = false
@@ -75,3 +75,5 @@
   email = mitchellwrosen@gmail.com
 [commit]
   gpgsign = false
+[init]
+	defaultBranch = main
